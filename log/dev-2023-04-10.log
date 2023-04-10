@@ -1,0 +1,23 @@
+┌ Info: 2023-04-10 12:13:09 
+│ Web Server starting at http://127.0.0.1:8000 
+└ @ Genie.Server /Users/daleblack/.julia/packages/Genie/SKepC/src/Server.jl:161
+┌ Info: 2023-04-10 12:13:11 Watching ["/Users/daleblack/Desktop/BrainDancerProject/CSVAnalysis"]
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:19
+┌ Info: 2023-04-10 12:13:11 Listening on: 127.0.0.1:8000, thread id: 1
+└ @ HTTP.Servers /Users/daleblack/.julia/packages/HTTP/z8l0i/src/Servers.jl:366
+┌ Info: 2023-04-10 12:18:13 Autoreloading
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
+┌ Info: 2023-04-10 12:18:35 Watching ["/Users/daleblack/Desktop/BrainDancerProject/CSVAnalysis"]
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:19
+┌ Warning: 2023-04-10 12:37:34 The macro `@onchangeany` is deprecated and should be replaced by `@onchange`
+└ @ Main /Users/daleblack/.julia/packages/Stipple/pgem3/src/ReactiveTools.jl:705
+┌ Info: 2023-04-10 12:37:43 Watching ["/Users/daleblack/Desktop/BrainDancerProject/CSVAnalysis"]
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:19
+┌ Info: 2023-04-10 12:38:14 Autoreloading
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
+┌ Warning: 2023-04-10 12:39:02 The macro `@onchangeany` is deprecated and should be replaced by `@onchange`
+└ @ Main /Users/daleblack/.julia/packages/Stipple/pgem3/src/ReactiveTools.jl:705
+┌ Info: 2023-04-10 12:39:02 Watching ["/Users/daleblack/Desktop/BrainDancerProject/CSVAnalysis"]
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:19
+┌ Info: 2023-04-10 12:39:10 Autoreloading
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
