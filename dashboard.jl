@@ -9,7 +9,7 @@ Genie.config.cors_allowed_origins = ["*"]
 const FILE_PATH = "uploads"
 mkpath(FILE_PATH)
 
-@out title = "CSV Analysis"
+@out title = "Image Analysis"
 @in selected_file = "iris.csv"
 @in selected_column = "petal.length"
 @out upfiles = readdir(FILE_PATH)

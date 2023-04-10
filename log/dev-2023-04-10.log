@@ -21,3 +21,17 @@
 └ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:19
 ┌ Info: 2023-04-10 12:39:10 Autoreloading
 └ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
+┌ Info: 2023-04-10 12:51:33 
+│ Web Server starting at http://127.0.0.1:8000 
+└ @ Genie.Server /Users/daleblack/.julia/packages/Genie/SKepC/src/Server.jl:161
+┌ Info: 2023-04-10 12:51:34 Watching ["/Users/daleblack/Desktop/BrainDancerProject/CSVAnalysis"]
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:19
+┌ Info: 2023-04-10 12:51:35 Listening on: 127.0.0.1:8000, thread id: 1
+└ @ HTTP.Servers /Users/daleblack/.julia/packages/HTTP/z8l0i/src/Servers.jl:366
+┌ Error: 2023-04-10 12:52:39 Error attempting to invoke handler 3 for field Reactive{Bool}(Observable(true), 1, false, false, "") with value true
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:36
+┌ Error: 2023-04-10 12:52:40 
+│   exception = (ArgumentError("\"uploads/iris.csv\" is not a valid file or doesn't exist"), Union{Ptr{Nothing}, Base.InterpreterIP}[Ptr{Nothing} @0x00000002ab83ae13, Ptr{Nothing} @0x00000002ab8501ff, Ptr{Nothing} @0x00000002ab8800db, Ptr{Nothing} @0x00000002ab88038b, Ptr{Nothing} @0x0000000103284893, Ptr{Nothing} @0x0000000103291973, Ptr{Nothing} @0x0000000103284893, Ptr{Nothing} @0x00000001032910d7, Ptr{Nothing} @0x000000015a27eaa3, Ptr{Nothing} @0x0000000103284893, Ptr{Nothing} @0x00000001032910d7, Ptr{Nothing} @0x000000015a54a90b, Ptr{Nothing} @0x0000000103284893, Ptr{Nothing} @0x00000001032910d7, Ptr{Nothing} @0x00000002a9c440f3, Ptr{Nothing} @0x00000002a9c44117, Ptr{Nothing} @0x0000000103284893, Ptr{Nothing} @0x0000000103291973, Ptr{Nothing} @0x00000002a9a4c22b, Ptr{Nothing} @0x00000002a9a58017, Ptr{Nothing} @0x00000002a9a58047, Ptr{Nothing} @0x0000000103284893, Ptr{Nothing} @0x00000002a9a401bf, Ptr{Nothing} @0x00000002a9a40203, Ptr{Nothing} @0x0000000103284893, Ptr{Nothing} @0x00000002a98ccdf3, Ptr{Nothing} @0x00000002a98ccec3, Ptr{Nothing} @0x0000000103284893, Ptr{Nothing} @0x00000002a0f04957, Ptr{Nothing} @0x00000002a0f10143, Ptr{Nothing} @0x00000002a0f1c037, Ptr{Nothing} @0x00000002a0f1c0ab, Ptr{Nothing} @0x0000000103284893, Ptr{Nothing} @0x00000002a08840cb, Ptr{Nothing} @0x00000002a08840ff, Ptr{Nothing} @0x0000000103284893, Ptr{Nothing} @0x0000000103291973, Ptr{Nothing} @0x000000028b1e81af, Ptr{Nothing} @0x000000028b1f449f, Ptr{Nothing} @0x000000028b230df7, Ptr{Nothing} @0x000000028b3b0383, Ptr{Nothing} @0x000000028b3b0403, Ptr{Nothing} @0x0000000103284893, Ptr{Nothing} @0x0000000103291973, Ptr{Nothing} @0x000000028affd09f, Ptr{Nothing} @0x000000028b02c18f, Ptr{Nothing} @0x000000028b02c20f, Ptr{Nothing} @0x0000000103284893, Ptr{Nothing} @0x00000001032a3667])
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:37
+┌ Info: 2023-04-10 13:01:49 Autoreloading
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
