@@ -1,8 +1,14 @@
 [
     heading("{{title}}")
     row([
-        cell(class="col-md-12", [
-            uploader(label="Upload Dataset", accpt=".csv", multiple=true, method="POST", url="http://localhost:8000/", field__name="csv_file")
+        cell(class="st-module", [
+            uploader(label="Upload fMRI", accpt=".nii", multiple=true, method="POST", url="http://localhost:8000/", field__name="nii_image")
+        ])
+        cell(class="st-module", [
+            uploader(label="Upload Logs", accpt=".csv", multiple=true, method="POST", url="http://localhost:8000/", field__name="csv_logs")
+        ])
+        cell(class="st-module", [
+            uploader(label="Upload Acquisition Times", accpt=".csv", multiple=true, method="POST", url="http://localhost:8000/", field__name="csv_acq")
         ])
     ])
     row([
@@ -12,20 +18,13 @@
                 h6("File")
                 Stipple.select(:selected_file; options=:upfiles)
             ]
-        )
-        cell(
-            class="st-module",
-            [
-                h6("Column")
-                Stipple.select(:selected_column; options=:columns)
-            ]
         )])
     row([
         cell(
             class="st-module",
             [
-                h5("Histogram")
-                plot(:irisplot)
+                h5("Image Viewer")
+                plot(:image_viewer)
             ]
         )
     ])

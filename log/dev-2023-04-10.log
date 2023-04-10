@@ -35,3 +35,271 @@
 └ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:37
 ┌ Info: 2023-04-10 13:01:49 Autoreloading
 └ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
+┌ Info: 2023-04-10 14:17:32 
+│ Web Server starting at http://127.0.0.1:8000 
+└ @ Genie.Server /Users/daleblack/.julia/packages/Genie/SKepC/src/Server.jl:161
+┌ Info: 2023-04-10 14:17:34 Watching ["/Users/daleblack/Desktop/BrainDancerProject/CSVAnalysis"]
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:19
+┌ Info: 2023-04-10 14:17:34 Listening on: 127.0.0.1:8000, thread id: 1
+└ @ HTTP.Servers /Users/daleblack/.julia/packages/HTTP/z8l0i/src/Servers.jl:366
+┌ Info: 2023-04-10 14:22:12 
+│ Web Server starting at http://127.0.0.1:8000 
+└ @ Genie.Server /Users/daleblack/.julia/packages/Genie/SKepC/src/Server.jl:161
+┌ Info: 2023-04-10 14:22:16 Watching ["/Users/daleblack/Desktop/BrainDancerProject/Dashboard"]
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:19
+┌ Info: 2023-04-10 14:22:18 Listening on: 127.0.0.1:8000, thread id: 1
+└ @ HTTP.Servers /Users/daleblack/.julia/packages/HTTP/z8l0i/src/Servers.jl:366
+┌ Info: 2023-04-10 14:22:30 Autoreloading
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
+┌ Info: 2023-04-10 14:24:01 Autoreloading
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
+┌ Info: 2023-04-10 14:25:28 Autoreloading
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
+┌ Info: 2023-04-10 14:25:36 Autoreloading
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
+┌ Info: 2023-04-10 14:26:26 Autoreloading
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
+┌ Info: 2023-04-10 14:27:03 Autoreloading
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
+┌ Info: 2023-04-10 14:27:23 Autoreloading
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
+┌ Info: 2023-04-10 14:28:53 Autoreloading
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
+┌ Info: 2023-04-10 14:32:11 Autoreloading
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
+┌ Info: 2023-04-10 14:32:31 Autoreloading
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
+┌ Info: 2023-04-10 14:32:34 Autoreloading
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
+┌ Info: 2023-04-10 14:33:21 Autoreloading
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
+┌ Info: 2023-04-10 14:34:07 Autoreloading
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
+┌ Info: 2023-04-10 14:34:31 Autoreloading
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
+┌ Info: 2023-04-10 14:34:46 Autoreloading
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
+┌ Info: 2023-04-10 14:35:50 Autoreloading
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
+┌ Info: 2023-04-10 14:37:33 Autoreloading
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
+┌ Error: 2023-04-10 14:37:34 LoadError: syntax: unexpected "]" in argument list
+│ Stacktrace:
+│   [1] top-level scope
+│     @ /var/folders/t3/_k26tgtj7cv96l4vy3pxk5nw0000gn/T/jl_genie_build_cxVXCs/GenieViews/0dc5da90ea465674873897cd99a5ba8046814734.jl:39
+│   [2] include
+│     @ ./Base.jl:419 [inlined]
+│   [3] get_template(path::String; partial::Bool, context::Module, vars::Base.Pairs{Symbol, var"##Main_ReactiveModel!#312", Tuple{Symbol}, NamedTuple{(:model,), Tuple{var"##Main_ReactiveModel!#312"}}})
+│     @ Genie.Renderer.Html ~/.julia/packages/Genie/SKepC/src/renderers/Html.jl:360
+│   [4] render(viewfile::FilePathsBase.PosixPath; layout::String, context::Module, vars::Base.Pairs{Symbol, var"##Main_ReactiveModel!#312", Tuple{Symbol}, NamedTuple{(:model,), Tuple{var"##Main_ReactiveModel!#312"}}})
+│     @ Genie.Renderer.Html ~/.julia/packages/Genie/SKepC/src/renderers/Html.jl:438
+│   [5] render(::Type{MIME{Symbol("text/html")}}, viewfile::FilePathsBase.PosixPath; layout::String, context::Module, vars::Base.Pairs{Symbol, var"##Main_ReactiveModel!#312", Tuple{Symbol}, NamedTuple{(:model,), Tuple{var"##Main_ReactiveModel!#312"}}})
+│     @ Genie.Renderer.Html ~/.julia/packages/Genie/SKepC/src/renderers/Html.jl:486
+│   [6] #html#33
+│     @ ~/.julia/packages/Genie/SKepC/src/renderers/Html.jl:637 [inlined]
+│   [7] (::Stipple.Pages.var"#5#6"{FilePathsBase.PosixPath, String, Module, Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}})()
+│     @ Stipple.Pages ~/.julia/packages/Stipple/pgem3/src/Pages.jl:52
+│   [8] run_route(r::Genie.Router.Route)
+│     @ Genie.Router ~/.julia/packages/Genie/SKepC/src/Router.jl:535
+│   [9] route_request(req::HTTP.Messages.Request, res::HTTP.Messages.Response)
+│     @ Genie.Router ~/.julia/packages/Genie/SKepC/src/Router.jl:173
+│  [10] handle_request(req::HTTP.Messages.Request, res::HTTP.Messages.Response)
+│     @ Genie.Server ~/.julia/packages/Genie/SKepC/src/Server.jl:278
+│  [11] (::Genie.Server.var"#29#30"{HTTP.Messages.Request, HTTP.Messages.Response})()
+│     @ Genie.Server ~/.julia/juliaup/julia-1.8.5+0.aarch64.apple.darwin14/share/julia/stdlib/v1.8/Distributed/src/macros.jl:123
+│  [12] #invokelatest#2
+│     @ ./essentials.jl:729 [inlined]
+│  [13] invokelatest
+│     @ ./essentials.jl:726 [inlined]
+│  [14] #153
+│     @ ~/.julia/juliaup/julia-1.8.5+0.aarch64.apple.darwin14/share/julia/stdlib/v1.8/Distributed/src/remotecall.jl:425 [inlined]
+│  [15] run_work_thunk(thunk::Distributed.var"#153#154"{Genie.Server.var"#29#30"{HTTP.Messages.Request, HTTP.Messages.Response}, Tuple{}, Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}}, print_error::Bool)
+│     @ Distributed ~/.julia/juliaup/julia-1.8.5+0.aarch64.apple.darwin14/share/julia/stdlib/v1.8/Distributed/src/process_messages.jl:70
+│  [16] #remotecall_fetch#158
+│     @ ~/.julia/juliaup/julia-1.8.5+0.aarch64.apple.darwin14/share/julia/stdlib/v1.8/Distributed/src/remotecall.jl:450 [inlined]
+│  [17] remotecall_fetch
+│     @ ~/.julia/juliaup/julia-1.8.5+0.aarch64.apple.darwin14/share/julia/stdlib/v1.8/Distributed/src/remotecall.jl:449 [inlined]
+│  [18] #remotecall_fetch#162
+│     @ ~/.julia/juliaup/julia-1.8.5+0.aarch64.apple.darwin14/share/julia/stdlib/v1.8/Distributed/src/remotecall.jl:492 [inlined]
+│  [19] remotecall_fetch
+│     @ ~/.julia/juliaup/julia-1.8.5+0.aarch64.apple.darwin14/share/julia/stdlib/v1.8/Distributed/src/remotecall.jl:492 [inlined]
+│  [20] setup_http_listener(req::HTTP.Messages.Request, res::HTTP.Messages.Response)
+│     @ Genie.Server ~/.julia/packages/Genie/SKepC/src/Server.jl:305
+│  [21] setup_http_listener
+│     @ ~/.julia/packages/Genie/SKepC/src/Server.jl:304 [inlined]
+│  [22] (::HTTP.Handlers.var"#1#2"{typeof(Genie.Server.setup_http_listener)})(stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.ConnectionPool.Connection{Sockets.TCPSocket}})
+│     @ HTTP.Handlers ~/.julia/packages/HTTP/z8l0i/src/Handlers.jl:58
+│  [23] setup_http_streamer(http::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.ConnectionPool.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server ~/.julia/packages/Genie/SKepC/src/Server.jl:294
+│  [24] (::Genie.Server.var"#7#14")(http::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.ConnectionPool.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server ~/.julia/packages/Genie/SKepC/src/Server.jl:121
+│  [25] #invokelatest#2
+│     @ ./essentials.jl:729 [inlined]
+│  [26] invokelatest
+│     @ ./essentials.jl:726 [inlined]
+│  [27] handle_connection(f::Function, c::HTTP.ConnectionPool.Connection{Sockets.TCPSocket}, listener::HTTP.Servers.Listener{Nothing, Sockets.TCPServer}, readtimeout::Int64, access_log::Nothing)
+│     @ HTTP.Servers ~/.julia/packages/HTTP/z8l0i/src/Servers.jl:447
+│  [28] (::HTTP.Servers.var"#16#17"{Genie.Server.var"#7#14", HTTP.Servers.Listener{Nothing, Sockets.TCPServer}, Set{HTTP.ConnectionPool.Connection}, Int64, Nothing, Base.Semaphore, HTTP.ConnectionPool.Connection{Sockets.TCPSocket}})()
+│     @ HTTP.Servers ./task.jl:484
+│ in expression starting at /var/folders/t3/_k26tgtj7cv96l4vy3pxk5nw0000gn/T/jl_genie_build_cxVXCs/GenieViews/0dc5da90ea465674873897cd99a5ba8046814734.jl:39
+│ 
+└ @ Genie.Server /Users/daleblack/.julia/packages/Genie/SKepC/src/Server.jl:317
+┌ Error: 2023-04-10 14:37:38 LoadError: syntax: unexpected "]" in argument list
+│ Stacktrace:
+│   [1] top-level scope
+│     @ /var/folders/t3/_k26tgtj7cv96l4vy3pxk5nw0000gn/T/jl_genie_build_cxVXCs/GenieViews/0dc5da90ea465674873897cd99a5ba8046814734.jl:39
+│   [2] include
+│     @ ./Base.jl:419 [inlined]
+│   [3] get_template(path::String; partial::Bool, context::Module, vars::Base.Pairs{Symbol, var"##Main_ReactiveModel!#312", Tuple{Symbol}, NamedTuple{(:model,), Tuple{var"##Main_ReactiveModel!#312"}}})
+│     @ Genie.Renderer.Html ~/.julia/packages/Genie/SKepC/src/renderers/Html.jl:360
+│   [4] render(viewfile::FilePathsBase.PosixPath; layout::String, context::Module, vars::Base.Pairs{Symbol, var"##Main_ReactiveModel!#312", Tuple{Symbol}, NamedTuple{(:model,), Tuple{var"##Main_ReactiveModel!#312"}}})
+│     @ Genie.Renderer.Html ~/.julia/packages/Genie/SKepC/src/renderers/Html.jl:438
+│   [5] render(::Type{MIME{Symbol("text/html")}}, viewfile::FilePathsBase.PosixPath; layout::String, context::Module, vars::Base.Pairs{Symbol, var"##Main_ReactiveModel!#312", Tuple{Symbol}, NamedTuple{(:model,), Tuple{var"##Main_ReactiveModel!#312"}}})
+│     @ Genie.Renderer.Html ~/.julia/packages/Genie/SKepC/src/renderers/Html.jl:486
+│   [6] #html#33
+│     @ ~/.julia/packages/Genie/SKepC/src/renderers/Html.jl:637 [inlined]
+│   [7] (::Stipple.Pages.var"#5#6"{FilePathsBase.PosixPath, String, Module, Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}})()
+│     @ Stipple.Pages ~/.julia/packages/Stipple/pgem3/src/Pages.jl:52
+│   [8] run_route(r::Genie.Router.Route)
+│     @ Genie.Router ~/.julia/packages/Genie/SKepC/src/Router.jl:535
+│   [9] route_request(req::HTTP.Messages.Request, res::HTTP.Messages.Response)
+│     @ Genie.Router ~/.julia/packages/Genie/SKepC/src/Router.jl:173
+│  [10] handle_request(req::HTTP.Messages.Request, res::HTTP.Messages.Response)
+│     @ Genie.Server ~/.julia/packages/Genie/SKepC/src/Server.jl:278
+│  [11] (::Genie.Server.var"#29#30"{HTTP.Messages.Request, HTTP.Messages.Response})()
+│     @ Genie.Server ~/.julia/juliaup/julia-1.8.5+0.aarch64.apple.darwin14/share/julia/stdlib/v1.8/Distributed/src/macros.jl:123
+│  [12] #invokelatest#2
+│     @ ./essentials.jl:729 [inlined]
+│  [13] invokelatest
+│     @ ./essentials.jl:726 [inlined]
+│  [14] #153
+│     @ ~/.julia/juliaup/julia-1.8.5+0.aarch64.apple.darwin14/share/julia/stdlib/v1.8/Distributed/src/remotecall.jl:425 [inlined]
+│  [15] run_work_thunk(thunk::Distributed.var"#153#154"{Genie.Server.var"#29#30"{HTTP.Messages.Request, HTTP.Messages.Response}, Tuple{}, Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}}, print_error::Bool)
+│     @ Distributed ~/.julia/juliaup/julia-1.8.5+0.aarch64.apple.darwin14/share/julia/stdlib/v1.8/Distributed/src/process_messages.jl:70
+│  [16] #remotecall_fetch#158
+│     @ ~/.julia/juliaup/julia-1.8.5+0.aarch64.apple.darwin14/share/julia/stdlib/v1.8/Distributed/src/remotecall.jl:450 [inlined]
+│  [17] remotecall_fetch
+│     @ ~/.julia/juliaup/julia-1.8.5+0.aarch64.apple.darwin14/share/julia/stdlib/v1.8/Distributed/src/remotecall.jl:449 [inlined]
+│  [18] #remotecall_fetch#162
+│     @ ~/.julia/juliaup/julia-1.8.5+0.aarch64.apple.darwin14/share/julia/stdlib/v1.8/Distributed/src/remotecall.jl:492 [inlined]
+│  [19] remotecall_fetch
+│     @ ~/.julia/juliaup/julia-1.8.5+0.aarch64.apple.darwin14/share/julia/stdlib/v1.8/Distributed/src/remotecall.jl:492 [inlined]
+│  [20] setup_http_listener(req::HTTP.Messages.Request, res::HTTP.Messages.Response)
+│     @ Genie.Server ~/.julia/packages/Genie/SKepC/src/Server.jl:305
+│  [21] setup_http_listener
+│     @ ~/.julia/packages/Genie/SKepC/src/Server.jl:304 [inlined]
+│  [22] (::HTTP.Handlers.var"#1#2"{typeof(Genie.Server.setup_http_listener)})(stream::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.ConnectionPool.Connection{Sockets.TCPSocket}})
+│     @ HTTP.Handlers ~/.julia/packages/HTTP/z8l0i/src/Handlers.jl:58
+│  [23] setup_http_streamer(http::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.ConnectionPool.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server ~/.julia/packages/Genie/SKepC/src/Server.jl:294
+│  [24] (::Genie.Server.var"#7#14")(http::HTTP.Streams.Stream{HTTP.Messages.Request, HTTP.ConnectionPool.Connection{Sockets.TCPSocket}})
+│     @ Genie.Server ~/.julia/packages/Genie/SKepC/src/Server.jl:121
+│  [25] #invokelatest#2
+│     @ ./essentials.jl:729 [inlined]
+│  [26] invokelatest
+│     @ ./essentials.jl:726 [inlined]
+│  [27] handle_connection(f::Function, c::HTTP.ConnectionPool.Connection{Sockets.TCPSocket}, listener::HTTP.Servers.Listener{Nothing, Sockets.TCPServer}, readtimeout::Int64, access_log::Nothing)
+│     @ HTTP.Servers ~/.julia/packages/HTTP/z8l0i/src/Servers.jl:447
+│  [28] (::HTTP.Servers.var"#16#17"{Genie.Server.var"#7#14", HTTP.Servers.Listener{Nothing, Sockets.TCPServer}, Set{HTTP.ConnectionPool.Connection}, Int64, Nothing, Base.Semaphore, HTTP.ConnectionPool.Connection{Sockets.TCPSocket}})()
+│     @ HTTP.Servers ./task.jl:484
+│ in expression starting at /var/folders/t3/_k26tgtj7cv96l4vy3pxk5nw0000gn/T/jl_genie_build_cxVXCs/GenieViews/0dc5da90ea465674873897cd99a5ba8046814734.jl:39
+│ 
+└ @ Genie.Server /Users/daleblack/.julia/packages/Genie/SKepC/src/Server.jl:317
+┌ Info: 2023-04-10 14:37:47 Autoreloading
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
+┌ Error: 2023-04-10 14:38:05 Error attempting to invoke handler 3 for field Reactive{String}(Observable("BFC_time_series.nii"), 1, false, false, "/Users/daleblack/Desktop/BrainDancerProject/Dashboard/dashboard.jl:13") with value BFC_time_series.nii
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:36
+┌ Error: 2023-04-10 14:38:06 
+│   exception = (ArgumentError("Symbol name may not contain \\0"), Union{Ptr{Nothing}, Base.InterpreterIP}[Ptr{Nothing} @0x00000001011d2637, Ptr{Nothing} @0x00000001012032d7, Ptr{Nothing} @0x000000029cf300b7, Ptr{Nothing} @0x000000029cf3019f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029cef46d7, Ptr{Nothing} @0x000000029cef48b3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029cbe91d3, Ptr{Nothing} @0x000000029cbf81ff, Ptr{Nothing} @0x000000029cc280db, Ptr{Nothing} @0x000000029cc2838b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013427eaa3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013454a90b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000029c7f00f3, Ptr{Nothing} @0x000000029c7f0117, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x00000002b050c217, Ptr{Nothing} @0x00000002b0518047, Ptr{Nothing} @0x00000002b051807f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000002b0500163, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bf30e03, Ptr{Nothing} @0x000000029bf30ed3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bd58957, Ptr{Nothing} @0x000000029bd64143, Ptr{Nothing} @0x000000029bd70037, Ptr{Nothing} @0x000000029bd700ab, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000017d6cc0cb, Ptr{Nothing} @0x000000017d6cc0ff, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d8181af, Ptr{Nothing} @0x000000028d82449f, Ptr{Nothing} @0x000000028d950df7, Ptr{Nothing} @0x000000028d95c383, Ptr{Nothing} @0x000000028d95c403, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d5d5033, Ptr{Nothing} @0x000000028d60418f, Ptr{Nothing} @0x000000028d60420f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x0000000101207667])
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:37
+┌ Info: 2023-04-10 14:38:42 Autoreloading
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
+┌ Error: 2023-04-10 14:38:44 Error attempting to invoke handler 3 for field Reactive{Bool}(Observable(true), 1, false, false, "") with value true
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:36
+┌ Error: 2023-04-10 14:38:44 
+│   exception = (ArgumentError("Symbol name may not contain \\0"), Union{Ptr{Nothing}, Base.InterpreterIP}[Ptr{Nothing} @0x00000001011d2637, Ptr{Nothing} @0x00000001012032d7, Ptr{Nothing} @0x000000029cf300b7, Ptr{Nothing} @0x000000029cf3019f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029cef46d7, Ptr{Nothing} @0x000000029cef48b3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029cbe91d3, Ptr{Nothing} @0x000000029cbf81ff, Ptr{Nothing} @0x000000029cc280db, Ptr{Nothing} @0x000000029cc2838b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013427eaa3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013454a90b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000029c7f00f3, Ptr{Nothing} @0x000000029c7f0117, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000029c03c22b, Ptr{Nothing} @0x000000029c048017, Ptr{Nothing} @0x000000029c048047, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029c0301bf, Ptr{Nothing} @0x000000029c030203, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bf30e03, Ptr{Nothing} @0x000000029bf30ed3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bd58957, Ptr{Nothing} @0x000000029bd64143, Ptr{Nothing} @0x000000029bd70037, Ptr{Nothing} @0x000000029bd700ab, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000017d6cc0cb, Ptr{Nothing} @0x000000017d6cc0ff, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d8181af, Ptr{Nothing} @0x000000028d82449f, Ptr{Nothing} @0x000000028d950df7, Ptr{Nothing} @0x000000028d95c383, Ptr{Nothing} @0x000000028d95c403, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d5d5033, Ptr{Nothing} @0x000000028d60418f, Ptr{Nothing} @0x000000028d60420f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x0000000101207667])
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:37
+┌ Info: 2023-04-10 14:38:58 Autoreloading
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
+┌ Error: 2023-04-10 14:39:00 Error attempting to invoke handler 3 for field Reactive{Bool}(Observable(true), 1, false, false, "") with value true
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:36
+┌ Error: 2023-04-10 14:39:00 
+│   exception = (ArgumentError("Symbol name may not contain \\0"), Union{Ptr{Nothing}, Base.InterpreterIP}[Ptr{Nothing} @0x00000001011d2637, Ptr{Nothing} @0x00000001012032d7, Ptr{Nothing} @0x000000029cf300b7, Ptr{Nothing} @0x000000029cf3019f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029cef46d7, Ptr{Nothing} @0x000000029cef48b3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029cbe91d3, Ptr{Nothing} @0x000000029cbf81ff, Ptr{Nothing} @0x000000029cc280db, Ptr{Nothing} @0x000000029cc2838b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013427eaa3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013454a90b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000029c7f00f3, Ptr{Nothing} @0x000000029c7f0117, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000029c03c22b, Ptr{Nothing} @0x000000029c048017, Ptr{Nothing} @0x000000029c048047, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029c0301bf, Ptr{Nothing} @0x000000029c030203, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bf30e03, Ptr{Nothing} @0x000000029bf30ed3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bd58957, Ptr{Nothing} @0x000000029bd64143, Ptr{Nothing} @0x000000029bd70037, Ptr{Nothing} @0x000000029bd700ab, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000017d6cc0cb, Ptr{Nothing} @0x000000017d6cc0ff, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d8181af, Ptr{Nothing} @0x000000028d82449f, Ptr{Nothing} @0x000000028d950df7, Ptr{Nothing} @0x000000028d95c383, Ptr{Nothing} @0x000000028d95c403, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d5d5033, Ptr{Nothing} @0x000000028d60418f, Ptr{Nothing} @0x000000028d60420f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x0000000101207667])
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:37
+┌ Error: 2023-04-10 14:39:05 Error attempting to invoke handler 3 for field Reactive{Bool}(Observable(true), 1, false, false, "") with value true
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:36
+┌ Error: 2023-04-10 14:39:05 
+│   exception = (ArgumentError("Symbol name may not contain \\0"), Union{Ptr{Nothing}, Base.InterpreterIP}[Ptr{Nothing} @0x00000001011d2637, Ptr{Nothing} @0x00000001012032d7, Ptr{Nothing} @0x000000029cf300b7, Ptr{Nothing} @0x000000029cf3019f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029cef46d7, Ptr{Nothing} @0x000000029cef48b3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029cbe91d3, Ptr{Nothing} @0x000000029cbf81ff, Ptr{Nothing} @0x000000029cc280db, Ptr{Nothing} @0x000000029cc2838b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013427eaa3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013454a90b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000029c7f00f3, Ptr{Nothing} @0x000000029c7f0117, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000029c03c22b, Ptr{Nothing} @0x000000029c048017, Ptr{Nothing} @0x000000029c048047, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029c0301bf, Ptr{Nothing} @0x000000029c030203, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bf30e03, Ptr{Nothing} @0x000000029bf30ed3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bd58957, Ptr{Nothing} @0x000000029bd64143, Ptr{Nothing} @0x000000029bd70037, Ptr{Nothing} @0x000000029bd700ab, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000017d6cc0cb, Ptr{Nothing} @0x000000017d6cc0ff, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d8181af, Ptr{Nothing} @0x000000028d82449f, Ptr{Nothing} @0x000000028d950df7, Ptr{Nothing} @0x000000028d95c383, Ptr{Nothing} @0x000000028d95c403, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d5d5033, Ptr{Nothing} @0x000000028d60418f, Ptr{Nothing} @0x000000028d60420f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x0000000101207667])
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:37
+┌ Info: 2023-04-10 14:41:51 Autoreloading
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
+┌ Error: 2023-04-10 14:41:53 Error attempting to invoke handler 3 for field Reactive{Bool}(Observable(true), 1, false, false, "") with value true
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:36
+┌ Error: 2023-04-10 14:41:53 
+│   exception = (ArgumentError("Symbol name may not contain \\0"), Union{Ptr{Nothing}, Base.InterpreterIP}[Ptr{Nothing} @0x00000001011d2637, Ptr{Nothing} @0x00000001012032d7, Ptr{Nothing} @0x000000029cf300b7, Ptr{Nothing} @0x000000029cf3019f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029cef46d7, Ptr{Nothing} @0x000000029cef48b3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029cbe91d3, Ptr{Nothing} @0x000000029cbf81ff, Ptr{Nothing} @0x000000029cc280db, Ptr{Nothing} @0x000000029cc2838b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013427eaa3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013454a90b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000029c7f00f3, Ptr{Nothing} @0x000000029c7f0117, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000029c03c22b, Ptr{Nothing} @0x000000029c048017, Ptr{Nothing} @0x000000029c048047, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029c0301bf, Ptr{Nothing} @0x000000029c030203, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bf30e03, Ptr{Nothing} @0x000000029bf30ed3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bd58957, Ptr{Nothing} @0x000000029bd64143, Ptr{Nothing} @0x000000029bd70037, Ptr{Nothing} @0x000000029bd700ab, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000017d6cc0cb, Ptr{Nothing} @0x000000017d6cc0ff, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d8181af, Ptr{Nothing} @0x000000028d82449f, Ptr{Nothing} @0x000000028d950df7, Ptr{Nothing} @0x000000028d95c383, Ptr{Nothing} @0x000000028d95c403, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d5d5033, Ptr{Nothing} @0x000000028d60418f, Ptr{Nothing} @0x000000028d60420f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x0000000101207667])
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:37
+┌ Error: 2023-04-10 14:41:56 Error attempting to invoke handler 3 for field Reactive{Bool}(Observable(true), 1, false, false, "") with value true
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:36
+┌ Error: 2023-04-10 14:41:56 
+│   exception = (ArgumentError("Symbol name may not contain \\0"), Union{Ptr{Nothing}, Base.InterpreterIP}[Ptr{Nothing} @0x00000001011d2637, Ptr{Nothing} @0x00000001012032d7, Ptr{Nothing} @0x000000029cf300b7, Ptr{Nothing} @0x000000029cf3019f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029cef46d7, Ptr{Nothing} @0x000000029cef48b3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029cbe91d3, Ptr{Nothing} @0x000000029cbf81ff, Ptr{Nothing} @0x000000029cc280db, Ptr{Nothing} @0x000000029cc2838b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013427eaa3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013454a90b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000029c7f00f3, Ptr{Nothing} @0x000000029c7f0117, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000029c03c22b, Ptr{Nothing} @0x000000029c048017, Ptr{Nothing} @0x000000029c048047, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029c0301bf, Ptr{Nothing} @0x000000029c030203, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bf30e03, Ptr{Nothing} @0x000000029bf30ed3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bd58957, Ptr{Nothing} @0x000000029bd64143, Ptr{Nothing} @0x000000029bd70037, Ptr{Nothing} @0x000000029bd700ab, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000017d6cc0cb, Ptr{Nothing} @0x000000017d6cc0ff, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d8181af, Ptr{Nothing} @0x000000028d82449f, Ptr{Nothing} @0x000000028d950df7, Ptr{Nothing} @0x000000028d95c383, Ptr{Nothing} @0x000000028d95c403, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d5d5033, Ptr{Nothing} @0x000000028d60418f, Ptr{Nothing} @0x000000028d60420f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x0000000101207667])
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:37
+┌ Error: 2023-04-10 14:42:08 Error attempting to invoke handler 3 for field Reactive{Bool}(Observable(true), 1, false, false, "") with value true
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:36
+┌ Error: 2023-04-10 14:42:08 
+│   exception = (ArgumentError("Symbol name may not contain \\0"), Union{Ptr{Nothing}, Base.InterpreterIP}[Ptr{Nothing} @0x00000001011d2637, Ptr{Nothing} @0x00000001012032d7, Ptr{Nothing} @0x000000029cf300b7, Ptr{Nothing} @0x000000029cf3019f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029cef46d7, Ptr{Nothing} @0x000000029cef48b3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029cbe91d3, Ptr{Nothing} @0x000000029cbf81ff, Ptr{Nothing} @0x000000029cc280db, Ptr{Nothing} @0x000000029cc2838b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013427eaa3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013454a90b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000029c7f00f3, Ptr{Nothing} @0x000000029c7f0117, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000029c03c22b, Ptr{Nothing} @0x000000029c048017, Ptr{Nothing} @0x000000029c048047, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029c0301bf, Ptr{Nothing} @0x000000029c030203, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bf30e03, Ptr{Nothing} @0x000000029bf30ed3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bd58957, Ptr{Nothing} @0x000000029bd64143, Ptr{Nothing} @0x000000029bd70037, Ptr{Nothing} @0x000000029bd700ab, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000017d6cc0cb, Ptr{Nothing} @0x000000017d6cc0ff, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d8181af, Ptr{Nothing} @0x000000028d82449f, Ptr{Nothing} @0x000000028d950df7, Ptr{Nothing} @0x000000028d95c383, Ptr{Nothing} @0x000000028d95c403, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d5d5033, Ptr{Nothing} @0x000000028d60418f, Ptr{Nothing} @0x000000028d60420f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x0000000101207667])
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:37
+┌ Info: 2023-04-10 14:42:33 Autoreloading
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
+┌ Error: 2023-04-10 14:42:36 Error attempting to invoke handler 3 for field Reactive{Bool}(Observable(true), 1, false, false, "") with value true
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:36
+┌ Error: 2023-04-10 14:42:36 
+│   exception = (ArgumentError("Symbol name may not contain \\0"), Union{Ptr{Nothing}, Base.InterpreterIP}[Ptr{Nothing} @0x00000001011d2637, Ptr{Nothing} @0x00000001012032d7, Ptr{Nothing} @0x000000029cf300b7, Ptr{Nothing} @0x000000029cf3019f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029cef46d7, Ptr{Nothing} @0x000000029cef48b3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029cbe91d3, Ptr{Nothing} @0x000000029cbf81ff, Ptr{Nothing} @0x000000029cc280db, Ptr{Nothing} @0x000000029cc2838b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013427eaa3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013454a90b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000029c7f00f3, Ptr{Nothing} @0x000000029c7f0117, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000029c03c22b, Ptr{Nothing} @0x000000029c048017, Ptr{Nothing} @0x000000029c048047, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029c0301bf, Ptr{Nothing} @0x000000029c030203, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bf30e03, Ptr{Nothing} @0x000000029bf30ed3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bd58957, Ptr{Nothing} @0x000000029bd64143, Ptr{Nothing} @0x000000029bd70037, Ptr{Nothing} @0x000000029bd700ab, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000017d6cc0cb, Ptr{Nothing} @0x000000017d6cc0ff, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d8181af, Ptr{Nothing} @0x000000028d82449f, Ptr{Nothing} @0x000000028d950df7, Ptr{Nothing} @0x000000028d95c383, Ptr{Nothing} @0x000000028d95c403, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d5d5033, Ptr{Nothing} @0x000000028d60418f, Ptr{Nothing} @0x000000028d60420f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x0000000101207667])
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:37
+┌ Info: 2023-04-10 14:43:06 Autoreloading
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
+┌ Error: 2023-04-10 14:43:08 Error attempting to invoke handler 3 for field Reactive{Bool}(Observable(true), 1, false, false, "") with value true
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:36
+┌ Error: 2023-04-10 14:43:08 
+│   exception = (ArgumentError("Symbol name may not contain \\0"), Union{Ptr{Nothing}, Base.InterpreterIP}[Ptr{Nothing} @0x00000001011d2637, Ptr{Nothing} @0x00000001012032d7, Ptr{Nothing} @0x000000029cf300b7, Ptr{Nothing} @0x000000029cf3019f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029cef46d7, Ptr{Nothing} @0x000000029cef48b3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029cbe91d3, Ptr{Nothing} @0x000000029cbf81ff, Ptr{Nothing} @0x000000029cc280db, Ptr{Nothing} @0x000000029cc2838b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013427eaa3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013454a90b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000029c7f00f3, Ptr{Nothing} @0x000000029c7f0117, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000029c03c22b, Ptr{Nothing} @0x000000029c048017, Ptr{Nothing} @0x000000029c048047, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029c0301bf, Ptr{Nothing} @0x000000029c030203, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bf30e03, Ptr{Nothing} @0x000000029bf30ed3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bd58957, Ptr{Nothing} @0x000000029bd64143, Ptr{Nothing} @0x000000029bd70037, Ptr{Nothing} @0x000000029bd700ab, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000017d6cc0cb, Ptr{Nothing} @0x000000017d6cc0ff, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d8181af, Ptr{Nothing} @0x000000028d82449f, Ptr{Nothing} @0x000000028d950df7, Ptr{Nothing} @0x000000028d95c383, Ptr{Nothing} @0x000000028d95c403, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d5d5033, Ptr{Nothing} @0x000000028d60418f, Ptr{Nothing} @0x000000028d60420f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x0000000101207667])
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:37
+┌ Error: 2023-04-10 14:43:17 Error attempting to invoke handler 3 for field Reactive{String}(Observable("BFC_time_series.nii"), 1, false, false, "/Users/daleblack/Desktop/BrainDancerProject/Dashboard/dashboard.jl:13") with value BFC_time_series.nii
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:36
+┌ Error: 2023-04-10 14:43:17 
+│   exception = (ArgumentError("Symbol name may not contain \\0"), Union{Ptr{Nothing}, Base.InterpreterIP}[Ptr{Nothing} @0x00000001011d2637, Ptr{Nothing} @0x00000001012032d7, Ptr{Nothing} @0x000000029cf300b7, Ptr{Nothing} @0x000000029cf3019f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029cef46d7, Ptr{Nothing} @0x000000029cef48b3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029cbe91d3, Ptr{Nothing} @0x000000029cbf81ff, Ptr{Nothing} @0x000000029cc280db, Ptr{Nothing} @0x000000029cc2838b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013427eaa3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013454a90b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000029c7f00f3, Ptr{Nothing} @0x000000029c7f0117, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x00000002b050c217, Ptr{Nothing} @0x00000002b0518047, Ptr{Nothing} @0x00000002b051807f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000002b0500163, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bf30e03, Ptr{Nothing} @0x000000029bf30ed3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bd58957, Ptr{Nothing} @0x000000029bd64143, Ptr{Nothing} @0x000000029bd70037, Ptr{Nothing} @0x000000029bd700ab, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000017d6cc0cb, Ptr{Nothing} @0x000000017d6cc0ff, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d8181af, Ptr{Nothing} @0x000000028d82449f, Ptr{Nothing} @0x000000028d950df7, Ptr{Nothing} @0x000000028d95c383, Ptr{Nothing} @0x000000028d95c403, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d5d5033, Ptr{Nothing} @0x000000028d60418f, Ptr{Nothing} @0x000000028d60420f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x0000000101207667])
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:37
+┌ Error: 2023-04-10 14:43:23 Error attempting to invoke handler 3 for field Reactive{Bool}(Observable(true), 1, false, false, "") with value true
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:36
+┌ Error: 2023-04-10 14:43:23 
+│   exception = (ArgumentError("Symbol name may not contain \\0"), Union{Ptr{Nothing}, Base.InterpreterIP}[Ptr{Nothing} @0x00000001011d2637, Ptr{Nothing} @0x00000001012032d7, Ptr{Nothing} @0x000000029cf300b7, Ptr{Nothing} @0x000000029cf3019f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029cef46d7, Ptr{Nothing} @0x000000029cef48b3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029cbe91d3, Ptr{Nothing} @0x000000029cbf81ff, Ptr{Nothing} @0x000000029cc280db, Ptr{Nothing} @0x000000029cc2838b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013427eaa3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013454a90b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000029c7f00f3, Ptr{Nothing} @0x000000029c7f0117, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000029c03c22b, Ptr{Nothing} @0x000000029c048017, Ptr{Nothing} @0x000000029c048047, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029c0301bf, Ptr{Nothing} @0x000000029c030203, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bf30e03, Ptr{Nothing} @0x000000029bf30ed3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bd58957, Ptr{Nothing} @0x000000029bd64143, Ptr{Nothing} @0x000000029bd70037, Ptr{Nothing} @0x000000029bd700ab, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000017d6cc0cb, Ptr{Nothing} @0x000000017d6cc0ff, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d8181af, Ptr{Nothing} @0x000000028d82449f, Ptr{Nothing} @0x000000028d950df7, Ptr{Nothing} @0x000000028d95c383, Ptr{Nothing} @0x000000028d95c403, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d5d5033, Ptr{Nothing} @0x000000028d60418f, Ptr{Nothing} @0x000000028d60420f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x0000000101207667])
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:37
+┌ Error: 2023-04-10 14:44:46 Error attempting to invoke handler 3 for field Reactive{Bool}(Observable(true), 1, false, false, "") with value true
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:36
+┌ Error: 2023-04-10 14:44:46 
+│   exception = (ArgumentError("Symbol name may not contain \\0"), Union{Ptr{Nothing}, Base.InterpreterIP}[Ptr{Nothing} @0x00000001011d2637, Ptr{Nothing} @0x00000001012032d7, Ptr{Nothing} @0x000000029cf300b7, Ptr{Nothing} @0x000000029cf3019f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029cef46d7, Ptr{Nothing} @0x000000029cef48b3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029cbe91d3, Ptr{Nothing} @0x000000029cbf81ff, Ptr{Nothing} @0x000000029cc280db, Ptr{Nothing} @0x000000029cc2838b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013427eaa3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013454a90b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000029c7f00f3, Ptr{Nothing} @0x000000029c7f0117, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000029c03c22b, Ptr{Nothing} @0x000000029c048017, Ptr{Nothing} @0x000000029c048047, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029c0301bf, Ptr{Nothing} @0x000000029c030203, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bf30e03, Ptr{Nothing} @0x000000029bf30ed3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bd58957, Ptr{Nothing} @0x000000029bd64143, Ptr{Nothing} @0x000000029bd70037, Ptr{Nothing} @0x000000029bd700ab, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000017d6cc0cb, Ptr{Nothing} @0x000000017d6cc0ff, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d8181af, Ptr{Nothing} @0x000000028d82449f, Ptr{Nothing} @0x000000028d950df7, Ptr{Nothing} @0x000000028d95c383, Ptr{Nothing} @0x000000028d95c403, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d5d5033, Ptr{Nothing} @0x000000028d60418f, Ptr{Nothing} @0x000000028d60420f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x0000000101207667])
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:37
+┌ Info: 2023-04-10 14:45:12 Autoreloading
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
+┌ Error: 2023-04-10 14:45:15 Error attempting to invoke handler 3 for field Reactive{Bool}(Observable(true), 1, false, false, "") with value true
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:36
+┌ Error: 2023-04-10 14:45:15 
+│   exception = (ArgumentError("Symbol name may not contain \\0"), Union{Ptr{Nothing}, Base.InterpreterIP}[Ptr{Nothing} @0x00000001011d2637, Ptr{Nothing} @0x00000001012032d7, Ptr{Nothing} @0x000000029cf300b7, Ptr{Nothing} @0x000000029cf3019f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029cef46d7, Ptr{Nothing} @0x000000029cef48b3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029cbe91d3, Ptr{Nothing} @0x000000029cbf81ff, Ptr{Nothing} @0x000000029cc280db, Ptr{Nothing} @0x000000029cc2838b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013427eaa3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013454a90b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000029c7f00f3, Ptr{Nothing} @0x000000029c7f0117, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000029c03c22b, Ptr{Nothing} @0x000000029c048017, Ptr{Nothing} @0x000000029c048047, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029c0301bf, Ptr{Nothing} @0x000000029c030203, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bf30e03, Ptr{Nothing} @0x000000029bf30ed3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bd58957, Ptr{Nothing} @0x000000029bd64143, Ptr{Nothing} @0x000000029bd70037, Ptr{Nothing} @0x000000029bd700ab, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000017d6cc0cb, Ptr{Nothing} @0x000000017d6cc0ff, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d8181af, Ptr{Nothing} @0x000000028d82449f, Ptr{Nothing} @0x000000028d950df7, Ptr{Nothing} @0x000000028d95c383, Ptr{Nothing} @0x000000028d95c403, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d5d5033, Ptr{Nothing} @0x000000028d60418f, Ptr{Nothing} @0x000000028d60420f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x0000000101207667])
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:37
+┌ Error: 2023-04-10 14:45:22 Error attempting to invoke handler 3 for field Reactive{String}(Observable("BFC_time_series.nii"), 1, false, false, "/Users/daleblack/Desktop/BrainDancerProject/Dashboard/dashboard.jl:13") with value BFC_time_series.nii
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:36
+┌ Error: 2023-04-10 14:45:22 
+│   exception = (ArgumentError("Symbol name may not contain \\0"), Union{Ptr{Nothing}, Base.InterpreterIP}[Ptr{Nothing} @0x00000001011d2637, Ptr{Nothing} @0x00000001012032d7, Ptr{Nothing} @0x000000029cf300b7, Ptr{Nothing} @0x000000029cf3019f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029cef46d7, Ptr{Nothing} @0x000000029cef48b3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029cbe91d3, Ptr{Nothing} @0x000000029cbf81ff, Ptr{Nothing} @0x000000029cc280db, Ptr{Nothing} @0x000000029cc2838b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013427eaa3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013454a90b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000029c7f00f3, Ptr{Nothing} @0x000000029c7f0117, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x00000002b050c217, Ptr{Nothing} @0x00000002b0518047, Ptr{Nothing} @0x00000002b051807f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000002b0500163, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bf30e03, Ptr{Nothing} @0x000000029bf30ed3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bd58957, Ptr{Nothing} @0x000000029bd64143, Ptr{Nothing} @0x000000029bd70037, Ptr{Nothing} @0x000000029bd700ab, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000017d6cc0cb, Ptr{Nothing} @0x000000017d6cc0ff, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d8181af, Ptr{Nothing} @0x000000028d82449f, Ptr{Nothing} @0x000000028d950df7, Ptr{Nothing} @0x000000028d95c383, Ptr{Nothing} @0x000000028d95c403, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d5d5033, Ptr{Nothing} @0x000000028d60418f, Ptr{Nothing} @0x000000028d60420f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x0000000101207667])
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:37
+┌ Info: 2023-04-10 14:46:27 Autoreloading
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
+┌ Error: 2023-04-10 14:46:29 Error attempting to invoke handler 3 for field Reactive{Bool}(Observable(true), 1, false, false, "") with value true
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:36
+┌ Error: 2023-04-10 14:46:29 
+│   exception = (ArgumentError("\"uploads/BFC_time_series.nii\" is not a valid file or doesn't exist"), Union{Ptr{Nothing}, Base.InterpreterIP}[Ptr{Nothing} @0x000000029cbeee1f, Ptr{Nothing} @0x000000029cbf81ff, Ptr{Nothing} @0x000000029cc280db, Ptr{Nothing} @0x000000029cc2838b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013427eaa3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013454a90b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000029c7f00f3, Ptr{Nothing} @0x000000029c7f0117, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000029c03c22b, Ptr{Nothing} @0x000000029c048017, Ptr{Nothing} @0x000000029c048047, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029c0301bf, Ptr{Nothing} @0x000000029c030203, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bf30e03, Ptr{Nothing} @0x000000029bf30ed3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bd58957, Ptr{Nothing} @0x000000029bd64143, Ptr{Nothing} @0x000000029bd70037, Ptr{Nothing} @0x000000029bd700ab, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000017d6cc0cb, Ptr{Nothing} @0x000000017d6cc0ff, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d8181af, Ptr{Nothing} @0x000000028d82449f, Ptr{Nothing} @0x000000028d950df7, Ptr{Nothing} @0x000000028d95c383, Ptr{Nothing} @0x000000028d95c403, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d5d5033, Ptr{Nothing} @0x000000028d60418f, Ptr{Nothing} @0x000000028d60420f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x0000000101207667])
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:37
+┌ Info: 2023-04-10 14:46:38 Autoreloading
+└ @ GenieAutoReload /Users/daleblack/.julia/packages/GenieAutoReload/IuBCb/src/GenieAutoReload.jl:22
+┌ Error: 2023-04-10 14:46:39 Error attempting to invoke handler 3 for field Reactive{Bool}(Observable(true), 1, false, false, "") with value true
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:36
+┌ Error: 2023-04-10 14:46:39 
+│   exception = (ArgumentError("\"uploads/BFC_time_series.nii\" is not a valid file or doesn't exist"), Union{Ptr{Nothing}, Base.InterpreterIP}[Ptr{Nothing} @0x000000029cbeee1f, Ptr{Nothing} @0x000000029cbf81ff, Ptr{Nothing} @0x000000029cc280db, Ptr{Nothing} @0x000000029cc2838b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013427eaa3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000013454a90b, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f50d7, Ptr{Nothing} @0x000000029c7f00f3, Ptr{Nothing} @0x000000029c7f0117, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000029c03c22b, Ptr{Nothing} @0x000000029c048017, Ptr{Nothing} @0x000000029c048047, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029c0301bf, Ptr{Nothing} @0x000000029c030203, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bf30e03, Ptr{Nothing} @0x000000029bf30ed3, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000029bd58957, Ptr{Nothing} @0x000000029bd64143, Ptr{Nothing} @0x000000029bd70037, Ptr{Nothing} @0x000000029bd700ab, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x000000017d6cc0cb, Ptr{Nothing} @0x000000017d6cc0ff, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d8181af, Ptr{Nothing} @0x000000028d82449f, Ptr{Nothing} @0x000000028d950df7, Ptr{Nothing} @0x000000028d95c383, Ptr{Nothing} @0x000000028d95c403, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x00000001011f5973, Ptr{Nothing} @0x000000028d5d5033, Ptr{Nothing} @0x000000028d60418f, Ptr{Nothing} @0x000000028d60420f, Ptr{Nothing} @0x00000001011e8893, Ptr{Nothing} @0x0000000101207667])
+└ @ Stipple /Users/daleblack/.julia/packages/Stipple/pgem3/src/stipple/mutators.jl:37
