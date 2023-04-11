@@ -10,10 +10,8 @@ const FILE_PATH = "uploads"
 mkpath(FILE_PATH)
 
 @out title = "Image Analysis"
-@in selected_file = "BFC_time_series.nii"
-# @in selected_column = "petal.length"
+@in selected_file = ""
 @out upfiles = readdir(FILE_PATH)
-# @out columns = ["petal.length", "petal.width", "sepal.length", "sepal.width", "variety"]
 @out image_viewer = PlotData()
 
 route("/", method=POST) do
@@ -30,15 +28,9 @@ end
 @handlers begin
     @onchange isready, selected_file begin
         upfiles = readdir(FILE_PATH)
-        data = niread(joinpath(FILE_PATH, selected_file))
-        slice = data[:, :, 10, 10]
-        # columns = names(data)
-        image_viewer = PlotData(x=slice, plot=StipplePlotly.Charts.PLOT_TYPE_HEATMAP)
-        # image_viewer = PlotData(x=slice, plot=StipplePlotly.Charts.PLOT_TYPE_HISTOGRAM)
-        # if selected_column in names(data)
-        #     irisplot = PlotData(x=data[!, selected_column], plot=StipplePlotly.Charts.PLOT_TYPE_HISTOGRAM)
-        # end
-        console.log("File changed")
+        img = niread(joinpath(FILE_PATH, selected_file))
+        slice = img.raw[:, :, 10, 10]
+        image_viewer = PlotData(z=vec(slice); plot="heatmap")
     end
 end
 
