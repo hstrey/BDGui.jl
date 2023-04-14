@@ -23,8 +23,8 @@
         cell(
             class="st-module",
             [
-                h5("Image Viewer")
-                plot(:image_viewer)
+                h5("fMRI ({{selected_file}})")
+                plot(:hmap, layout=:layout)
             ]
         )
     ])

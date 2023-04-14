@@ -9,10 +9,10 @@ Genie.config.cors_allowed_origins = ["*"]
 const FILE_PATH = "uploads"
 mkpath(FILE_PATH)
 
-@out title = "Image Analysis"
 @in selected_file = ""
 @out upfiles = readdir(FILE_PATH)
-@out image_viewer = PlotData()
+@out hmap = PlotData()
+@out layout = PlotLayout()
 
 route("/", method=POST) do
     files = Genie.Requests.filespayload()
@@ -26,13 +26,20 @@ route("/", method=POST) do
 end
 
 @handlers begin
-    @onchange isready, selected_file begin
-        upfiles = readdir(FILE_PATH)
+    @out hmap = PlotData()
+    @out layout = PlotLayout()
+    @onchange selected_file, isready begin
         img = niread(joinpath(FILE_PATH, selected_file))
         slice = img.raw[:, :, 10, 10]
-        image_viewer = PlotData(z=vec(slice); plot="heatmap")
+        hmap = PlotData(
+            z=collect(eachcol(slice)), 
+            plot="heatmap",
+            colorscale="Greys",
+            colorbar=false
+        )
     end
 end
 
-@page("/", "ui.jl")
+# @page("/", "ui.jl")
+@page("/", "app.jl.html")
 Server.isrunning() || Server.up()
