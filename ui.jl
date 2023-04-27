@@ -16,14 +16,16 @@
             class="st-module",
             [
                 h6("File")
-                Stipple.select(:selected_file; options=:upfiles)
+                Stipple.select(:selected_file_image; options=:upfiles)
+                slider(:z_slices, :selected_z_slice)
+                slider(:t_slices, :selected_t_slice)
             ]
-        )])
-    row([
+        )
         cell(
             class="st-module",
             [
                 h5("fMRI ({{selected_file}})")
+                # slider(:slice; min=1, max=100, step=1, value=10)
                 plot(:hmap, layout=:layout)
             ]
         )
