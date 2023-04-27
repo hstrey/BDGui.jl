@@ -30,7 +30,7 @@
       multiple
       method="POST"
       url="http://localhost:8000/"
-      field__name="csv_logs"
+      field__name="csv_acqs"
     ></q-uploader>
   </div>
 </div>
@@ -42,6 +42,6 @@
     </div>
     <div class="col col-12 col-sm st-module">
         <h5>fMRI ({{selected_file}})</h5>
-        <plotly :data="hmap" :layout="layout" :displaylogo=false></plotly>
+        <plotly :data="hmap" :layout="layout" :displaylogo="false"></plotly>
     </div>
 </div>
