@@ -12,6 +12,8 @@ mkpath(FILE_PATH)
 @in selected_file_image = ""
 @in selected_file_log = ""
 @in selected_file_acq = ""
+@in selected_z_slice = 1
+@in selected_t_slice = 1
 
 @out upfiles = readdir(FILE_PATH)
 @out hmap = PlotData()
@@ -31,26 +33,26 @@ end
 @handlers begin
     @out hmap = PlotData()
     @out layout = PlotLayout()
-    @out selected_z_slice = 1
-    @out selected_t_slice = 1
     @onchange selected_file_image, selected_file_log, selected_file_acq begin
         # -- Load the phantom image -- #
-        img = niread(joinpath(FILE_PATH, selected_file_image)).raw
-        @in z_slices = axes(img, 3)
-        @in t_slices = axes(img, 4)
-        slice = img[:, :, selected_z_slice, selected_t_slice]
+        img = niread(joinpath(FILE_PATH, selected_file_image))
+        img_raw = img.raw
+        # @show img_raw
+
+        # -- Load the log file -- #
+        df_log = CSV.read(joinpath(FILE_PATH, selected_file_log), DataFrame)
+
+        # -- Load the acquisition times -- #
+        df_acq = CSV.read(joinpath(FILE_PATH, selected_file_acq), DataFrame)
+
+        # -- Visualize phantom -- #
+        slice = img_raw[:, :, 11, 100]
+        @info slice
         hmap = PlotData(
             z=collect(eachcol(slice)),
             plot="heatmap",
             colorscale="Greys"
         )
-
-        # -- Load the logs -- #
-        angles, firstrotidx = BDTools.getangles(joinpath(DATA_DIR, selected_file_log))
-
-        # -- Select "Good" Slices -- #
-
-
     end
 end
 

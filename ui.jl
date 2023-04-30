@@ -1,5 +1,5 @@
 [
-    heading("{{title}}")
+    heading("Brain Dancer GUI")
     row([
         cell(class="st-module", [
             uploader(label="Upload fMRI", accpt=".nii", multiple=true, method="POST", url="http://localhost:8000/", field__name="nii_image")
@@ -12,20 +12,24 @@
         ])
     ])
     row([
+        cell(class="st-module", [
+            h6("Select fMRI")
+            Stipple.select(:selected_file_image; options=:upfiles)
+        ])
+        cell(class="st-module", [
+            h6("Select Logs")
+            Stipple.select(:selected_file_log; options=:upfiles)
+        ])
+        cell(class="st-module", [
+            h6("Select Acquisition Times")
+            Stipple.select(:selected_file_acq; options=:upfiles)
+        ])
+    ])
+    row([
         cell(
             class="st-module",
             [
-                h6("File")
-                Stipple.select(:selected_file_image; options=:upfiles)
-                slider(:z_slices, :selected_z_slice)
-                slider(:t_slices, :selected_t_slice)
-            ]
-        )
-        cell(
-            class="st-module",
-            [
-                h5("fMRI ({{selected_file}})")
-                # slider(:slice; min=1, max=100, step=1, value=10)
+                h5("fMRI ({{selected_file_image}})")
                 plot(:hmap, layout=:layout)
             ]
         )
