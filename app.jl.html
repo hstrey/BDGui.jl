@@ -1,47 +1,28 @@
 <header class="st-header q-pa-sm">
-  <h1 class="st-header__title st-module">Brain Dancer GUI</h1>
+  <h1 class="st-header__title text-h3">Visualize Phantom</h1>
 </header>
-
 <div class="row">
-  <div class="col col-12 col-sm st-module">
-    <q-uploader
-      label="Upload fMRI"
-      accpt=".nii"
-      multiple
-      method="POST"
-      url="http://localhost:8000/"
-      field__name="nii_image"
-    ></q-uploader>
+  <div class="col col-6 col-sm">
+    <p>Slice Number</p>
+    <q-slider v-model="z" :max="max_z" :min="min_z" label></q-slider>
+    <p>Time Series Number</p>
+    <q-slider v-model="t" :max="max_t" :min="min_t" label></q-slider>
+    <header class="st-header q-pa-sm">
+      <h1 class="st-header__title text-h3">
+        Select Good Slice (&amp; Static Scan) Range<br />
+      </h1>
+      <p>
+        Based on the visualization to the right, select the start and end of the good
+        slices. (If needed, select the start and end of the static scans.)
+      </p>
+    </header>
+    <p>Good Slices Range</p>
+    <q-range v-model="g_slices" :max="max_z" :min="min_z" label ></q-range>
+    <p>Static Slices Range</p>
+    <q-range v-model="t_slices" :max="max_t" :min="min_t" label  ></q-range>
   </div>
-  <div class="col col-12 col-sm st-module">
-    <q-uploader
-      label="Upload Log"
-      accpt=".csv"
-      multiple
-      method="POST"
-      url="http://localhost:8000/"
-      field__name="csv_logs"
-    ></q-uploader>
+  <div class="col col-6 col-sm">
+    <p>Phantom</p>
+    <plotly :data="phantom_hmap"></plotly>
   </div>
-  <div class="col col-12 col-sm st-module">
-    <q-uploader
-      label="Upload Acquisition Times"
-      accpt=".csv"
-      multiple
-      method="POST"
-      url="http://localhost:8000/"
-      field__name="csv_acqs"
-    ></q-uploader>
-  </div>
-</div>
-
-<div class="row">
-    <div class="col col-12 col-sm st-module">
-        <h6>File</h6>
-        <q-select v-model="selected_file" :options="upfiles"></q-select>
-    </div>
-    <div class="col col-12 col-sm st-module">
-        <h5>fMRI ({{selected_file}})</h5>
-        <plotly :data="hmap" :layout="layout" :displaylogo="false"></plotly>
-    </div>
 </div>
