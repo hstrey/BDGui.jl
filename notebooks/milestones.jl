@@ -27,6 +27,8 @@ begin
 	Pkg.add("PlutoUI")
 	Pkg.add("CSV")
 	Pkg.add("DataFrames")
+	Pkg.add("Statistics")
+	
 
 	using CondaPkg; CondaPkg.add("SimpleITK")
 	using PythonCall
@@ -379,6 +381,16 @@ let
 	f
 end
 
+# ╔═╡ da492d58-6fa3-42c6-9d46-07eddcba5466
+md"""
+Save File to Path: $(@bind output_dir confirm(TextField()))
+"""
+
+# ╔═╡ 6fb79bd9-da41-4bf8-92f4-12e10a4d9867
+if output_dir != ""
+	niwrite(joinpath(output_dir, "bfc_phantom.nii"), NIVolume(phantom_header, bfc_phantom))
+end
+
 # ╔═╡ 91980ceb-92ce-47f1-999c-25ebe4701ebb
 md"""
 # Milestone 2
@@ -586,6 +598,8 @@ md"""
 # ╠═3042e311-40fb-40a0-a4f2-d641dfb07809
 # ╟─0f10f6b7-a97f-4305-b14b-8aafed390d64
 # ╟─b80c17d2-6867-454c-b4cb-b20f7f9d1b3d
+# ╟─da492d58-6fa3-42c6-9d46-07eddcba5466
+# ╠═6fb79bd9-da41-4bf8-92f4-12e10a4d9867
 # ╟─91980ceb-92ce-47f1-999c-25ebe4701ebb
 # ╟─e4097235-99d6-4efc-a670-a630938c8731
 # ╠═c5b32d5f-773e-44c4-abb4-95ed33d607d5

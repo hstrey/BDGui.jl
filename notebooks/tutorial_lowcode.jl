@@ -27,6 +27,7 @@ begin
 	Pkg.add("PlutoUI")
 	Pkg.add("CSV")
 	Pkg.add("DataFrames")
+	Pkg.add("Statistics")
 
 	using CondaPkg; CondaPkg.add("SimpleITK")
 	using PythonCall
@@ -62,6 +63,11 @@ md"""
 # ╔═╡ e49a06d1-4fa8-48d2-b913-75d9f90719e2
 md"""
 ## Visualize B-field Corrected 4D Phantom
+"""
+
+# ╔═╡ 8e4185b7-103b-4cdd-9af6-7f97d03ea25c
+md"""
+Enter File Path to Save B-field Corrected Phantom: $(@bind output_dir confirm(TextField()))
 """
 
 # ╔═╡ f8278545-bb5d-4f91-8d56-eeab4e7e4929
@@ -357,6 +363,11 @@ let
 	end
 end
 
+# ╔═╡ 6625f7cc-fe32-4448-9f83-190febdc8ed6
+if output_dir != ""
+	niwrite(joinpath(output_dir, "bfc_phantom.nii"), NIVolume(phantom_header, bfc_phantom))
+end
+
 # ╔═╡ Cell order:
 # ╟─ff531753-72d7-439e-85ee-de8da6a54268
 # ╟─02d49e3b-918e-41b1-966f-d3aa5b19019f
@@ -374,6 +385,7 @@ end
 # ╟─e49a06d1-4fa8-48d2-b913-75d9f90719e2
 # ╟─f267d838-7ddf-4f5f-b91e-6b154624660f
 # ╟─312081a5-e9d8-4368-9e12-87694f24d5dc
+# ╟─8e4185b7-103b-4cdd-9af6-7f97d03ea25c
 # ╟─f8278545-bb5d-4f91-8d56-eeab4e7e4929
 # ╟─e885bd90-2474-48dc-bba6-d4b9aaebcacf
 # ╠═33b2249f-4dff-4eed-9be9-b0abff4074b1
@@ -396,3 +408,4 @@ end
 # ╠═61505bbe-ca29-4d5a-9ada-e837b6cceed1
 # ╟─608a56bf-ccf1-45cb-8114-e4b23e7a7ad3
 # ╠═d8412662-ac5a-46e4-95ed-e68bdedd0732
+# ╠═6625f7cc-fe32-4448-9f83-190febdc8ed6
