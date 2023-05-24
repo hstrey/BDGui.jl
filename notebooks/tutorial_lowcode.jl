@@ -21,7 +21,7 @@ begin
 	Pkg.activate(mktempdir())
 	Pkg.add("CondaPkg")
 	Pkg.add("PythonCall")
-	Pkg.add(url="https://github.com/Dale-Black/BDTools.jl")
+	Pkg.add(url="https://github.com/hstrey/BDTools.jl")
 	Pkg.add("CairoMakie")
 	Pkg.add("NIfTI")
 	Pkg.add("PlutoUI")
