@@ -435,6 +435,9 @@ md"""
 ## Construct Ground Truth Dataset
 """
 
+# ╔═╡ aef7eda7-e79f-4538-b8b5-79e934fa279b
+sz = size(bfc_phantom2)
+
 # ╔═╡ 400020e5-ab6c-492b-8534-51adf73784bb
 md"""
 Select Angle of Rotation: $(@bind degrees PlutoUI.Slider(1:360, show_value = true, default = 20))
@@ -452,17 +455,6 @@ end;
 # ╔═╡ e1a3e357-3d3c-4018-8179-9e9ad1d69691
 origin, a, b = BDTools.getellipse(sph2, z2);
 
-# ╔═╡ 2c9d1563-2261-42a0-b682-66b9cc1b9431
-ave2 = BDTools.genimg(sph2.data[:, :, z2]);
-
-# ╔═╡ 1bf8f6e1-a17a-4b9f-a334-7a0d7ce217a6
-md"""
-## Generate Rotated Predictions
-"""
-
-# ╔═╡ aef7eda7-e79f-4538-b8b5-79e934fa279b
-sz = size(bfc_phantom)
-
 # ╔═╡ 38e0ffee-cf4c-460f-92a2-c2d8ea7c4fb4
 coords = [BDTools.ellipserot(α, γ, a, b)*([i,j,z2].-origin).+origin for i in 1:sz[1], j in 1:sz[2]];
 
@@ -473,6 +465,9 @@ sim = map(c -> sph2.interpolation(c...), coords);
 # ╔═╡ 718c5bee-3eb9-41e1-9535-53c29bf5662c
 # generate image
 gen = sim |> BDTools.genimg;
+
+# ╔═╡ 2c9d1563-2261-42a0-b682-66b9cc1b9431
+ave2 = BDTools.genimg(sph2.data[:, :, z2]);
 
 # ╔═╡ 5e2d2964-efc2-4f7c-9fd4-6c1d96dc9b54
 let
@@ -490,6 +485,11 @@ let
 	heatmap!(gen[:, :], colormap=:grays)
 	f
 end
+
+# ╔═╡ 1bf8f6e1-a17a-4b9f-a334-7a0d7ce217a6
+md"""
+## Generate Rotated Predictions
+"""
 
 # ╔═╡ d92f6df1-58de-4ab4-ae43-2e19cbca10d3
 begin
@@ -612,8 +612,9 @@ md"""
 # ╠═efff0880-9ab8-45e6-946f-fbaa1715a174
 # ╠═4d5e03fd-eefe-47bc-8007-a3d4b173875e
 # ╟─8c38dc26-24d1-47a9-9c51-3abf9850fe27
-# ╟─16f026d4-4dc7-4bb9-8814-d30933a65b23
+# ╠═16f026d4-4dc7-4bb9-8814-d30933a65b23
 # ╟─6bdad393-9a77-4056-bb7d-96a8367224d3
+# ╠═aef7eda7-e79f-4538-b8b5-79e934fa279b
 # ╠═74b70f05-31cf-494f-92f6-bc82dd8b2168
 # ╠═e1a3e357-3d3c-4018-8179-9e9ad1d69691
 # ╠═38e0ffee-cf4c-460f-92a2-c2d8ea7c4fb4
@@ -623,7 +624,6 @@ md"""
 # ╟─400020e5-ab6c-492b-8534-51adf73784bb
 # ╟─5e2d2964-efc2-4f7c-9fd4-6c1d96dc9b54
 # ╟─1bf8f6e1-a17a-4b9f-a334-7a0d7ce217a6
-# ╠═aef7eda7-e79f-4538-b8b5-79e934fa279b
 # ╠═d92f6df1-58de-4ab4-ae43-2e19cbca10d3
 # ╠═29a143eb-b77b-40b7-ab7b-b219381420f2
 # ╟─f7e9166a-340f-4950-b5b0-51f2313b3e8b
