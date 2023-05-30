@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.25
+# v0.19.26
 
 using Markdown
 using InteractiveUtils
@@ -19,30 +19,22 @@ end
 begin
 	using Pkg
 	Pkg.activate(mktempdir())
-	Pkg.add("CondaPkg")
-	Pkg.add("PythonCall")
-	Pkg.add(url="https://github.com/hstrey/BDTools.jl")
 	Pkg.add("CairoMakie")
 	Pkg.add("NIfTI")
 	Pkg.add("PlutoUI")
 	Pkg.add("CSV")
 	Pkg.add("DataFrames")
 	Pkg.add("Statistics")
-	
+	Pkg.add(url="https://github.com/hstrey/BDTools.jl")
 
-	using CondaPkg; CondaPkg.add("SimpleITK")
-	using PythonCall
-	using BDTools
 	using CairoMakie
 	using PlutoUI
 	using NIfTI
 	using CSV
 	using DataFrames
 	using Statistics
+	using BDTools
 end
-
-# ╔═╡ 90b6279b-7595-43de-b3f7-10ffdbeabf58
-sitk = pyimport("SimpleITK")
 
 # ╔═╡ e7a428ce-0489-43c3-8c5a-bae818f0ca03
 TableOfContents()
@@ -280,22 +272,19 @@ end
 
 # ╔═╡ cb3c7d65-dcdf-48c9-a1fa-56ba71b327e5
 begin
-	msk3D = zeros(Int, size(sph.data)[1:2]..., length(good_slices))
-	for i in axes(sph.data, 3)
-		msk3D[:, :, i] = BDTools.segment3(sph.data[:, :, i]).image_indexmap
-	end
-	msk3D = parent(msk3D)
-	binary_msk3D = Float64.(ifelse.(msk3D .== 1, 0, 1))
+	segs = BDTools.segment3.(eachslice(sph.data, dims=3))
+    mask_binary = cat(BDTools.labels_map.(segs)..., dims=3) .!= 1
+	mask_float = Float32.(mask_binary)
 end;
 
 # ╔═╡ 51a6b51f-55fd-442c-a6a0-5d9be970d300
 begin
 	mask_path = joinpath(tempdir, "mask.nii")
-	niwrite(mask_path, NIVolume(phantom_header, binary_msk3D))
+	niwrite(mask_path, NIVolume(phantom_header, mask_float))
 end;
 
 # ╔═╡ 692360cc-dcb0-456a-8234-f747ce371b1b
-heatmap(binary_msk3D[:, :, 10], colormap=:grays)
+heatmap(mask_float[:, :, 5], colormap=:grays)
 
 # ╔═╡ 659ec1a1-356c-4742-bd63-0ebaa3df5b96
 md"""
@@ -398,23 +387,37 @@ md"""
 
 # ╔═╡ e4097235-99d6-4efc-a670-a630938c8731
 md"""
-## Fit Center & Radius
+## Fit Center & Radius of Inner Cylinder for Each Slice
 """
+
+# ╔═╡ 8c38dc26-24d1-47a9-9c51-3abf9850fe27
+md"""
+Beginning Corrected Slice: $(@bind rot_slices1 PlutoUI.Slider(axes(sph.data, 3); show_value = true, default = first(axes(sph.data, 3))))
+
+End Corrected Slice: $(@bind rot_slices2 PlutoUI.Slider(axes(sph.data, 3); show_value = true, default = last(axes(sph.data, 3))))
+"""
+
+# ╔═╡ e3134051-6309-4fbd-9ca5-2c610346d438
+begin
+	new_slices_df = slices_df[rot_slices1:rot_slices2, :]
+	bfc_phantom2 = bfc_phantom[:, :, rot_slices1:rot_slices2, :]
+	sph2 = staticphantom(bfc_phantom2, Matrix(new_slices_df))
+end
 
 # ╔═╡ c5b32d5f-773e-44c4-abb4-95ed33d607d5
 # Original Centers
-ecs = BDTools.centers(sph);
+ecs = BDTools.centers(sph2);
 
 # ╔═╡ efff0880-9ab8-45e6-946f-fbaa1715a174
 # Predicted center axis
 begin
 	rng = collect(-1.:0.15:1.)
-	cc = map(t->BDTools.predictcenter(sph, t), rng)
+	cc = map(t->BDTools.predictcenter(sph2, t), rng)
 end;
 
 # ╔═╡ 4d5e03fd-eefe-47bc-8007-a3d4b173875e
 # Fitted Centers
-xy = BDTools.fittedcenters(sph);
+xy = BDTools.fittedcenters(sph2);
 
 # ╔═╡ 16f026d4-4dc7-4bb9-8814-d30933a65b23
 let
@@ -427,75 +430,45 @@ let
 	f
 end
 
+# ╔═╡ 6bdad393-9a77-4056-bb7d-96a8367224d3
+md"""
+## Construct Ground Truth Dataset
+"""
+
+# ╔═╡ 400020e5-ab6c-492b-8534-51adf73784bb
+md"""
+Select Angle of Rotation: $(@bind degrees PlutoUI.Slider(1:360, show_value = true, default = 20))
+
+
+Select Slice: $(@bind z2 PlutoUI.Slider(axes(sph2.data, 3); default=3, show_value=true))
+"""
+
+# ╔═╡ 74b70f05-31cf-494f-92f6-bc82dd8b2168
+begin
+	α = deg2rad(degrees)
+	γ = BDTools.findinitialrotation(sph2, z2)
+end;
+
+# ╔═╡ e1a3e357-3d3c-4018-8179-9e9ad1d69691
+origin, a, b = BDTools.getellipse(sph2, z2);
+
+# ╔═╡ 2c9d1563-2261-42a0-b682-66b9cc1b9431
+ave2 = BDTools.genimg(sph2.data[:, :, z2]);
+
 # ╔═╡ 1bf8f6e1-a17a-4b9f-a334-7a0d7ce217a6
 md"""
-## Construct Ground Truth Phantom
-Users might need to input `threshold`
+## Generate Rotated Predictions
 """
 
 # ╔═╡ aef7eda7-e79f-4538-b8b5-79e934fa279b
 sz = size(bfc_phantom)
 
-# ╔═╡ d92f6df1-58de-4ab4-ae43-2e19cbca10d3
-begin
-	pos = df_log[!, :EndPos]
-	firstrotidx = findfirst(e -> e > 20, pos)
-	angles, firstrotidx = [a > π ? a-2π : a for a in (pos ./ 2^13).*(2π)], firstrotidx
-end
-
-# ╔═╡ be222517-d2ff-4131-971e-853144ec22c8
-res = BDTools.groundtruth(sph, bfc_phantom, angles; startmotion=firstrotidx, threshold=.95);
-
-# ╔═╡ 367979f1-9303-46a7-a831-3c2fd8452057
-data, sliceidx, maskcoords = res.data, res.sliceindex, res.maskindex
-
-# ╔═╡ 6ccc174f-c42e-4347-ae2f-979a57a1af86
-md"""
-## Fit Centerline of Rotation
-"""
-
-# ╔═╡ 986c0d5c-c8ad-4800-8271-99f8e3beaf40
-begin
-	x = 42
-	y = 52
-	cidx = res[x, y] # get a masked coordinate index
-    cidx === nothing && return
-end
-
-# ╔═╡ fc9e2b2a-66e3-4e4a-984c-2cab89147ffe
-@bind z PlutoUI.Slider(eachindex(sliceidx); default=3, show_value=true)
-
-# ╔═╡ 2fa99031-29a3-4fd4-9fb4-b2b7b940514a
-let
-	f = Figure()
-	ax = CairoMakie.Axis(f[1, 1])
-    lines!(data[:, cidx, z, 2], label="original")
-    lines!(data[:, cidx, z, 1], label="prediction")
-	axislegend(ax)
-	f
-end
-
-# ╔═╡ 6bdad393-9a77-4056-bb7d-96a8367224d3
-md"""
-## Calculate Ground Truth By Rotations & Interpolation
-"""
-
-# ╔═╡ 74b70f05-31cf-494f-92f6-bc82dd8b2168
-begin
-	degrees = 20
-	α = deg2rad(degrees)
-	γ = BDTools.findinitialrotation(sph, z)
-end;
-
-# ╔═╡ e1a3e357-3d3c-4018-8179-9e9ad1d69691
-origin, a, b = BDTools.getellipse(sph, z);
-
 # ╔═╡ 38e0ffee-cf4c-460f-92a2-c2d8ea7c4fb4
-coords = [BDTools.ellipserot(α, γ, a, b)*([i,j,z].-origin).+origin for i in 1:sz[1], j in 1:sz[2]];
+coords = [BDTools.ellipserot(α, γ, a, b)*([i,j,z2].-origin).+origin for i in 1:sz[1], j in 1:sz[2]];
 
 # ╔═╡ ffa76c31-5650-4372-ab2a-bf3d1d58f90a
 # interpolate intensities
-sim = map(c->sph.interpolation(c...), coords);
+sim = map(c -> sph2.interpolation(c...), coords);
 
 # ╔═╡ 718c5bee-3eb9-41e1-9535-53c29bf5662c
 # generate image
@@ -506,15 +479,48 @@ let
 	f = Figure(resolution=(1000, 700))
 	ax = CairoMakie.Axis(
 		f[1, 1],
-		title="Average Static Image @ Slice $(c_slider)"
+		title="Average Static Image @ Slice $(z2)"
 	)
-	heatmap!(ave, colormap=:grays)
+	heatmap!(ave2, colormap=:grays)
 
 	ax = CairoMakie.Axis(
 		f[1, 2],
-		title="Generated Image @ Slice $(c_slider) & Rotated $(degrees) Degrees"
+		title="Generated Image @ Slice $(z2) & Rotated $(degrees) Degrees"
 	)
 	heatmap!(gen[:, :], colormap=:grays)
+	f
+end
+
+# ╔═╡ d92f6df1-58de-4ab4-ae43-2e19cbca10d3
+begin
+	quant = 2^13
+	pos = df_log[!, :EndPos]
+	firstrotidx = 200
+	angles = [a > π ? a-2π : a for a in (pos ./ quant).*(2π)]
+end
+
+# ╔═╡ 29a143eb-b77b-40b7-ab7b-b219381420f2
+gt = BDTools.groundtruth(sph2, bfc_phantom2, angles; startmotion=firstrotidx, threshold=.95);
+
+# ╔═╡ f7e9166a-340f-4950-b5b0-51f2313b3e8b
+md"""
+Choose Centerpoint Slice: $(@bind z4 PlutoUI.Slider(axes(gt.data, 3); default=3, show_value=true))
+"""
+
+# ╔═╡ 849d31df-d064-4126-85c4-52cb65781c90
+let 
+	x = Int(round(xy[z4, 1])) + 1
+	y = Int(round(xy[z4, 2])) + 1
+	z = z4 # get coordinates
+    cidx = gt[x, y] # get a masked coordinate index
+    cidx === nothing && return
+
+    # plot data
+	f = Figure()
+	ax = CairoMakie.Axis(f[1, 1])
+    lines!(gt[x, y, z], label="prediction", title="Intensity (x=$x, y=$y, z=$z)")
+    lines!(gt[x, y, z, true], label="original")
+	axislegend(ax, position=:lt)
 	f
 end
 
@@ -550,7 +556,6 @@ md"""
 
 # ╔═╡ Cell order:
 # ╠═866b498e-52cc-461a-90dc-bfd6d53dd80d
-# ╠═90b6279b-7595-43de-b3f7-10ffdbeabf58
 # ╠═e7a428ce-0489-43c3-8c5a-bae818f0ca03
 # ╟─bbd3d93f-8775-48aa-93e0-5600fd1b5355
 # ╟─dc6717ba-25fb-4f7d-933a-18dc69fea34d
@@ -602,26 +607,27 @@ md"""
 # ╠═6fb79bd9-da41-4bf8-92f4-12e10a4d9867
 # ╟─91980ceb-92ce-47f1-999c-25ebe4701ebb
 # ╟─e4097235-99d6-4efc-a670-a630938c8731
+# ╠═e3134051-6309-4fbd-9ca5-2c610346d438
 # ╠═c5b32d5f-773e-44c4-abb4-95ed33d607d5
 # ╠═efff0880-9ab8-45e6-946f-fbaa1715a174
 # ╠═4d5e03fd-eefe-47bc-8007-a3d4b173875e
+# ╟─8c38dc26-24d1-47a9-9c51-3abf9850fe27
 # ╟─16f026d4-4dc7-4bb9-8814-d30933a65b23
-# ╟─1bf8f6e1-a17a-4b9f-a334-7a0d7ce217a6
-# ╠═aef7eda7-e79f-4538-b8b5-79e934fa279b
-# ╠═d92f6df1-58de-4ab4-ae43-2e19cbca10d3
-# ╠═be222517-d2ff-4131-971e-853144ec22c8
-# ╠═367979f1-9303-46a7-a831-3c2fd8452057
-# ╟─6ccc174f-c42e-4347-ae2f-979a57a1af86
-# ╠═986c0d5c-c8ad-4800-8271-99f8e3beaf40
-# ╟─fc9e2b2a-66e3-4e4a-984c-2cab89147ffe
-# ╟─2fa99031-29a3-4fd4-9fb4-b2b7b940514a
 # ╟─6bdad393-9a77-4056-bb7d-96a8367224d3
 # ╠═74b70f05-31cf-494f-92f6-bc82dd8b2168
 # ╠═e1a3e357-3d3c-4018-8179-9e9ad1d69691
 # ╠═38e0ffee-cf4c-460f-92a2-c2d8ea7c4fb4
 # ╠═ffa76c31-5650-4372-ab2a-bf3d1d58f90a
 # ╠═718c5bee-3eb9-41e1-9535-53c29bf5662c
+# ╠═2c9d1563-2261-42a0-b682-66b9cc1b9431
+# ╟─400020e5-ab6c-492b-8534-51adf73784bb
 # ╟─5e2d2964-efc2-4f7c-9fd4-6c1d96dc9b54
+# ╟─1bf8f6e1-a17a-4b9f-a334-7a0d7ce217a6
+# ╠═aef7eda7-e79f-4538-b8b5-79e934fa279b
+# ╠═d92f6df1-58de-4ab4-ae43-2e19cbca10d3
+# ╠═29a143eb-b77b-40b7-ab7b-b219381420f2
+# ╟─f7e9166a-340f-4950-b5b0-51f2313b3e8b
+# ╟─849d31df-d064-4126-85c4-52cb65781c90
 # ╟─1a274a20-d067-4682-afb2-5abf5b7626f6
 # ╟─56785b5d-eb3d-4e13-9d9e-fc82ab6e5c54
 # ╟─cb058e2b-f874-4324-a188-292bf303e5b2

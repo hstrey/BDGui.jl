@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.25
+# v0.19.26
 
 using Markdown
 using InteractiveUtils
@@ -19,25 +19,21 @@ end
 begin
 	using Pkg
 	Pkg.activate(mktempdir())
-	Pkg.add("CondaPkg")
-	Pkg.add("PythonCall")
-	Pkg.add(url="https://github.com/hstrey/BDTools.jl")
 	Pkg.add("CairoMakie")
 	Pkg.add("NIfTI")
 	Pkg.add("PlutoUI")
 	Pkg.add("CSV")
 	Pkg.add("DataFrames")
 	Pkg.add("Statistics")
+	Pkg.add(url="https://github.com/hstrey/BDTools.jl")
 
-	using CondaPkg; CondaPkg.add("SimpleITK")
-	using PythonCall
-	using BDTools
 	using CairoMakie
 	using PlutoUI
 	using NIfTI
 	using CSV
 	using DataFrames
 	using Statistics
+	using BDTools
 end
 
 # ╔═╡ ff531753-72d7-439e-85ee-de8da6a54268
@@ -79,9 +75,6 @@ md"""
 md"""
 ## (Code) Import Packages
 """
-
-# ╔═╡ 56a64c10-e461-43bd-b448-94ed0e7b40fa
-sitk = pyimport("SimpleITK")
 
 # ╔═╡ a6081d85-7903-4ea7-ac77-16f9161e1d65
 TableOfContents()
@@ -259,15 +252,12 @@ md"""
 
 # ╔═╡ 8d349bbd-abcf-44fe-af35-0042fec17aad
 if slices
-	msk3D = zeros(Int, size(sph.data)[1:2]..., length(good_slices))
-	for i in axes(sph.data, 3)
-		msk3D[:, :, i] = BDTools.segment3(sph.data[:, :, i]).image_indexmap
-	end
-	msk3D = parent(msk3D)
-	binary_msk3D = Float64.(ifelse.(msk3D .== 1, 0, 1))
+	segs = BDTools.segment3.(eachslice(sph.data, dims=3))
+    mask_binary = cat(BDTools.labels_map.(segs)..., dims=3) .!= 1
+	mask_float = Float32.(mask_binary)
 
 	mask_path = joinpath(tempdir, "mask.nii")
-	niwrite(mask_path, NIVolume(phantom_header, binary_msk3D))
+	niwrite(mask_path, NIVolume(phantom_header, mask_float))
 end;
 
 # ╔═╡ 3a96e5db-8db8-4051-ab72-83598aa82330
@@ -389,7 +379,6 @@ end
 # ╟─f8278545-bb5d-4f91-8d56-eeab4e7e4929
 # ╟─e885bd90-2474-48dc-bba6-d4b9aaebcacf
 # ╠═33b2249f-4dff-4eed-9be9-b0abff4074b1
-# ╠═56a64c10-e461-43bd-b448-94ed0e7b40fa
 # ╠═a6081d85-7903-4ea7-ac77-16f9161e1d65
 # ╟─22fd7fc7-5b53-49dd-b648-0281a121f8c9
 # ╟─4ec60d96-3269-43ac-9c55-8b803673456b
