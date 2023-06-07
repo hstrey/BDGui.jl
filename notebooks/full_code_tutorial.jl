@@ -74,18 +74,27 @@ end
 confirm(upload_files("Upload Log File: ", "Upload Acquisition Times: ", "Upload Phantom Scan: "))
 
 # ╔═╡ 19b12720-4bd9-4790-84d0-9cf660d8ed70
-try
-	global df_log = CSV.read(download(log_file), DataFrame)
+begin
+	if contains(log_file, "http")
+		global df_log = CSV.read(download(log_file), DataFrame)
+	else
+		global df_log = CSV.read(log_file, DataFrame)
+
+	end
+
+	if contains(acq_file, "http")
+		global df_acq = CSV.read(download(acq_file), DataFrame)
+	else
+		global df_acq = CSV.read(acq_file, DataFrame)
+
+	end
 	
-	global df_acq = CSV.read(download(acq_file), DataFrame)
-		
-	global phantom = niread(download(nifti_file))
-catch
-	global df_log = CSV.read(log_file, DataFrame)
-	
-	global df_acq = CSV.read(acq_file, DataFrame)
-		
-	global raw_phantom = niread(nifti_file)
+	if contains(nifti_file, "http")
+		global phantom = niread(download(nifti_file))
+	else
+		global phantom = niread(nifti_file)
+
+	end
 end;
 
 # ╔═╡ b0e58a0a-c6a7-4e4d-8a14-efbfbf7251e9
@@ -179,7 +188,13 @@ phantom_ok = Float64.(convert(Array, phantom[:, :, good_slices_range, static_ran
 
 # ╔═╡ de4e1b7c-2a70-499d-a375-87c8aaca0ad3
 begin
-	max_motion = findmax(df_log[!,"Tmot"])[1]
+	# Get a list of all column names
+	colnames = names(df_log)
+	
+	# Find the index of the first column whose name contains "Tmot"
+	tmot_col_index = findfirst(name -> occursin("tmot", lowercase.(name)), colnames)
+	
+	max_motion = findmax(df_log[!, tmot_col_index])[1]
 	slices_without_motion = df_acq[!,"Slice"][df_acq[!,"Time"] .> max_motion]
 	slices_ok = sort(
 		slices_without_motion[parse(Int, first(g_slices))-1 .<= slices_without_motion .<= parse(Int, last(g_slices))+1]
@@ -193,20 +208,20 @@ md"""
 ## Calculate Average Static Phantom
 """
 
-# ╔═╡ d75e495c-bf4e-4608-bd7f-357d3fe1023b
-sph = staticphantom(phantom_ok, Matrix(slices_df); staticslices=static_range);
+# ╔═╡ d5faa518-5dc6-4662-990d-84b21eccfdee
+avg_static_phantom = Float32.(mean(phantom_ok[:, :, :, static_range], dims=4)[:, :, :]);
 
 # ╔═╡ db78c6f2-5afe-4d12-b39f-f6b4286f2d17
-phantom_header.dim = (length(size(sph.data)), size(sph.data)..., 1, 1, 1, 1)
+phantom_header.dim = (length(size(avg_static_phantom)), size(avg_static_phantom)..., 1, 1, 1, 1)
 
 # ╔═╡ 35e1fcca-f1e0-4b33-82c7-e0c1325464d0
-@bind c_slider PlutoUI.Slider(axes(sph.data, 3) ; default=div(size(sph.data, 3), 2), show_value=true)
+@bind c_slider PlutoUI.Slider(axes(avg_static_phantom, 3) ; default=div(size(avg_static_phantom, 3), 2), show_value=true)
 
 # ╔═╡ fc87815b-54d1-4f69-ac8d-b0fbeab7f53d
 @bind d_slider PlutoUI.Slider(axes(phantom, 4), ; default=div(size(phantom, 4), 2), show_value=true)
 
 # ╔═╡ f57cb424-9dd2-4432-8485-034ded569f13
-ave = BDTools.genimg(sph.data[:, :, c_slider]);
+ave = BDTools.genimg(avg_static_phantom[:, :, c_slider]);
 
 # ╔═╡ e570adef-e2d1-4080-86e8-4ac57ad8a6f0
 let
@@ -225,9 +240,6 @@ let
 	f
 end
 
-# ╔═╡ 4de55168-94c0-400e-a072-feb34a07fe2b
-avg_static_phantom = Float32.(sph.data);
-
 # ╔═╡ a649bf25-f3e4-44b4-bb3e-266a456f2f21
 begin
 	tempdir = mktempdir()
@@ -242,10 +254,10 @@ md"""
 """
 
 # ╔═╡ 056f3868-9a21-4c68-9f51-a9ed2d662e46
-@bind c_slider2 PlutoUI.Slider(axes(sph.data, 3); show_value=true)
+@bind c_slider2 PlutoUI.Slider(axes(avg_static_phantom, 3); show_value=true)
 
 # ╔═╡ 13b34063-4fea-4044-9648-7d72fd90ed2d
-msk = BDTools.segment3(sph.data[:, :, c_slider2]);
+msk = BDTools.segment3(avg_static_phantom[:, :, c_slider2]);
 
 # ╔═╡ e512474b-a648-416a-a52f-19b0e52fbd17
 let
@@ -264,7 +276,7 @@ let
 		f[1, 1],
 		title = "Raw Phantom + Mask"
 	)
-	heatmap!(sph.data[:, :, c_slider2], colormap=:grays)
+	heatmap!(avg_static_phantom[:, :, c_slider2], colormap=:grays)
 	scatter!(xys1[:, 1], xys1[:, 2], color=:red)
 	scatter!(xys2[:, 1], xys2[:, 2], color=:blue)
 	f
@@ -272,7 +284,7 @@ end
 
 # ╔═╡ cb3c7d65-dcdf-48c9-a1fa-56ba71b327e5
 begin
-	segs = BDTools.segment3.(eachslice(sph.data, dims=3))
+	segs = BDTools.segment3.(eachslice(avg_static_phantom, dims=3))
     mask_binary = cat(BDTools.labels_map.(segs)..., dims=3) .!= 1
 	mask_float = Float32.(mask_binary)
 end;
@@ -392,32 +404,32 @@ md"""
 
 # ╔═╡ 8c38dc26-24d1-47a9-9c51-3abf9850fe27
 md"""
-Beginning Corrected Slice: $(@bind rot_slices1 PlutoUI.Slider(axes(sph.data, 3); show_value = true, default = first(axes(sph.data, 3))))
+Beginning Corrected Slice: $(@bind rot_slices1 PlutoUI.Slider(axes(avg_static_phantom, 3); show_value = true, default = first(axes(avg_static_phantom, 3))))
 
-End Corrected Slice: $(@bind rot_slices2 PlutoUI.Slider(axes(sph.data, 3); show_value = true, default = last(axes(sph.data, 3))))
+End Corrected Slice: $(@bind rot_slices2 PlutoUI.Slider(axes(avg_static_phantom, 3); show_value = true, default = last(axes(avg_static_phantom, 3))))
 """
 
 # ╔═╡ e3134051-6309-4fbd-9ca5-2c610346d438
 begin
 	new_slices_df = slices_df[rot_slices1:rot_slices2, :]
 	bfc_phantom2 = bfc_phantom[:, :, rot_slices1:rot_slices2, :]
-	sph2 = staticphantom(bfc_phantom2, Matrix(new_slices_df))
+	sph = staticphantom(bfc_phantom2, Matrix(new_slices_df))
 end
 
 # ╔═╡ c5b32d5f-773e-44c4-abb4-95ed33d607d5
 # Original Centers
-ecs = BDTools.centers(sph2);
+ecs = BDTools.centers(sph);
 
 # ╔═╡ efff0880-9ab8-45e6-946f-fbaa1715a174
 # Predicted center axis
 begin
 	rng = collect(-1.:0.15:1.)
-	cc = map(t->BDTools.predictcenter(sph2, t), rng)
+	cc = map(t->BDTools.predictcenter(sph, t), rng)
 end;
 
 # ╔═╡ 4d5e03fd-eefe-47bc-8007-a3d4b173875e
 # Fitted Centers
-xy = BDTools.fittedcenters(sph2);
+xy = BDTools.fittedcenters(sph);
 
 # ╔═╡ 16f026d4-4dc7-4bb9-8814-d30933a65b23
 let
@@ -443,31 +455,31 @@ md"""
 Select Angle of Rotation: $(@bind degrees PlutoUI.Slider(1:360, show_value = true, default = 20))
 
 
-Select Slice: $(@bind z2 PlutoUI.Slider(axes(sph2.data, 3); default=3, show_value=true))
+Select Slice: $(@bind z2 PlutoUI.Slider(axes(sph.data, 3); default=3, show_value=true))
 """
 
 # ╔═╡ 74b70f05-31cf-494f-92f6-bc82dd8b2168
 begin
 	α = deg2rad(degrees)
-	γ = BDTools.findinitialrotation(sph2, z2)
+	γ = BDTools.findinitialrotation(sph, z2)
 end;
 
 # ╔═╡ e1a3e357-3d3c-4018-8179-9e9ad1d69691
-origin, a, b = BDTools.getellipse(sph2, z2);
+origin, a, b = BDTools.getellipse(sph, z2);
 
 # ╔═╡ 38e0ffee-cf4c-460f-92a2-c2d8ea7c4fb4
 coords = [BDTools.ellipserot(α, γ, a, b)*([i,j,z2].-origin).+origin for i in 1:sz[1], j in 1:sz[2]];
 
 # ╔═╡ ffa76c31-5650-4372-ab2a-bf3d1d58f90a
 # interpolate intensities
-sim = map(c -> sph2.interpolation(c...), coords);
+sim = map(c -> sph.interpolation(c...), coords);
 
 # ╔═╡ 718c5bee-3eb9-41e1-9535-53c29bf5662c
 # generate image
 gen = sim |> BDTools.genimg;
 
 # ╔═╡ 2c9d1563-2261-42a0-b682-66b9cc1b9431
-ave2 = BDTools.genimg(sph2.data[:, :, z2]);
+ave2 = BDTools.genimg(sph.data[:, :, z2]);
 
 # ╔═╡ 5e2d2964-efc2-4f7c-9fd4-6c1d96dc9b54
 let
@@ -493,14 +505,17 @@ md"""
 
 # ╔═╡ d92f6df1-58de-4ab4-ae43-2e19cbca10d3
 begin
+	# Find the index of the first column whose name contains "EndPos" or "CurPos"
+	pos_col_indices = first([index for (index, name) in enumerate(colnames) if occursin("endpos", lowercase.(name)) || occursin("curpos", lowercase.(name))])
+	
 	quant = 2^13
-	pos = df_log[!, :EndPos]
+	pos = df_log[!, pos_col_indices]
 	firstrotidx = 200
 	angles = [a > π ? a-2π : a for a in (pos ./ quant).*(2π)]
 end
 
 # ╔═╡ 29a143eb-b77b-40b7-ab7b-b219381420f2
-gt = BDTools.groundtruth(sph2, bfc_phantom2, angles; startmotion=firstrotidx, threshold=.95);
+gt = BDTools.groundtruth(sph, bfc_phantom2, angles; startmotion=firstrotidx, threshold=.95);
 
 # ╔═╡ f7e9166a-340f-4950-b5b0-51f2313b3e8b
 md"""
@@ -579,18 +594,17 @@ md"""
 # ╠═886c9748-b423-4d68-acb4-2b32c65ebc1d
 # ╠═de4e1b7c-2a70-499d-a375-87c8aaca0ad3
 # ╟─d0c6dc6d-b85f-4f76-a478-02fcd9484344
-# ╠═d75e495c-bf4e-4608-bd7f-357d3fe1023b
+# ╠═d5faa518-5dc6-4662-990d-84b21eccfdee
 # ╠═db78c6f2-5afe-4d12-b39f-f6b4286f2d17
 # ╟─35e1fcca-f1e0-4b33-82c7-e0c1325464d0
 # ╟─fc87815b-54d1-4f69-ac8d-b0fbeab7f53d
 # ╠═f57cb424-9dd2-4432-8485-034ded569f13
 # ╟─e570adef-e2d1-4080-86e8-4ac57ad8a6f0
-# ╠═4de55168-94c0-400e-a072-feb34a07fe2b
 # ╠═a649bf25-f3e4-44b4-bb3e-266a456f2f21
 # ╟─5e364415-8ab9-4f8d-a775-03d45748b249
 # ╟─056f3868-9a21-4c68-9f51-a9ed2d662e46
 # ╠═13b34063-4fea-4044-9648-7d72fd90ed2d
-# ╟─e512474b-a648-416a-a52f-19b0e52fbd17
+# ╠═e512474b-a648-416a-a52f-19b0e52fbd17
 # ╠═cb3c7d65-dcdf-48c9-a1fa-56ba71b327e5
 # ╠═51a6b51f-55fd-442c-a6a0-5d9be970d300
 # ╟─692360cc-dcb0-456a-8234-f747ce371b1b
@@ -612,7 +626,7 @@ md"""
 # ╠═efff0880-9ab8-45e6-946f-fbaa1715a174
 # ╠═4d5e03fd-eefe-47bc-8007-a3d4b173875e
 # ╟─8c38dc26-24d1-47a9-9c51-3abf9850fe27
-# ╠═16f026d4-4dc7-4bb9-8814-d30933a65b23
+# ╟─16f026d4-4dc7-4bb9-8814-d30933a65b23
 # ╟─6bdad393-9a77-4056-bb7d-96a8367224d3
 # ╠═aef7eda7-e79f-4538-b8b5-79e934fa279b
 # ╠═74b70f05-31cf-494f-92f6-bc82dd8b2168

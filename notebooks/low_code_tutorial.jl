@@ -210,20 +210,6 @@ if uploaded
 		global phantom = niread(nifti_file)
 
 	end
-	
-	# try
-	# 	global df_log = CSV.read(download(log_file), DataFrame)
-		
-	# 	global df_acq = CSV.read(download(acq_file), DataFrame)
-			
-	# 	global phantom = niread(download(nifti_file))
-	# catch
-	# 	global df_log = CSV.read(log_file, DataFrame)
-		
-	# 	global df_acq = CSV.read(acq_file, DataFrame)
-			
-	# 	global raw_phantom = niread(nifti_file)
-	# end
 
 	phantom_header = phantom.header
 	vsize = voxel_size(phantom.header) # mm
@@ -334,7 +320,13 @@ if slices
 
 	phantom_ok = Float64.(convert(Array, phantom[:, :, good_slices_range, static_range]))
 
-	max_motion = findmax(df_log[!,"Tmot"])[1]
+	# Get a list of all column names
+	colnames = names(df_log)
+	
+	# Find the index of the first column whose name contains "Tmot"
+	tmot_col_index = findfirst(name -> occursin("tmot", lowercase.(name)), colnames)
+
+	max_motion = findmax(df_log[!, tmot_col_index])[1]
 	slices_without_motion = df_acq[!,"Slice"][df_acq[!,"Time"] .> max_motion]
 	slices_ok = sort(
 		slices_without_motion[parse(Int, first(g_slices))-1 .<= slices_without_motion .<= parse(Int, last(g_slices))+1]
@@ -350,9 +342,8 @@ md"""
 
 # ╔═╡ 797159df-a9bf-4048-aacb-bc8f83dfde6e
 if slices
-	sph = staticphantom(phantom_ok, Matrix(slices_df); staticslices=static_range)
-	phantom_header.dim = (length(size(sph.data)), size(sph.data)..., 1, 1, 1, 1)
-	avg_static_phantom = Float32.(sph.data)
+	avg_static_phantom = Float32.(mean(phantom_ok[:, :, :, static_range], dims=4)[:, :, :])
+	phantom_header.dim = (length(size(avg_static_phantom)), size(avg_static_phantom)..., 1, 1, 1, 1)
 	tempdir = mktempdir()
 	
 	avg_static_phantom_path = joinpath(tempdir, "image.nii")
@@ -364,9 +355,9 @@ if @isdefined bfc_ready; if bfc_ready == true
 md"""
 If the plot below shows that certain `Centers` are far from the predicted axis, these slices might need to be removed from the fitting. This can be done by dragging the sliders below
 
-Beginning Corrected Slice: $(@bind rot_slices1 PlutoUI.Slider(axes(sph.data, 3); show_value = true, default = first(axes(sph.data, 3))))
+Beginning Corrected Slice: $(@bind rot_slices1 PlutoUI.Slider(axes(avg_static_phantom, 3); show_value = true, default = first(axes(avg_static_phantom, 3))))
 
-End Corrected Slice: $(@bind rot_slices2 PlutoUI.Slider(axes(sph.data, 3); show_value = true, default = last(axes(sph.data, 3))))
+End Corrected Slice: $(@bind rot_slices2 PlutoUI.Slider(axes(avg_static_phantom, 3); show_value = true, default = last(axes(avg_static_phantom, 3))))
 """
 end; end
 
@@ -377,7 +368,7 @@ md"""
 
 # ╔═╡ 8d349bbd-abcf-44fe-af35-0042fec17aad
 if slices
-	segs = BDTools.segment3.(eachslice(sph.data, dims=3))
+	segs = BDTools.segment3.(eachslice(avg_static_phantom, dims=3))
     mask_binary = cat(BDTools.labels_map.(segs)..., dims=3) .!= 1
 	mask_float = Float32.(mask_binary)
 
@@ -487,28 +478,32 @@ md"""
 if @isdefined bfc_ready; if bfc_ready == true
 	new_slices_df = slices_df[rot_slices1:rot_slices2, :]
 	bfc_phantom2 = bfc_phantom[:, :, rot_slices1:rot_slices2, :]
-	sph2 = staticphantom(bfc_phantom2, Matrix(new_slices_df))
+	sph = staticphantom(bfc_phantom2, Matrix(new_slices_df))
 
 	# Original Centers
-	ecs = BDTools.centers(sph2)
+	ecs = BDTools.centers(sph)
 
 	rng = collect(-1.:0.15:1.)
-	cc = map(t->BDTools.predictcenter(sph2, t), rng)
+	cc = map(t->BDTools.predictcenter(sph, t), rng)
 
 	# Fitted Centers
-	xy = BDTools.fittedcenters(sph2);
+	xy = BDTools.fittedcenters(sph);
 end; end;
 
 # ╔═╡ fb7ef4c9-2c45-486e-bbf9-e3c8a6e32b62
 if @isdefined bfc_ready; if bfc_ready == true
 	let
-		f = Figure()
-		ax = CairoMakie.Axis(f[1, 1])
-		scatter!(ecs[:, 1], ecs[:, 2], label="Centers")
-		lines!(map(first, cc), map(last, cc), label="Predicted Axis", color=:orange)
-		scatter!(xy[:, 1], xy[:, 2], label="Fitted Centers", color=:green)
-		axislegend(ax, position=:lt)
-		f
+		if !@isdefined ecs
+			@warn "Not enough data points. Check that the acqusition timings are correct"
+		else
+			f = Figure()
+			ax = CairoMakie.Axis(f[1, 1])
+			scatter!(ecs[:, 1], ecs[:, 2], label="Centers")
+			lines!(map(first, cc), map(last, cc), label="Predicted Axis", color=:orange)
+			scatter!(xy[:, 1], xy[:, 2], label="Fitted Centers", color=:green)
+			axislegend(ax, position=:lt)
+			f
+		end
 	end
 end; end
 
@@ -518,7 +513,7 @@ md"""
 Select Angle of Rotation: $(@bind degrees PlutoUI.Slider(1:360, show_value = true, default = 20))
 
 
-Select Slice: $(@bind z2 PlutoUI.Slider(axes(sph2.data, 3); default=3, show_value=true))
+Select Slice: $(@bind z2 PlutoUI.Slider(axes(sph.data, 3); default=3, show_value=true))
 """
 end; end
 
@@ -532,15 +527,15 @@ if @isdefined rot_ready; if rot_ready == true
 	sz = size(bfc_phantom2)
 	
 	α = deg2rad(degrees)
-	γ = BDTools.findinitialrotation(sph2, z2)
-	origin, a, b = BDTools.getellipse(sph2, z2)
+	γ = BDTools.findinitialrotation(sph, z2)
+	origin, a, b = BDTools.getellipse(sph, z2)
 	coords = [BDTools.ellipserot(α, γ, a, b)*([i,j,z2].-origin).+origin for i in 1:sz[1], j in 1:sz[2]]
 
 	# interpolate intensities
-	sim = map(c -> sph2.interpolation(c...), coords)
+	sim = map(c -> sph.interpolation(c...), coords)
 	# generate image
 	gen = sim |> BDTools.genimg
-	ave2 = BDTools.genimg(sph2.data[:, :, z2])
+	ave2 = BDTools.genimg(sph.data[:, :, z2])
 end; end;
 
 # ╔═╡ 5afc0ac5-659f-4995-b840-a25b656c0d17
@@ -569,12 +564,15 @@ md"""
 
 # ╔═╡ e401ab6a-1169-45ac-a9ac-af4ca28c33ea
 if @isdefined rot_ready; if rot_ready == true
+	# Find the index of the first column whose name contains "EndPos" or "CurPos"
+	pos_col_indices = first([index for (index, name) in enumerate(colnames) if occursin("endpos", lowercase.(name)) || occursin("curpos", lowercase.(name))])
+	
 	quant = 2^13
-	pos = df_log[!, :EndPos]
+	pos = df_log[!, pos_col_indices]
 	firstrotidx = 200
 	angles = [a > π ? a-2π : a for a in (pos ./ quant).*(2π)]
 	
-	gt = BDTools.groundtruth(sph2, bfc_phantom2, angles; startmotion=firstrotidx, threshold=.95)
+	gt = BDTools.groundtruth(sph, bfc_phantom2, angles; startmotion=firstrotidx, threshold=.95)
 end; end;
 
 # ╔═╡ 5965bf01-a4a9-4b36-aa00-47cfca4f4ba2
