@@ -61,6 +61,11 @@ md"""
 ## Visualize B-field Corrected 4D Phantom
 """
 
+# ╔═╡ a143c990-45db-4648-8782-2e65099d79f9
+md"""
+## Choose Motion Start Time
+"""
+
 # ╔═╡ 6a02123b-497e-4230-9ca4-4264c00e3f9c
 md"""
 ## Check the Center Fitting Process
@@ -276,6 +281,20 @@ $(@bind bfc_ready PlutoUI.CheckBox())
 """
 end
 
+# ╔═╡ 98ad625f-ae5c-4ed4-8fec-0aef6abd12a1
+if @isdefined bfc_ready; if bfc_ready == true
+md"""
+Typically, motion starts at `Seq#` 201 but choose the time by visually verifying the `Seq#` below:
+
+Motion Start Sequence: $(@bind motion_start PlutoUI.Slider(df_log[!, "Seq#"]; show_value = true, default = 201))
+"""
+end; end
+
+# ╔═╡ 4100ec34-be7f-4c61-90bd-58bd0cb942ff
+if @isdefined bfc_ready; if bfc_ready == true
+	df_log[200:210, :]
+end; end
+
 # ╔═╡ 466194a6-bec5-4bec-9e00-55cdc3d7c378
 if @isdefined bfc_ready; if bfc_ready == true
 	md"""
@@ -319,20 +338,6 @@ if slices
 	static_range = num_static_range_low:num_static_range_high
 
 	phantom_ok = Float64.(convert(Array, phantom[:, :, good_slices_range, static_range]))
-
-	# Get a list of all column names
-	colnames = names(df_log)
-	
-	# Find the index of the first column whose name contains "Tmot"
-	tmot_col_index = findfirst(name -> occursin("tmot", lowercase.(name)), colnames)
-
-	max_motion = findmax(df_log[!, tmot_col_index])[1]
-	slices_without_motion = df_acq[!,"Slice"][df_acq[!,"Time"] .> max_motion]
-	slices_ok = sort(
-		slices_without_motion[parse(Int, first(g_slices))-1 .<= slices_without_motion .<= parse(Int, last(g_slices))+1]
-	)
-	slices_wm = [x in slices_ok ? 1 : 0 for x in good_slices]
-	slices_df = DataFrame(Dict(:slice => good_slices, :no_motion => slices_wm))
 end;
 
 # ╔═╡ 51ee9269-4455-4118-8af8-632959653447
@@ -476,6 +481,21 @@ md"""
 
 # ╔═╡ fe339ac3-e62d-4e28-85c9-14ef89bea82c
 if @isdefined bfc_ready; if bfc_ready == true
+	# Get a list of all column names
+	colnames = names(df_log)
+	
+	# Find the index of the first column whose name contains "Tmot"
+	tmot_col_index = findfirst(name -> occursin("tmot", lowercase.(name)), colnames)
+
+	max_motion = findmax(df_log[!, tmot_col_index])[1]
+	max_motion2 = df_log[findall(x -> x == motion_start, df_log[!, "Seq#"]), tmot_col_index]
+	slices_without_motion = df_acq[!,"Slice"][df_acq[!,"Time"] .> max_motion2]
+	slices_ok = sort(
+		slices_without_motion[parse(Int, first(g_slices))-1 .<= slices_without_motion .<= parse(Int, last(g_slices))+1]
+	)
+	slices_wm = [x in slices_ok ? 1 : 0 for x in good_slices]
+	slices_df = DataFrame(Dict(:slice => good_slices, :no_motion => slices_wm))
+	
 	new_slices_df = slices_df[rot_slices1:rot_slices2, :]
 	bfc_phantom2 = bfc_phantom[:, :, rot_slices1:rot_slices2, :]
 	sph = staticphantom(bfc_phantom2, Matrix(new_slices_df))
@@ -516,6 +536,12 @@ Select Angle of Rotation: $(@bind degrees PlutoUI.Slider(1:360, show_value = tru
 Select Slice: $(@bind z2 PlutoUI.Slider(axes(sph.data, 3); default=3, show_value=true))
 """
 end; end
+
+# ╔═╡ 7eaa6780-f266-4e95-9631-6dca9fb4df1c
+findmax(df_log[!, tmot_col_index])
+
+# ╔═╡ 8cf70bc4-49a1-4a7c-a232-7fb343ece8d1
+max_mot2 = df_log[findall(x -> x == motion_start, df_log[!, "Seq#"]), tmot_col_index]
 
 # ╔═╡ 4b1db7c4-ee32-4db5-b8f8-61b51d8329a4
 md"""
@@ -569,10 +595,10 @@ if @isdefined rot_ready; if rot_ready == true
 	
 	quant = 2^13
 	pos = df_log[!, pos_col_indices]
-	firstrotidx = 200
+	firstrotidx = motion_start
 	angles = [a > π ? a-2π : a for a in (pos ./ quant).*(2π)]
 	
-	gt = BDTools.groundtruth(sph, bfc_phantom2, angles; startmotion=firstrotidx, threshold=.95)
+	gt = groundtruth(sph, bfc_phantom2, angles; startmotion=firstrotidx, threshold=.95)
 end; end;
 
 # ╔═╡ 5965bf01-a4a9-4b36-aa00-47cfca4f4ba2
@@ -629,6 +655,9 @@ end
 # ╟─f267d838-7ddf-4f5f-b91e-6b154624660f
 # ╟─0476f3ae-b35b-4d6c-8713-2edec2bac798
 # ╟─312081a5-e9d8-4368-9e12-87694f24d5dc
+# ╟─a143c990-45db-4648-8782-2e65099d79f9
+# ╟─98ad625f-ae5c-4ed4-8fec-0aef6abd12a1
+# ╟─4100ec34-be7f-4c61-90bd-58bd0cb942ff
 # ╟─6a02123b-497e-4230-9ca4-4264c00e3f9c
 # ╟─6402c226-2041-41bf-b7e9-3678bd211807
 # ╟─466194a6-bec5-4bec-9e00-55cdc3d7c378
@@ -683,6 +712,8 @@ end
 # ╠═d8412662-ac5a-46e4-95ed-e68bdedd0732
 # ╟─c8946acd-3765-4f4b-9664-9d73c4b3eb7e
 # ╠═fe339ac3-e62d-4e28-85c9-14ef89bea82c
+# ╠═7eaa6780-f266-4e95-9631-6dca9fb4df1c
+# ╠═8cf70bc4-49a1-4a7c-a232-7fb343ece8d1
 # ╟─4b1db7c4-ee32-4db5-b8f8-61b51d8329a4
 # ╠═91899626-c34f-4534-820c-f34f795670de
 # ╟─c1d3b670-58db-4cd1-a04b-4a4cc61a2b3f
