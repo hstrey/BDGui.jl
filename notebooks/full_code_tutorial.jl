@@ -78,7 +78,7 @@ begin
 	if contains(log_file, "http")
 		global df_log = CSV.read(download(log_file), DataFrame)
 	else
-		global df_log = CSV.read(log_file, DataFrame; header=3)
+		global df_log = CSV.read(log_file, DataFrame)
 
 	end
 
@@ -205,6 +205,23 @@ phantom_header.dim = (length(size(avg_static_phantom)), size(avg_static_phantom)
 
 # ╔═╡ f57cb424-9dd2-4432-8485-034ded569f13
 ave = BDTools.genimg(avg_static_phantom[:, :, c_slider]);
+
+# ╔═╡ e570adef-e2d1-4080-86e8-4ac57ad8a6f0
+let
+	f = Figure(resolution=(1000, 700))
+	ax = CairoMakie.Axis(
+		f[1, 1],
+		title="Raw 4D fMRI"
+	)
+	heatmap!(phantom[:, :, collect(good_slices_range)[c_slider], d_slider], colormap=:grays)
+
+	ax = CairoMakie.Axis(
+		f[1, 2],
+		title="Average Static Image"
+	)
+	heatmap!(ave[:, :], colormap=:grays)
+	f
+end
 
 # ╔═╡ a649bf25-f3e4-44b4-bb3e-266a456f2f21
 begin
@@ -412,23 +429,6 @@ begin
 	sph = staticphantom(bfc_phantom2, Matrix(new_slices_df))
 end
 
-# ╔═╡ e570adef-e2d1-4080-86e8-4ac57ad8a6f0
-let
-	f = Figure(resolution=(1000, 700))
-	ax = CairoMakie.Axis(
-		f[1, 1],
-		title="Raw 4D fMRI"
-	)
-	heatmap!(phantom[:, :, slices_df[c_slider, 2], d_slider], colormap=:grays)
-
-	ax = CairoMakie.Axis(
-		f[1, 2],
-		title="Average Static Image"
-	)
-	heatmap!(ave[:, :], colormap=:grays)
-	f
-end
-
 # ╔═╡ c5b32d5f-773e-44c4-abb4-95ed33d607d5
 # Original Centers
 ecs = BDTools.centers(sph);
@@ -530,9 +530,6 @@ end
 # ╔═╡ 29a143eb-b77b-40b7-ab7b-b219381420f2
 gt = BDTools.groundtruth(sph, bfc_phantom2, angles; startmotion=firstrotidx, threshold=.95);
 
-# ╔═╡ e6c2da4c-7f27-441f-b6da-688034824591
-
-
 # ╔═╡ f7e9166a-340f-4950-b5b0-51f2313b3e8b
 md"""
 Choose Centerpoint Slice: $(@bind z4 PlutoUI.Slider(axes(gt.data, 3); default=3, show_value=true))
@@ -576,6 +573,12 @@ begin
 	parseval_bfc = sum(bfc_phantom2[:, :, :, 1] .^ 2)
 	parseval_gt / parseval_bfc
 end
+
+# ╔═╡ a51a4b1a-111b-4e9f-8e82-7d275755a2df
+bfc_phantom2
+
+# ╔═╡ 81ec442b-d70e-4acb-8861-997558e56edb
+gt.data
 
 # ╔═╡ e6b187ad-4e1d-465e-b5fe-a0c182dd11e7
 md"""
@@ -684,13 +687,14 @@ md"""
 # ╟─1bf8f6e1-a17a-4b9f-a334-7a0d7ce217a6
 # ╠═d92f6df1-58de-4ab4-ae43-2e19cbca10d3
 # ╠═29a143eb-b77b-40b7-ab7b-b219381420f2
-# ╠═e6c2da4c-7f27-441f-b6da-688034824591
 # ╟─f7e9166a-340f-4950-b5b0-51f2313b3e8b
 # ╟─849d31df-d064-4126-85c4-52cb65781c90
 # ╟─1a274a20-d067-4682-afb2-5abf5b7626f6
 # ╟─56785b5d-eb3d-4e13-9d9e-fc82ab6e5c54
 # ╟─dda13b35-f33a-410a-9ff6-8431aafc9cc8
 # ╠═18512280-3716-47f3-94ee-e74e0ce28805
+# ╠═a51a4b1a-111b-4e9f-8e82-7d275755a2df
+# ╠═81ec442b-d70e-4acb-8861-997558e56edb
 # ╟─e6b187ad-4e1d-465e-b5fe-a0c182dd11e7
 # ╠═8ae2a9d6-536b-426f-9a3f-54b2270b15aa
 # ╠═68bbfbf5-85ee-4d02-b20a-a3339467f266
