@@ -78,7 +78,7 @@ begin
 	if contains(log_file, "http")
 		global df_log = CSV.read(download(log_file), DataFrame)
 	else
-		global df_log = CSV.read(log_file, DataFrame)
+		global df_log = CSV.read(log_file, DataFrame; header=3)
 
 	end
 
@@ -186,23 +186,6 @@ end;
 # ╔═╡ 886c9748-b423-4d68-acb4-2b32c65ebc1d
 phantom_ok = Float64.(convert(Array, phantom[:, :, good_slices_range, static_range]));
 
-# ╔═╡ de4e1b7c-2a70-499d-a375-87c8aaca0ad3
-begin
-	# Get a list of all column names
-	colnames = names(df_log)
-	
-	# Find the index of the first column whose name contains "Tmot"
-	tmot_col_index = findfirst(name -> occursin("tmot", lowercase.(name)), colnames)
-	
-	max_motion = findmax(df_log[!, tmot_col_index])[1]
-	slices_without_motion = df_acq[!,"Slice"][df_acq[!,"Time"] .> max_motion]
-	slices_ok = sort(
-		slices_without_motion[parse(Int, first(g_slices))-1 .<= slices_without_motion .<= parse(Int, last(g_slices))+1]
-	)
-	slices_wm = [x in slices_ok ? 1 : 0 for x in good_slices]
-	slices_df = DataFrame(Dict(:slice => good_slices, :no_motion => slices_wm))
-end
-
 # ╔═╡ d0c6dc6d-b85f-4f76-a478-02fcd9484344
 md"""
 ## Calculate Average Static Phantom
@@ -222,23 +205,6 @@ phantom_header.dim = (length(size(avg_static_phantom)), size(avg_static_phantom)
 
 # ╔═╡ f57cb424-9dd2-4432-8485-034ded569f13
 ave = BDTools.genimg(avg_static_phantom[:, :, c_slider]);
-
-# ╔═╡ e570adef-e2d1-4080-86e8-4ac57ad8a6f0
-let
-	f = Figure(resolution=(1000, 700))
-	ax = CairoMakie.Axis(
-		f[1, 1],
-		title="Raw 4D fMRI"
-	)
-	heatmap!(phantom[:, :, slices_df[c_slider, 2], d_slider], colormap=:grays)
-
-	ax = CairoMakie.Axis(
-		f[1, 2],
-		title="Average Static Image"
-	)
-	heatmap!(ave[:, :], colormap=:grays)
-	f
-end
 
 # ╔═╡ a649bf25-f3e4-44b4-bb3e-266a456f2f21
 begin
@@ -397,6 +363,21 @@ md"""
 # Milestone 2
 """
 
+# ╔═╡ bc5bca47-e67d-4e4d-aa95-176ca92cbdf3
+md"""
+## Choose Motion Start Time
+"""
+
+# ╔═╡ c770e399-f374-4af9-8ea2-2d9b301d9947
+md"""
+Typically, motion starts at `Seq#` 201 but choose the time by visually verifying the `Seq#` below:
+
+Motion Start Sequence: $(@bind motion_start PlutoUI.Slider(df_log[!, "Seq#"]; show_value = true, default = 201))
+"""
+
+# ╔═╡ 7b4bf6a7-5424-4a13-b4a6-f838b3b73add
+df_log[200:210, :]
+
 # ╔═╡ e4097235-99d6-4efc-a670-a630938c8731
 md"""
 ## Fit Center & Radius of Inner Cylinder for Each Slice
@@ -411,9 +392,41 @@ End Corrected Slice: $(@bind rot_slices2 PlutoUI.Slider(axes(avg_static_phantom,
 
 # ╔═╡ e3134051-6309-4fbd-9ca5-2c610346d438
 begin
+	# Get a list of all column names
+	colnames = names(df_log)
+	
+	# Find the index of the first column whose name contains "Tmot"
+	tmot_col_index = findfirst(name -> occursin("tmot", lowercase.(name)), colnames)
+
+	max_motion = findmax(df_log[!, tmot_col_index])[1]
+	max_motion2 = df_log[findall(x -> x == motion_start, df_log[!, "Seq#"]), tmot_col_index]
+	slices_without_motion = df_acq[!,"Slice"][df_acq[!,"Time"] .> max_motion2]
+	slices_ok = sort(
+		slices_without_motion[parse(Int, first(g_slices))-1 .<= slices_without_motion .<= parse(Int, last(g_slices))+1]
+	)
+	slices_wm = [x in slices_ok ? 1 : 0 for x in good_slices]
+	slices_df = DataFrame(Dict(:slice => good_slices, :no_motion => slices_wm))
+
 	new_slices_df = slices_df[rot_slices1:rot_slices2, :]
 	bfc_phantom2 = bfc_phantom[:, :, rot_slices1:rot_slices2, :]
 	sph = staticphantom(bfc_phantom2, Matrix(new_slices_df))
+end
+
+# ╔═╡ e570adef-e2d1-4080-86e8-4ac57ad8a6f0
+let
+	f = Figure(resolution=(1000, 700))
+	ax = CairoMakie.Axis(
+		f[1, 1],
+		title="Raw 4D fMRI"
+	)
+	heatmap!(phantom[:, :, slices_df[c_slider, 2], d_slider], colormap=:grays)
+
+	ax = CairoMakie.Axis(
+		f[1, 2],
+		title="Average Static Image"
+	)
+	heatmap!(ave[:, :], colormap=:grays)
+	f
 end
 
 # ╔═╡ c5b32d5f-773e-44c4-abb4-95ed33d607d5
@@ -510,12 +523,15 @@ begin
 	
 	quant = 2^13
 	pos = df_log[!, pos_col_indices]
-	firstrotidx = 200
+	firstrotidx = motion_start
 	angles = [a > π ? a-2π : a for a in (pos ./ quant).*(2π)]
 end
 
 # ╔═╡ 29a143eb-b77b-40b7-ab7b-b219381420f2
 gt = BDTools.groundtruth(sph, bfc_phantom2, angles; startmotion=firstrotidx, threshold=.95);
+
+# ╔═╡ e6c2da4c-7f27-441f-b6da-688034824591
+
 
 # ╔═╡ f7e9166a-340f-4950-b5b0-51f2313b3e8b
 md"""
@@ -548,6 +564,32 @@ md"""
 md"""
 ## Calculate Quality Control Measures
 """
+
+# ╔═╡ dda13b35-f33a-410a-9ff6-8431aafc9cc8
+md"""
+### 1. ST-SNR
+"""
+
+# ╔═╡ 18512280-3716-47f3-94ee-e74e0ce28805
+begin
+	parseval_gt = sum(gt.data .^ 2)
+	parseval_bfc = sum(bfc_phantom2[:, :, :, 1] .^ 2)
+	parseval_gt / parseval_bfc
+end
+
+# ╔═╡ e6b187ad-4e1d-465e-b5fe-a0c182dd11e7
+md"""
+### 2. Dynamic Fidelity
+"""
+
+# ╔═╡ 8ae2a9d6-536b-426f-9a3f-54b2270b15aa
+# cor(vec(gt.data), vec(bfc_phantom2[:, :, :, 1]))
+
+# ╔═╡ 68bbfbf5-85ee-4d02-b20a-a3339467f266
+gt
+
+# ╔═╡ 60aa5791-f1a9-4ccf-841f-0a60c091b4a9
+size(bfc_phantom2)
 
 # ╔═╡ cb058e2b-f874-4324-a188-292bf303e5b2
 md"""
@@ -592,7 +634,6 @@ md"""
 # ╟─32292190-1124-4087-b728-8f998e3c3814
 # ╠═15681a0d-a217-42af-be91-6edeff37dfaa
 # ╠═886c9748-b423-4d68-acb4-2b32c65ebc1d
-# ╠═de4e1b7c-2a70-499d-a375-87c8aaca0ad3
 # ╟─d0c6dc6d-b85f-4f76-a478-02fcd9484344
 # ╠═d5faa518-5dc6-4662-990d-84b21eccfdee
 # ╠═db78c6f2-5afe-4d12-b39f-f6b4286f2d17
@@ -620,6 +661,9 @@ md"""
 # ╟─da492d58-6fa3-42c6-9d46-07eddcba5466
 # ╠═6fb79bd9-da41-4bf8-92f4-12e10a4d9867
 # ╟─91980ceb-92ce-47f1-999c-25ebe4701ebb
+# ╟─bc5bca47-e67d-4e4d-aa95-176ca92cbdf3
+# ╟─c770e399-f374-4af9-8ea2-2d9b301d9947
+# ╟─7b4bf6a7-5424-4a13-b4a6-f838b3b73add
 # ╟─e4097235-99d6-4efc-a670-a630938c8731
 # ╠═e3134051-6309-4fbd-9ca5-2c610346d438
 # ╠═c5b32d5f-773e-44c4-abb4-95ed33d607d5
@@ -640,10 +684,17 @@ md"""
 # ╟─1bf8f6e1-a17a-4b9f-a334-7a0d7ce217a6
 # ╠═d92f6df1-58de-4ab4-ae43-2e19cbca10d3
 # ╠═29a143eb-b77b-40b7-ab7b-b219381420f2
+# ╠═e6c2da4c-7f27-441f-b6da-688034824591
 # ╟─f7e9166a-340f-4950-b5b0-51f2313b3e8b
 # ╟─849d31df-d064-4126-85c4-52cb65781c90
 # ╟─1a274a20-d067-4682-afb2-5abf5b7626f6
 # ╟─56785b5d-eb3d-4e13-9d9e-fc82ab6e5c54
+# ╟─dda13b35-f33a-410a-9ff6-8431aafc9cc8
+# ╠═18512280-3716-47f3-94ee-e74e0ce28805
+# ╟─e6b187ad-4e1d-465e-b5fe-a0c182dd11e7
+# ╠═8ae2a9d6-536b-426f-9a3f-54b2270b15aa
+# ╠═68bbfbf5-85ee-4d02-b20a-a3339467f266
+# ╠═60aa5791-f1a9-4ccf-841f-0a60c091b4a9
 # ╟─cb058e2b-f874-4324-a188-292bf303e5b2
 # ╟─1edf262c-2bde-45ff-ba02-c14ab481cfe3
 # ╟─c2d61056-7ef3-48c8-bc6b-a856ada983e1

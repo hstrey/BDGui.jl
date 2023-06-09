@@ -198,7 +198,8 @@ if uploaded
 	if contains(log_file, "http")
 		global df_log = CSV.read(download(log_file), DataFrame)
 	else
-		global df_log = CSV.read(log_file, DataFrame)
+		# global df_log = CSV.read(log_file, DataFrame)
+		global df_log = CSV.read(log_file, DataFrame; header = 3)
 
 	end
 
@@ -537,12 +538,6 @@ Select Slice: $(@bind z2 PlutoUI.Slider(axes(sph.data, 3); default=3, show_value
 """
 end; end
 
-# ╔═╡ 7eaa6780-f266-4e95-9631-6dca9fb4df1c
-findmax(df_log[!, tmot_col_index])
-
-# ╔═╡ 8cf70bc4-49a1-4a7c-a232-7fb343ece8d1
-max_mot2 = df_log[findall(x -> x == motion_start, df_log[!, "Seq#"]), tmot_col_index]
-
 # ╔═╡ 4b1db7c4-ee32-4db5-b8f8-61b51d8329a4
 md"""
 #### (Code) Rotations
@@ -712,8 +707,6 @@ end
 # ╠═d8412662-ac5a-46e4-95ed-e68bdedd0732
 # ╟─c8946acd-3765-4f4b-9664-9d73c4b3eb7e
 # ╠═fe339ac3-e62d-4e28-85c9-14ef89bea82c
-# ╠═7eaa6780-f266-4e95-9631-6dca9fb4df1c
-# ╠═8cf70bc4-49a1-4a7c-a232-7fb343ece8d1
 # ╟─4b1db7c4-ee32-4db5-b8f8-61b51d8329a4
 # ╠═91899626-c34f-4534-820c-f34f795670de
 # ╟─c1d3b670-58db-4cd1-a04b-4a4cc61a2b3f
