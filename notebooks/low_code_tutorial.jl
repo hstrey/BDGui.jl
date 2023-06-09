@@ -199,7 +199,7 @@ if uploaded
 		global df_log = CSV.read(download(log_file), DataFrame)
 	else
 		# global df_log = CSV.read(log_file, DataFrame)
-		global df_log = CSV.read(log_file, DataFrame; header = 3)
+		global df_log = CSV.read(log_file, DataFrame)
 
 	end
 
