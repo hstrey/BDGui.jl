@@ -193,28 +193,57 @@ confirm(upload_files("Upload Log File: ", "Upload Acquisition Times: ", "Upload 
 # ╔═╡ e69d1614-2511-4776-8ac4-5f94a947e498
 uploaded = log_file != "" && acq_file != "" && nifti_file != ""
 
+# ╔═╡ 7283f0fd-16ac-4349-9675-6edc1ddfadfc
+function load_logs(log_file)
+	if contains(log_file, "http")
+		df_log = CSV.read(download(log_file), DataFrame; silencewarnings = true)
+		cols = names(df_log)
+		if !any(contains.(lowercase.(cols), "tmot"))
+			df_log = CSV.read(download(log_file), DataFrame; header=3, silencewarnings = true)
+		end
+	else
+		df_log = CSV.read(log_file, DataFrame; silencewarnings = true)
+		cols = names(df_log)
+		if !any(contains.(lowercase.(cols), "tmot"))
+			df_log = CSV.read(log_file, DataFrame; header=3, silencewarnings = true)
+		end
+	end
+	return df_log
+end
+
+# ╔═╡ 5f339c15-3538-49d1-8c32-7d8670baef86
+function load_acqs(acq_file)
+	if contains(acq_file, "http")
+		df_acq = CSV.read(download(acq_file), DataFrame)
+	else
+		df_acq = CSV.read(acq_file, DataFrame)
+	end
+	return df_acq
+end
+
+# ╔═╡ 15a220d0-e1a8-40d3-bec4-f9563c3424be
+function load_phantom(nifti_file)
+	if contains(nifti_file, "http")
+		phantom = niread(download(nifti_file))
+	else
+		phantom = niread(nifti_file)
+	end
+	return phantom
+end
+
 # ╔═╡ 6b4e39ab-9fe8-4166-a7a0-ceccf2da58a7
 if uploaded
-	if contains(log_file, "http")
-		global df_log = CSV.read(download(log_file), DataFrame)
-	else
-		# global df_log = CSV.read(log_file, DataFrame)
-		global df_log = CSV.read(log_file, DataFrame)
+	df_log = load_logs(log_file)
+	df_acq = load_acqs(acq_file)
+	phantom = load_phantom(nifti_file)
 
-	end
+	time_points = size(phantom, 4)
+	sequences = length(df_log[!, "Seq#"])
 
-	if contains(acq_file, "http")
-		global df_acq = CSV.read(download(acq_file), DataFrame)
-	else
-		global df_acq = CSV.read(acq_file, DataFrame)
-
-	end
-	
-	if contains(nifti_file, "http")
-		global phantom = niread(download(nifti_file))
-	else
-		global phantom = niread(nifti_file)
-
+	if time_points < sequences
+		df_log = df_log[1:time_points, :]
+	elseif time_points > sequences
+		phantom = phantom[:, :, :, 1:sequences]
 	end
 
 	phantom_header = phantom.header
@@ -692,6 +721,9 @@ end
 # ╠═4ec60d96-3269-43ac-9c55-8b803673456b
 # ╠═e69d1614-2511-4776-8ac4-5f94a947e498
 # ╠═6b4e39ab-9fe8-4166-a7a0-ceccf2da58a7
+# ╠═7283f0fd-16ac-4349-9675-6edc1ddfadfc
+# ╠═5f339c15-3538-49d1-8c32-7d8670baef86
+# ╠═15a220d0-e1a8-40d3-bec4-f9563c3424be
 # ╟─63caf69b-1194-450f-99d1-aa776a3d9bb3
 # ╠═09db762a-5d46-45e1-a024-e1e1a986f8cf
 # ╠═09e300b5-7ae8-417a-8bb8-87c72750a5c9

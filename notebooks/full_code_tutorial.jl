@@ -73,27 +73,59 @@ end
 # ╔═╡ d2e0accd-2395-4115-8842-e9176a0a132e
 confirm(upload_files("Upload Log File: ", "Upload Acquisition Times: ", "Upload Phantom Scan: "))
 
+# ╔═╡ 135e05ae-4f61-4d45-a250-5095b20de54d
+function load_logs(log_file)
+	if contains(log_file, "http")
+		df_log = CSV.read(download(log_file), DataFrame; silencewarnings = true)
+		cols = names(df_log)
+		if !any(contains.(lowercase.(cols), "tmot"))
+			df_log = CSV.read(download(log_file), DataFrame; header=3, silencewarnings = true)
+		end
+	else
+		df_log = CSV.read(log_file, DataFrame; silencewarnings = true)
+		cols = names(df_log)
+		if !any(contains.(lowercase.(cols), "tmot"))
+			df_log = CSV.read(log_file, DataFrame; header=3, silencewarnings = true)
+		end
+	end
+	return df_log
+end
+
+# ╔═╡ 40543dc9-4b49-4085-8816-cb819eee4f84
+function load_acqs(acq_file)
+	if contains(acq_file, "http")
+		df_acq = CSV.read(download(acq_file), DataFrame)
+	else
+		df_acq = CSV.read(acq_file, DataFrame)
+	end
+	return df_acq
+end
+
+# ╔═╡ 1fd4d4ac-5471-4cc8-b133-366c1772273a
+function load_phantom(nifti_file)
+	if contains(nifti_file, "http")
+		phantom = niread(download(nifti_file))
+	else
+		phantom = niread(nifti_file)
+	end
+	return phantom
+end
+
 # ╔═╡ 19b12720-4bd9-4790-84d0-9cf660d8ed70
 begin
-	if contains(log_file, "http")
-		global df_log = CSV.read(download(log_file), DataFrame)
-	else
-		global df_log = CSV.read(log_file, DataFrame)
+	df_log = load_logs(log_file)
 
-	end
-
-	if contains(acq_file, "http")
-		global df_acq = CSV.read(download(acq_file), DataFrame)
-	else
-		global df_acq = CSV.read(acq_file, DataFrame)
-
-	end
+	df_acq = load_acqs(acq_file)
 	
-	if contains(nifti_file, "http")
-		global phantom = niread(download(nifti_file))
-	else
-		global phantom = niread(nifti_file)
+	phantom = load_phantom(nifti_file)
 
+	time_points = size(phantom, 4)
+	sequences = length(df_log[!, "Seq#"])
+
+	if time_points < sequences
+		df_log = df_log[1:time_points, :]
+	elseif time_points > sequences
+		phantom = phantom[:, :, :, 1:sequences]
 	end
 end;
 
@@ -574,12 +606,6 @@ begin
 	parseval_gt / parseval_bfc
 end
 
-# ╔═╡ a51a4b1a-111b-4e9f-8e82-7d275755a2df
-bfc_phantom2
-
-# ╔═╡ 81ec442b-d70e-4acb-8861-997558e56edb
-gt.data
-
 # ╔═╡ e6b187ad-4e1d-465e-b5fe-a0c182dd11e7
 md"""
 ### 2. Dynamic Fidelity
@@ -587,12 +613,6 @@ md"""
 
 # ╔═╡ 8ae2a9d6-536b-426f-9a3f-54b2270b15aa
 # cor(vec(gt.data), vec(bfc_phantom2[:, :, :, 1]))
-
-# ╔═╡ 68bbfbf5-85ee-4d02-b20a-a3339467f266
-gt
-
-# ╔═╡ 60aa5791-f1a9-4ccf-841f-0a60c091b4a9
-size(bfc_phantom2)
 
 # ╔═╡ cb058e2b-f874-4324-a188-292bf303e5b2
 md"""
@@ -622,6 +642,9 @@ md"""
 # ╟─d90a11ce-52fd-48e4-9cb1-755bc2b29e51
 # ╟─d2e0accd-2395-4115-8842-e9176a0a132e
 # ╠═19b12720-4bd9-4790-84d0-9cf660d8ed70
+# ╠═135e05ae-4f61-4d45-a250-5095b20de54d
+# ╠═40543dc9-4b49-4085-8816-cb819eee4f84
+# ╠═1fd4d4ac-5471-4cc8-b133-366c1772273a
 # ╠═b0e58a0a-c6a7-4e4d-8a14-efbfbf7251e9
 # ╠═3dcddb92-6277-46d2-9e34-3863f0a60731
 # ╟─7f2148e2-8649-4fb6-a50b-3dc54bca7505
@@ -693,12 +716,8 @@ md"""
 # ╟─56785b5d-eb3d-4e13-9d9e-fc82ab6e5c54
 # ╟─dda13b35-f33a-410a-9ff6-8431aafc9cc8
 # ╠═18512280-3716-47f3-94ee-e74e0ce28805
-# ╠═a51a4b1a-111b-4e9f-8e82-7d275755a2df
-# ╠═81ec442b-d70e-4acb-8861-997558e56edb
 # ╟─e6b187ad-4e1d-465e-b5fe-a0c182dd11e7
 # ╠═8ae2a9d6-536b-426f-9a3f-54b2270b15aa
-# ╠═68bbfbf5-85ee-4d02-b20a-a3339467f266
-# ╠═60aa5791-f1a9-4ccf-841f-0a60c091b4a9
 # ╟─cb058e2b-f874-4324-a188-292bf303e5b2
 # ╟─1edf262c-2bde-45ff-ba02-c14ab481cfe3
 # ╟─c2d61056-7ef3-48c8-bc6b-a856ada983e1
