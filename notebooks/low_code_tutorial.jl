@@ -18,7 +18,7 @@ end
 # ╠═╡ show_logs = false
 begin
 	using Pkg
-	Pkg.activate(mktempdir())
+	Pkg.activate(temp = true)
 	Pkg.add("CairoMakie")
 	Pkg.add("NIfTI")
 	Pkg.add("PlutoUI")
@@ -243,9 +243,11 @@ if uploaded
 	if time_points < sequences
 		df_log = df_log[1:time_points, :]
 	elseif time_points > sequences
-		phantom = phantom[:, :, :, 1:sequences]
+		header = phantom.header
+		header.dim = (header.dim[1:4]..., sequences, header.dim[6:end]...)
+		_phantom = phantom[:, :, :, 1:sequences]
+		phantom = NIVolume(phantom.header, _phantom)
 	end
-
 	phantom_header = phantom.header
 	vsize = voxel_size(phantom.header) # mm
 end;
