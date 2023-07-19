@@ -91,62 +91,28 @@ md"""
 Enter File Path to Save B-field Corrected Phantom: $(@bind output_dir confirm(TextField()))
 """
 
-# ╔═╡ 309bb6b3-c2d1-4212-8a10-8905053637c0
+# ╔═╡ a72f4410-72dd-4ca1-b829-eb59ea03540c
+sz_ = (96, 96, 14, 600)
+
+# ╔═╡ 24e9a37b-07be-44fd-87ac-2061d5787ec1
+function remove_outliers(x, outlier_constant)
+    a = x
+    upper_quartile = quantile(a, 0.75)
+    lower_quartile = quantile(a, 0.25)
+    IQR = (upper_quartile - lower_quartile) * outlier_constant
+    quartile_set = (lower_quartile - IQR, upper_quartile + IQR)
+    result = a[(a .>= quartile_set[1]) .& (a .<= quartile_set[2])]
+    return result
+end
+
+# ╔═╡ 61e81063-a481-44ba-8c8b-126fbdec2fac
 
 
-# ╔═╡ 99c1f6e4-bab5-4bb6-967e-3314ced59c20
-
-
-# ╔═╡ 1e5bd23f-44eb-4067-9665-6063c021af88
-
-
-# ╔═╡ 6059028f-1da8-41f5-bf9a-02fbfdf3340a
-
-
-# ╔═╡ 18e8f0ed-54b8-47dc-9772-9aee0e7bba61
-
-
-# ╔═╡ 7c8ee3bc-26e2-43a2-8a9d-316f574c6db6
-
-
-# ╔═╡ 4527b616-b2d9-49f0-a04c-ba5cf5c8f53e
-
-
-# ╔═╡ fbe3e902-7c5d-4995-b806-04099b8fdbe0
-
-
-# ╔═╡ 209610ef-c877-4274-b650-3380a8dcde0a
-
-
-# ╔═╡ 62e1727a-e953-4376-b3d2-d057c328e5f4
-
-
-# ╔═╡ 798eb8fc-b6d7-40db-8e0e-f3882776ec06
-
-
-# ╔═╡ 106eaca9-9a4b-4b8c-8d4e-9e6b08cef853
-
-
-# ╔═╡ bc336e56-1f28-4973-846e-caabb22be124
-
-
-# ╔═╡ 2f0c7901-61bd-4d97-bc4f-b570bad93d55
-
-
-# ╔═╡ 2ff5cc70-0e4f-431c-b102-34cc2fc355ec
-
-
-# ╔═╡ 86e3f51e-7ffa-4834-ab4a-91bb1cf5744e
-
-
-# ╔═╡ 435f4214-dd77-4c6d-b9e8-19312b36e45f
-
-
-# ╔═╡ ad1eb48a-e9f9-4283-a01d-905b6aca2f03
-
-
-# ╔═╡ 6e61f071-de99-429d-92b2-ec7a5c7fc7ad
-
+# ╔═╡ 77d6db81-955a-446e-be28-5b3bb2faeb9b
+html"""
+<!-- I replaced the ~20 cells with this, it's just a spacer! Update the height property to change how much space to include -->
+<div style="height: 1000px"/>
+"""
 
 # ╔═╡ f8278545-bb5d-4f91-8d56-eeab4e7e4929
 md"""
@@ -314,26 +280,35 @@ $(@bind bfc_ready PlutoUI.CheckBox())
 end
 
 # ╔═╡ 98ad625f-ae5c-4ed4-8fec-0aef6abd12a1
-if @isdefined bfc_ready; if bfc_ready == true
+if (@isdefined bfc_ready) && (bfc_ready == true)
 md"""
 Typically, motion starts at `Seq#` 201 but choose the time by visually verifying the `Seq#` below:
 
 Motion Start Sequence: $(@bind motion_start PlutoUI.Slider(df_log[!, "Seq#"]; show_value = true, default = 201))
 """
-end; end
+end
 
 # ╔═╡ 4100ec34-be7f-4c61-90bd-58bd0cb942ff
-if @isdefined bfc_ready; if bfc_ready == true
+if (@isdefined bfc_ready) && (bfc_ready == true)
 	df_log[200:210, :]
-end; end
+end
 
 # ╔═╡ 466194a6-bec5-4bec-9e00-55cdc3d7c378
-if @isdefined bfc_ready; if bfc_ready == true
+if (@isdefined bfc_ready) && (bfc_ready == true)
 	md"""
 	If the center fitting process looks accurate, check the box:
 	$(@bind rot_ready PlutoUI.CheckBox())
 	"""
-end; end
+end
+
+# ╔═╡ 0c5d04fc-b921-405c-8c3b-9ecb64965edf
+if (@isdefined rot_ready) && (rot_ready == true)
+md"""
+If the phantom is rotating the wrong direction, check the box below to flip the angles for the `groundtruth` phantom
+
+Flip Angles: $(@bind flipangles PlutoUI.CheckBox())
+"""
+end
 
 # ╔═╡ 7a5d5d09-db35-427b-9228-7b9cfa2522cf
 function static_slice_info(good_slices_first, good_slices_last)
@@ -388,7 +363,7 @@ if slices
 end;
 
 # ╔═╡ 6402c226-2041-41bf-b7e9-3678bd211807
-if @isdefined bfc_ready; if bfc_ready == true
+if (@isdefined bfc_ready) && (bfc_ready == true)
 md"""
 If the plot below shows that certain `Centers` are far from the predicted axis, these slices might need to be removed from the fitting. This can be done by dragging the sliders below
 
@@ -396,7 +371,7 @@ Beginning Corrected Slice: $(@bind rot_slices1 PlutoUI.Slider(axes(avg_static_ph
 
 End Corrected Slice: $(@bind rot_slices2 PlutoUI.Slider(axes(avg_static_phantom, 3); show_value = true, default = last(axes(avg_static_phantom, 3))))
 """
-end; end
+end
 
 # ╔═╡ 89326ccf-1274-473f-b077-1e3dc67adf49
 md"""
@@ -512,7 +487,7 @@ md"""
 """
 
 # ╔═╡ fe339ac3-e62d-4e28-85c9-14ef89bea82c
-if @isdefined bfc_ready; if bfc_ready == true
+if (@isdefined bfc_ready) && (bfc_ready == true)
 	# Get a list of all column names
 	colnames = names(df_log)
 	
@@ -540,10 +515,10 @@ if @isdefined bfc_ready; if bfc_ready == true
 
 	# Fitted Centers
 	xy = BDTools.fittedcenters(sph);
-end; end;
+end;
 
 # ╔═╡ fb7ef4c9-2c45-486e-bbf9-e3c8a6e32b62
-if @isdefined bfc_ready; if bfc_ready == true
+if (@isdefined bfc_ready) && (bfc_ready == true)
 	let
 		if !@isdefined ecs
 			@warn "Not enough data points. Check that the acqusition timings are correct"
@@ -557,17 +532,76 @@ if @isdefined bfc_ready; if bfc_ready == true
 			f
 		end
 	end
-end; end
+end
 
 # ╔═╡ f3cbe7c3-2caf-4bad-baf1-954b1f79f3e6
-if @isdefined rot_ready; if rot_ready == true
+if (@isdefined rot_ready) && (rot_ready == true)
 md"""
 Select Angle of Rotation: $(@bind degrees PlutoUI.Slider(1:360, show_value = true, default = 20))
 
 
 Select Slice: $(@bind z2 PlutoUI.Slider(axes(sph.data, 3); default=3, show_value=true))
 """
-end; end
+end
+
+# ╔═╡ e401ab6a-1169-45ac-a9ac-af4ca28c33ea
+if (@isdefined rot_ready) && (rot_ready == true)
+	# Find the index of the first column whose name contains "EndPos" or "CurPos"
+	pos_col_indices = first([index for (index, name) in enumerate(colnames) if occursin("endpos", lowercase.(name)) || occursin("curpos", lowercase.(name))])
+	
+	quant = 2^13
+	pos = df_log[!, pos_col_indices]
+	firstrotidx = motion_start
+	angles = [a > π ? a-2π : a for a in (pos ./ quant).*(2π)]
+	
+	gt = groundtruth(sph, bfc_phantom2, angles; startmotion=firstrotidx, threshold=.95, flipangles = flipangles)
+end;
+
+# ╔═╡ 5965bf01-a4a9-4b36-aa00-47cfca4f4ba2
+if (@isdefined rot_ready) && (rot_ready == true)
+	md"""
+	Choose Centerpoint Slice: $(@bind z4 PlutoUI.Slider(axes(gt.data, 3); default=3, show_value=true))
+	"""
+end
+
+# ╔═╡ 0b7b88cf-7729-44d9-b297-8795734b8908
+orig = gt.data[:, :, :, 1];
+
+# ╔═╡ 52214008-efd6-4f6a-b438-178c3caca227
+pred = gt.data[:, :, :, 2];
+
+# ╔═╡ b4e7d29f-29a9-482d-85d4-7e31033fcc53
+if (@isdefined rot_ready) && (rot_ready == true)
+	let 
+		x = Int(round(xy[z4, 1])) + 1
+		y = Int(round(xy[z4, 2])) + 1
+		z = z4 # get coordinates
+	    cidx = gt[x, y] # get a masked coordinate index
+	    cidx === nothing && return
+	
+	    # plot data
+		f = Figure()
+		ax = CairoMakie.Axis(
+			f[1, 1],
+			title = "Intensity (x=$x, y=$y, z=$z)",
+			xlabel = "Time Point",
+			ylabel = "Intensity"
+		)
+	    lines!(gt[x, y, z], label="prediction")
+	    lines!(gt[x, y, z, true], label="original")
+		axislegend(ax, position=:lt)
+		f
+	end
+end
+
+# ╔═╡ 93ba4b85-bbb6-4468-a24a-2a73c68a0ac6
+sph
+
+# ╔═╡ a0627d7c-e389-4b80-87ad-428cf100f92f
+size(bfc_phantom2)
+
+# ╔═╡ 7663e082-4546-4584-9748-f8de0cbbaab6
+size(sph)
 
 # ╔═╡ 4b1db7c4-ee32-4db5-b8f8-61b51d8329a4
 md"""
@@ -575,7 +609,7 @@ md"""
 """
 
 # ╔═╡ 91899626-c34f-4534-820c-f34f795670de
-if @isdefined rot_ready; if rot_ready == true
+if (@isdefined bfc_ready) && (rot_ready == true)
 	sz = size(bfc_phantom2)
 	
 	α = deg2rad(degrees)
@@ -588,10 +622,10 @@ if @isdefined rot_ready; if rot_ready == true
 	# generate image
 	gen = sim |> BDTools.genimg
 	ave2 = BDTools.genimg(sph.data[:, :, z2])
-end; end;
+end;
 
 # ╔═╡ 5afc0ac5-659f-4995-b840-a25b656c0d17
-if @isdefined rot_ready; if rot_ready == true
+if (@isdefined rot_ready) && (rot_ready == true)
 	let
 		f = Figure(resolution=(1000, 700))
 		ax = CairoMakie.Axis(
@@ -607,51 +641,12 @@ if @isdefined rot_ready; if rot_ready == true
 		heatmap!(gen[:, :], colormap=:grays)
 		f
 	end
-end; end
+end
 
 # ╔═╡ c1d3b670-58db-4cd1-a04b-4a4cc61a2b3f
 md"""
 #### (Code) Check Rotated Predictions
 """
-
-# ╔═╡ e401ab6a-1169-45ac-a9ac-af4ca28c33ea
-if @isdefined rot_ready; if rot_ready == true
-	# Find the index of the first column whose name contains "EndPos" or "CurPos"
-	pos_col_indices = first([index for (index, name) in enumerate(colnames) if occursin("endpos", lowercase.(name)) || occursin("curpos", lowercase.(name))])
-	
-	quant = 2^13
-	pos = df_log[!, pos_col_indices]
-	firstrotidx = motion_start
-	angles = [a > π ? a-2π : a for a in (pos ./ quant).*(2π)]
-	
-	gt = groundtruth(sph, bfc_phantom2, angles; startmotion=firstrotidx, threshold=.95)
-end; end;
-
-# ╔═╡ 5965bf01-a4a9-4b36-aa00-47cfca4f4ba2
-if @isdefined rot_ready; if rot_ready == true
-	md"""
-	Choose Centerpoint Slice: $(@bind z4 PlutoUI.Slider(axes(gt.data, 3); default=3, show_value=true))
-	"""
-end; end
-
-# ╔═╡ b4e7d29f-29a9-482d-85d4-7e31033fcc53
-if @isdefined rot_ready; if rot_ready == true
-	let 
-		x = Int(round(xy[z4, 1])) + 1
-		y = Int(round(xy[z4, 2])) + 1
-		z = z4 # get coordinates
-	    cidx = gt[x, y] # get a masked coordinate index
-	    cidx === nothing && return
-	
-	    # plot data
-		f = Figure()
-		ax = CairoMakie.Axis(f[1, 1])
-	    lines!(gt[x, y, z], label="prediction", title="Intensity (x=$x, y=$y, z=$z)")
-	    lines!(gt[x, y, z, true], label="original")
-		axislegend(ax, position=:lt)
-		f
-	end
-end; end
 
 # ╔═╡ 9248d105-2b48-42ab-b770-8c2c36923503
 md"""
@@ -692,29 +687,20 @@ end
 # ╟─f3cbe7c3-2caf-4bad-baf1-954b1f79f3e6
 # ╟─5afc0ac5-659f-4995-b840-a25b656c0d17
 # ╟─70ebb35e-1dd2-4a2e-ba9a-524cacfda3ae
+# ╟─0c5d04fc-b921-405c-8c3b-9ecb64965edf
 # ╟─5965bf01-a4a9-4b36-aa00-47cfca4f4ba2
 # ╟─b4e7d29f-29a9-482d-85d4-7e31033fcc53
 # ╟─e30df5c9-818c-400c-a5f8-28bfb12eb4c8
 # ╟─8e4185b7-103b-4cdd-9af6-7f97d03ea25c
-# ╟─309bb6b3-c2d1-4212-8a10-8905053637c0
-# ╟─99c1f6e4-bab5-4bb6-967e-3314ced59c20
-# ╟─1e5bd23f-44eb-4067-9665-6063c021af88
-# ╟─6059028f-1da8-41f5-bf9a-02fbfdf3340a
-# ╟─18e8f0ed-54b8-47dc-9772-9aee0e7bba61
-# ╟─7c8ee3bc-26e2-43a2-8a9d-316f574c6db6
-# ╟─4527b616-b2d9-49f0-a04c-ba5cf5c8f53e
-# ╟─fbe3e902-7c5d-4995-b806-04099b8fdbe0
-# ╟─209610ef-c877-4274-b650-3380a8dcde0a
-# ╟─62e1727a-e953-4376-b3d2-d057c328e5f4
-# ╟─798eb8fc-b6d7-40db-8e0e-f3882776ec06
-# ╟─106eaca9-9a4b-4b8c-8d4e-9e6b08cef853
-# ╟─bc336e56-1f28-4973-846e-caabb22be124
-# ╟─2f0c7901-61bd-4d97-bc4f-b570bad93d55
-# ╟─2ff5cc70-0e4f-431c-b102-34cc2fc355ec
-# ╟─86e3f51e-7ffa-4834-ab4a-91bb1cf5744e
-# ╟─435f4214-dd77-4c6d-b9e8-19312b36e45f
-# ╟─ad1eb48a-e9f9-4283-a01d-905b6aca2f03
-# ╟─6e61f071-de99-429d-92b2-ec7a5c7fc7ad
+# ╠═93ba4b85-bbb6-4468-a24a-2a73c68a0ac6
+# ╠═a0627d7c-e389-4b80-87ad-428cf100f92f
+# ╠═7663e082-4546-4584-9748-f8de0cbbaab6
+# ╠═a72f4410-72dd-4ca1-b829-eb59ea03540c
+# ╠═24e9a37b-07be-44fd-87ac-2061d5787ec1
+# ╠═0b7b88cf-7729-44d9-b297-8795734b8908
+# ╠═52214008-efd6-4f6a-b438-178c3caca227
+# ╠═61e81063-a481-44ba-8c8b-126fbdec2fac
+# ╟─77d6db81-955a-446e-be28-5b3bb2faeb9b
 # ╟─f8278545-bb5d-4f91-8d56-eeab4e7e4929
 # ╟─e885bd90-2474-48dc-bba6-d4b9aaebcacf
 # ╠═33b2249f-4dff-4eed-9be9-b0abff4074b1
