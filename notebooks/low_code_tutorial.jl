@@ -90,24 +90,24 @@ md"""
 
 # ╔═╡ 060ea16b-99bd-408f-be19-0ecc8d49b07e
 md"""
-### Visualize Time Series (Pixels)
+#### Visualize Time Series (Pixels)
 """
 
 # ╔═╡ d9c90d50-3db4-48d3-a43e-d112229bb8e0
 md"""
-### Remove Outliers
+#### Remove Outliers
 """
 
-# ╔═╡ 24e9a37b-07be-44fd-87ac-2061d5787ec1
-function remove_outliers(x, outlier_constant)
-    a = x
-    upper_quartile = quantile(a, 0.75)
-    lower_quartile = quantile(a, 0.25)
-    IQR = (upper_quartile - lower_quartile) * outlier_constant
-    quartile_set = (lower_quartile - IQR, upper_quartile + IQR)
-    result = a[(a .>= quartile_set[1]) .& (a .<= quartile_set[2])]
-    return result
-end
+# ╔═╡ a1acebbc-95b8-44b0-b93b-34275fc8cdd2
+md"""
+## Quality Measurements
+"""
+
+# ╔═╡ 69b59f4f-80ce-4291-a939-31121c74f5ec
+md"""
+- Pearson correlation coefficient
+- Helmut's Turing.jl script for the other part
+"""
 
 # ╔═╡ e30df5c9-818c-400c-a5f8-28bfb12eb4c8
 md"""
@@ -319,6 +319,28 @@ If the phantom is rotating the wrong direction, check the box below to flip the 
 
 Flip Angles: $(@bind flipangles PlutoUI.CheckBox())
 """
+end
+
+# ╔═╡ 49f9f28d-cf34-470a-b8dc-6d9cebb5fa2c
+if (@isdefined rot_ready) && (rot_ready == true)
+	md"""
+	Choose Threshold: $(@bind thresh PlutoUI.Slider(0.50:0.05:1.00; default = 0.50, show_value = true))
+	"""
+end
+
+# ╔═╡ caf7ed14-dbe6-4e69-8d19-156d6cfd09df
+if (@isdefined rot_ready) && (rot_ready == true)
+	md"""
+	If the threshold looks correct, check the box:
+	$(@bind skew_ready PlutoUI.CheckBox())
+	"""
+end
+
+# ╔═╡ 827ba5b1-d998-4099-8ff7-e24b95b89265
+if (@isdefined skew_ready) && (skew_ready == true)
+	md"""
+	Choose Outlier Removal Constant: $(@bind outlier_const PlutoUI.Slider(0:.5:10; default = 2, show_value = true))
+	"""
 end
 
 # ╔═╡ 7a5d5d09-db35-427b-9228-7b9cfa2522cf
@@ -610,29 +632,41 @@ if (@isdefined rot_ready) && (rot_ready == true)
 	firstrotidx = motion_start
 	angles = [a > π ? a-2π : a for a in (pos ./ quant).*(2π)]
 	
-	gt = groundtruth(sph, bfc_phantom2, angles; startmotion=firstrotidx, threshold=.95, flipangles = flipangles)
+	gt = groundtruth(sph, bfc_phantom2, angles; startmotion=firstrotidx, threshold = thresh, flipangles = flipangles)
 end;
 
 # ╔═╡ 5965bf01-a4a9-4b36-aa00-47cfca4f4ba2
 if (@isdefined rot_ready) && (rot_ready == true)
 	md"""
 	Choose Centerpoint Slice: $(@bind z4 PlutoUI.Slider(axes(gt.data, 3); default=3, show_value=true))
+
+	Choose `x` Offset: $(@bind x4 PlutoUI.Slider(-10:10; default=1, show_value=true))
+
+	Choose `y` Offset: $(@bind y4 PlutoUI.Slider(-10:10; default=1, show_value=true))
 	"""
 end
 
 # ╔═╡ b4e7d29f-29a9-482d-85d4-7e31033fcc53
 if (@isdefined rot_ready) && (rot_ready == true)
 	let 
-		x = Int(round(xy[z4, 1])) + 1
-		y = Int(round(xy[z4, 2])) + 1
+		x = Int(round(xy[z4, 1])) + x4
+		y = Int(round(xy[z4, 2])) + y4
 		z = z4 # get coordinates
 	    cidx = gt[x, y] # get a masked coordinate index
 	    cidx === nothing && return
 	
 	    # plot data
-		f = Figure()
+		f = Figure(resolution = (1200, 800))
+
 		ax = CairoMakie.Axis(
 			f[1, 1],
+			title="Average Static Image @ Slice $(z2)"
+		)
+		heatmap!(ave2, colormap=:grays)
+		scatter!([x], [y]; markercolor = :red, markersize = 20)
+		
+		ax = CairoMakie.Axis(
+			f[1, 2],
 			title = "Intensity (x=$x, y=$y, z=$z)",
 			xlabel = "Time Point",
 			ylabel = "Intensity"
@@ -644,87 +678,111 @@ if (@isdefined rot_ready) && (rot_ready == true)
 	end
 end
 
+# ╔═╡ 7060ebb2-a4f7-493f-8237-9704a5b60046
+if (@isdefined rot_ready) && (rot_ready == true)
+	md"""
+	Select Slice: $(@bind z5 PlutoUI.Slider(axes(gt.data, 3); show_value = true))
+	
+	Select Timepoint: $(@bind z6 PlutoUI.Slider(axes(gt.data, 1); show_value = true)) 
+	"""
+end
+
+# ╔═╡ 7d724a8b-6b67-4be7-8560-6405ca7b8b03
+md"""
+#### (Code) Visualize Time Series
+"""
+
 # ╔═╡ 31edf3b1-ad4a-46af-9ad4-52ca33df117d
-begin
+if (@isdefined rot_ready) && (rot_ready == true)
 	orig = gt.data[:, :, :, 1]
 	pred = gt.data[:, :, :, 2]
-end;
 
-# ╔═╡ ee1d998c-6c22-4bee-8ac8-dd69fe185527
-begin
 	orig_cat = vec(orig[:, :, :])
 	pred_cat = vec(pred[:, :, :])
 end;
 
-# ╔═╡ 24a9e088-00d3-46e1-b7b7-b46dd610731f
-let
-	f = Figure()
-	ax = Axis(
-		f[1, 1],
-		title = "All Time Points & Slices",
-		xlabel = "Pixel",
-		ylabel = "Intensity"
-	)
-
-	scatterlines!(orig_cat; markersize = 1, label = "original")
-	scatterlines!(pred_cat; markersize = 1, label = "predicted")
-
-	axislegend(ax)
+# ╔═╡ 5041d655-8a8d-4063-a8ab-bcb57bbbef44
+if (@isdefined rot_ready) && (rot_ready == true)
+	let
+		f = Figure()
+		ax = Axis(
+			f[1, 1],
+			title = "Single Time Point & Slice",
+			xlabel = "Pixel",
+			ylabel = "Intensity"
+		)
 	
-	f
+		orig_vec = vec(orig[z6, :, z5])
+		pred_vec = vec(pred[z6, :, z5])
+		
+		scatterlines!(orig_vec; markersize = 1, label = "original")
+		scatterlines!(pred_vec; markersize = 1, label = "predicted")
+		
+		axislegend(ax)
+		
+		f
+	end
+end
+
+# ╔═╡ 24a9e088-00d3-46e1-b7b7-b46dd610731f
+if (@isdefined skew_ready) && (skew_ready == true)
+	let
+		f = Figure()
+		ax = Axis(
+			f[1, 1],
+			title = "All Time Points & Slices",
+			xlabel = "Pixel",
+			ylabel = "Intensity"
+		)
+	
+		scatterlines!(orig_cat; markersize = 1, label = "original")
+		scatterlines!(pred_cat; markersize = 1, label = "predicted")
+	
+		axislegend(ax)
+		
+		f
+	end
+end
+
+# ╔═╡ 50512420-92f2-4a7b-ae72-40075be93e05
+md"""
+#### (Code) Remove Outliers
+"""
+
+# ╔═╡ 24e9a37b-07be-44fd-87ac-2061d5787ec1
+function remove_outliers(x, outlier_constant)
+    a = x
+    upper_quartile = quantile(a, 0.75)
+    lower_quartile = quantile(a, 0.25)
+    IQR = (upper_quartile - lower_quartile) * outlier_constant
+    quartile_set = (lower_quartile - IQR, upper_quartile + IQR)
+    result = a[(a .>= quartile_set[1]) .& (a .<= quartile_set[2])]
+    return result
 end
 
 # ╔═╡ 61e81063-a481-44ba-8c8b-126fbdec2fac
-orig_clean, pred_clean = remove_outliers(orig_cat, 1.5), remove_outliers(pred_cat, 1.5)
-
-# ╔═╡ 4a2c309e-eb06-4d39-9b34-3b6e64814998
-orig_clean_skew, pred_clean_skew = skewness(orig_clean), skewness(pred_clean)
-
-# ╔═╡ 08277839-f62a-436a-926a-71988835199b
-orig_skew, pred_skew = skewness(orig_cat), skewness(pred_cat)
-
-# ╔═╡ 676f2f3c-e02c-4d10-8626-7ea46120be59
-let
-	f = Figure()
-	ax = Axis(f[1, 1])
-	hist!(orig_cat, bins = 1000, label = "Original")
-	hist!(orig_clean; bins = 1000, label = "Original Cleaned")
-	axislegend(ax)
-
-	ax = Axis(f[1, 2])
-	hist!(pred_cat, bins = 1000, label = "Predicted")
-	hist!(pred_clean; bins = 1000, label = "Predicted Cleaned")
-	axislegend(ax)
-	
-	f
+if (@isdefined skew_ready) && (skew_ready == true)
+	orig_clean, pred_clean = remove_outliers(orig_cat, outlier_const), remove_outliers(pred_cat, outlier_const)
+	orig_skew, pred_skew = skewness(orig_cat), skewness(pred_cat)
+	orig_clean_skew, pred_clean_skew = skewness(orig_clean), skewness(pred_clean)
 end
 
-# ╔═╡ 7060ebb2-a4f7-493f-8237-9704a5b60046
-md"""
-Select Slice: $(@bind z5 PlutoUI.Slider(axes(gt.data, 3); show_value = true))
-
-Select Timepoint: $(@bind z6 PlutoUI.Slider(axes(gt.data, 1); show_value = true))
-"""
-
-# ╔═╡ 5041d655-8a8d-4063-a8ab-bcb57bbbef44
-let
-	f = Figure()
-	ax = Axis(
-		f[1, 1],
-		title = "Single Time Point & Slice",
-		xlabel = "Pixel",
-		ylabel = "Intensity"
-	)
-
-	orig_vec = vec(orig[z6, :, z5])
-	pred_vec = vec(pred[z6, :, z5])
+# ╔═╡ 676f2f3c-e02c-4d10-8626-7ea46120be59
+if (@isdefined skew_ready) && (skew_ready == true)
+	let
+		f = Figure()
+		ax = Axis(f[1, 1])
+		hist!(orig_cat, bins = 1000, label = "Original")
+		hist!(orig_clean; bins = 1000, label = "Original Cleaned")
+		axislegend(ax)
 	
-	scatterlines!(orig_vec; markersize = 1, label = "original")
-	scatterlines!(pred_vec; markersize = 1, label = "predicted")
-	
-	axislegend(ax)
-	
-	f
+		ax = Axis(f[1, 2])
+		hist!(pred_cat, bins = 1000, label = "Predicted")
+		hist!(pred_clean; bins = 1000, label = "Predicted Cleaned")
+		axislegend(ax)
+		
+		f
+	end
 end
 
 # ╔═╡ 9248d105-2b48-42ab-b770-8c2c36923503
@@ -770,18 +828,17 @@ end
 # ╟─b4e7d29f-29a9-482d-85d4-7e31033fcc53
 # ╟─0c5d04fc-b921-405c-8c3b-9ecb64965edf
 # ╟─a4b07c7e-6ae5-40f9-8ac9-03ee60b707e4
-# ╠═31edf3b1-ad4a-46af-9ad4-52ca33df117d
 # ╟─060ea16b-99bd-408f-be19-0ecc8d49b07e
 # ╟─7060ebb2-a4f7-493f-8237-9704a5b60046
+# ╟─49f9f28d-cf34-470a-b8dc-6d9cebb5fa2c
 # ╟─5041d655-8a8d-4063-a8ab-bcb57bbbef44
-# ╠═ee1d998c-6c22-4bee-8ac8-dd69fe185527
-# ╟─24a9e088-00d3-46e1-b7b7-b46dd610731f
+# ╟─caf7ed14-dbe6-4e69-8d19-156d6cfd09df
 # ╟─d9c90d50-3db4-48d3-a43e-d112229bb8e0
-# ╠═24e9a37b-07be-44fd-87ac-2061d5787ec1
-# ╠═61e81063-a481-44ba-8c8b-126fbdec2fac
-# ╠═08277839-f62a-436a-926a-71988835199b
-# ╠═4a2c309e-eb06-4d39-9b34-3b6e64814998
+# ╟─24a9e088-00d3-46e1-b7b7-b46dd610731f
+# ╟─827ba5b1-d998-4099-8ff7-e24b95b89265
 # ╟─676f2f3c-e02c-4d10-8626-7ea46120be59
+# ╟─a1acebbc-95b8-44b0-b93b-34275fc8cdd2
+# ╟─69b59f4f-80ce-4291-a939-31121c74f5ec
 # ╟─e30df5c9-818c-400c-a5f8-28bfb12eb4c8
 # ╟─8e4185b7-103b-4cdd-9af6-7f97d03ea25c
 # ╟─77d6db81-955a-446e-be28-5b3bb2faeb9b
@@ -815,5 +872,10 @@ end
 # ╠═91899626-c34f-4534-820c-f34f795670de
 # ╟─c1d3b670-58db-4cd1-a04b-4a4cc61a2b3f
 # ╠═e401ab6a-1169-45ac-a9ac-af4ca28c33ea
+# ╟─7d724a8b-6b67-4be7-8560-6405ca7b8b03
+# ╠═31edf3b1-ad4a-46af-9ad4-52ca33df117d
+# ╟─50512420-92f2-4a7b-ae72-40075be93e05
+# ╠═24e9a37b-07be-44fd-87ac-2061d5787ec1
+# ╠═61e81063-a481-44ba-8c8b-126fbdec2fac
 # ╟─9248d105-2b48-42ab-b770-8c2c36923503
 # ╠═6625f7cc-fe32-4448-9f83-190febdc8ed6
