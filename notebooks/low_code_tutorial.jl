@@ -103,20 +103,16 @@ md"""
 ## Quality Measurements
 """
 
-# ╔═╡ 69b59f4f-80ce-4291-a939-31121c74f5ec
-md"""
-- Pearson correlation coefficient
-- Helmut's Turing.jl script for the other part
-"""
-
 # ╔═╡ e30df5c9-818c-400c-a5f8-28bfb12eb4c8
 md"""
-## Save Corrected Time Series Phantom
+## Save Phantom(s)
 """
 
 # ╔═╡ 8e4185b7-103b-4cdd-9af6-7f97d03ea25c
 md"""
-Enter File Path to Save B-field Corrected Phantom: $(@bind output_dir confirm(TextField()))
+Enter File Path to Save `groundtruth` (raw and clean) phantoms: 
+
+$(@bind output_dir confirm(TextField()))
 """
 
 # ╔═╡ 77d6db81-955a-446e-be28-5b3bb2faeb9b
@@ -340,6 +336,14 @@ end
 if (@isdefined skew_ready) && (skew_ready == true)
 	md"""
 	Choose Outlier Removal Constant: $(@bind outlier_const PlutoUI.Slider(0:.5:10; default = 2, show_value = true))
+	"""
+end
+
+# ╔═╡ 2533717f-2395-4123-953c-276129bb23d2
+if (@isdefined skew_ready) && (skew_ready == true)
+	md"""
+	If the outliers were removed correctly, check the box:
+	$(@bind outliers_ready PlutoUI.CheckBox())
 	"""
 end
 
@@ -583,7 +587,7 @@ md"""
 """
 
 # ╔═╡ 91899626-c34f-4534-820c-f34f795670de
-if (@isdefined bfc_ready) && (rot_ready == true)
+if (@isdefined bfc_ready) && (bfc_ready == true)
 	sz = size(bfc_phantom2)
 	
 	α = deg2rad(degrees)
@@ -697,8 +701,8 @@ if (@isdefined rot_ready) && (rot_ready == true)
 	orig = gt.data[:, :, :, 1]
 	pred = gt.data[:, :, :, 2]
 
-	orig_cat = vec(orig[:, :, :])
-	pred_cat = vec(pred[:, :, :])
+	orig_vec = vec(orig[:, :, :])
+	pred_vec = vec(pred[:, :, :])
 end;
 
 # ╔═╡ 5041d655-8a8d-4063-a8ab-bcb57bbbef44
@@ -735,8 +739,8 @@ if (@isdefined skew_ready) && (skew_ready == true)
 			ylabel = "Intensity"
 		)
 	
-		scatterlines!(orig_cat; markersize = 1, label = "original")
-		scatterlines!(pred_cat; markersize = 1, label = "predicted")
+		scatterlines!(orig_vec; markersize = 1, label = "original")
+		scatterlines!(pred_vec; markersize = 1, label = "predicted")
 	
 		axislegend(ax)
 		
@@ -749,22 +753,44 @@ md"""
 #### (Code) Remove Outliers
 """
 
-# ╔═╡ 24e9a37b-07be-44fd-87ac-2061d5787ec1
-function remove_outliers(x, outlier_constant)
-    a = x
-    upper_quartile = quantile(a, 0.75)
-    lower_quartile = quantile(a, 0.25)
+# ╔═╡ 6990dfe0-ecb7-49d1-b4d1-38b689abe7e7
+function remove_outliers(orig::Array{T, 3}, pred::Array{T, 3}, outlier_constant) where T
+    orig_vec = vec(orig)
+    pred_vec = vec(pred)
+
+    upper_quartile = quantile(orig_vec, 0.75)
+    lower_quartile = quantile(orig_vec, 0.25)
     IQR = (upper_quartile - lower_quartile) * outlier_constant
     quartile_set = (lower_quartile - IQR, upper_quartile + IQR)
-    result = a[(a .>= quartile_set[1]) .& (a .<= quartile_set[2])]
-    return result
+
+    orig_mask = (orig_vec .>= quartile_set[1]) .& (orig_vec .<= quartile_set[2])
+
+    orig_clean_vec = orig_vec[orig_mask]
+    pred_clean_vec = pred_vec[orig_mask]  # Same mask for pred_vec
+
+    orig_clean_3D_nan = fill(NaN, size(orig))
+    pred_clean_3D_nan = fill(NaN, size(pred))
+
+    count = 0
+    for (idx, element) in enumerate(orig_mask)
+        if element
+            count += 1
+            orig_clean_3D_nan[idx] = orig_clean_vec[count]
+            pred_clean_3D_nan[idx] = pred_clean_vec[count]
+        end
+    end
+
+    return orig_clean_vec, pred_clean_vec, orig_clean_3D_nan, pred_clean_3D_nan
 end
 
-# ╔═╡ 61e81063-a481-44ba-8c8b-126fbdec2fac
+# ╔═╡ f926ed88-c48a-40f9-900b-d95925eaf78b
 if (@isdefined skew_ready) && (skew_ready == true)
-	orig_clean, pred_clean = remove_outliers(orig_cat, outlier_const), remove_outliers(pred_cat, outlier_const)
-	orig_skew, pred_skew = skewness(orig_cat), skewness(pred_cat)
-	orig_clean_skew, pred_clean_skew = skewness(orig_clean), skewness(pred_clean)
+
+	orig_clean_vec, pred_clean_vec, orig_clean_3D_nan, pred_clean_3D_nan = remove_outliers(orig, pred, outlier_const)
+	
+	orig_skew, pred_skew = skewness(orig_vec), skewness(pred_vec)
+	
+	orig_clean_skew, pred_clean_skew = skewness(orig_clean_vec), skewness(orig_clean_vec)
 end
 
 # ╔═╡ 676f2f3c-e02c-4d10-8626-7ea46120be59
@@ -772,27 +798,64 @@ if (@isdefined skew_ready) && (skew_ready == true)
 	let
 		f = Figure()
 		ax = Axis(f[1, 1])
-		hist!(orig_cat, bins = 1000, label = "Original")
-		hist!(orig_clean; bins = 1000, label = "Original Cleaned")
+		hist!(orig_vec, bins = 1000, label = "Original")
+		hist!(orig_clean_vec; bins = 1000, label = "Original Cleaned")
 		axislegend(ax)
 	
 		ax = Axis(f[1, 2])
-		hist!(pred_cat, bins = 1000, label = "Predicted")
-		hist!(pred_clean; bins = 1000, label = "Predicted Cleaned")
+		hist!(pred_vec, bins = 1000, label = "Predicted")
+		hist!(pred_clean_vec; bins = 1000, label = "Predicted Cleaned")
 		axislegend(ax)
 		
 		f
 	end
 end
 
+# ╔═╡ 549b26f6-903f-477a-a528-877dd60ec8be
+md"""
+#### (CODE) Quality Measurements
+"""
+
+# ╔═╡ 0b66e9e0-68a9-4d1c-a0f2-9c98f41097f0
+if (@isdefined outliers_ready) && (outliers_ready == true)
+	mean_sigma, std_sigma, mean_amplitude, std_amplitude = BDTools.mul_noise(pred_clean_vec, orig_clean_vec)
+	
+	snr = BDTools.st_snr(pred_clean_vec, orig_clean_vec)
+
+	p_cor = cor(pred_clean_vec, orig_clean_vec)
+end
+
+# ╔═╡ 819f9274-cfbf-4ba9-943c-2ac9244e9299
+if (@isdefined outliers_ready) && (outliers_ready == true)
+	md"""
+	Variance (multiplicative noise):
+	- Mean sigma: $(mean_sigma)
+	- Std sigma: $(std_sigma)
+	- Mean amplitude: $(mean_amplitude)
+	- Std amplitude: $(std_amplitude)
+	
+	Power (standard signal to noise): $(snr)
+	
+	Pearson's correlation coefficient: $(p_cor)
+	
+	"""
+end
+
 # ╔═╡ 9248d105-2b48-42ab-b770-8c2c36923503
 md"""
-#### (Code) Save Phantom
+#### (Code) Save Phantom(s)
 """
 
 # ╔═╡ 6625f7cc-fe32-4448-9f83-190febdc8ed6
 if output_dir != ""
-	niwrite(joinpath(output_dir, "corrected_phantom.nii"), NIVolume(phantom_header, bfc_phantom2))
+	gt_data_clean = cat(orig_clean_3D_nan, pred_clean_3D_nan; dims = 4)
+	gt_clean = BDTools.GroundTruth(gt_data_clean, copy(gt.sliceindex), copy(gt.maskindex))
+	
+	filepath_raw = joinpath(output_dir, "gt_raw.h5")
+	BDTools.serialize(filepath_raw, gt)
+
+	filepath_clean = joinpath(output_dir, "gt_clean.h5")
+	BDTools.serialize(filepath_clean, gt_clean)
 end
 
 # ╔═╡ Cell order:
@@ -837,8 +900,9 @@ end
 # ╟─24a9e088-00d3-46e1-b7b7-b46dd610731f
 # ╟─827ba5b1-d998-4099-8ff7-e24b95b89265
 # ╟─676f2f3c-e02c-4d10-8626-7ea46120be59
+# ╟─2533717f-2395-4123-953c-276129bb23d2
 # ╟─a1acebbc-95b8-44b0-b93b-34275fc8cdd2
-# ╟─69b59f4f-80ce-4291-a939-31121c74f5ec
+# ╟─819f9274-cfbf-4ba9-943c-2ac9244e9299
 # ╟─e30df5c9-818c-400c-a5f8-28bfb12eb4c8
 # ╟─8e4185b7-103b-4cdd-9af6-7f97d03ea25c
 # ╟─77d6db81-955a-446e-be28-5b3bb2faeb9b
@@ -875,7 +939,9 @@ end
 # ╟─7d724a8b-6b67-4be7-8560-6405ca7b8b03
 # ╠═31edf3b1-ad4a-46af-9ad4-52ca33df117d
 # ╟─50512420-92f2-4a7b-ae72-40075be93e05
-# ╠═24e9a37b-07be-44fd-87ac-2061d5787ec1
-# ╠═61e81063-a481-44ba-8c8b-126fbdec2fac
+# ╠═6990dfe0-ecb7-49d1-b4d1-38b689abe7e7
+# ╠═f926ed88-c48a-40f9-900b-d95925eaf78b
+# ╟─549b26f6-903f-477a-a528-877dd60ec8be
+# ╠═0b66e9e0-68a9-4d1c-a0f2-9c98f41097f0
 # ╟─9248d105-2b48-42ab-b770-8c2c36923503
 # ╠═6625f7cc-fe32-4448-9f83-190febdc8ed6
