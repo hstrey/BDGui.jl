@@ -116,10 +116,10 @@ function upload_files(phtm, grd_phtm)
 		
 		inputs = [
 			md""" $(phtm): $(
-				Child(TextField(60))
+				Child(TextField(60; default = "https://www.dropbox.com/s/hikpi7t89mwbb4w/104.nii?dl=0"))
 			)""",
 			md""" $(grd_phtm): $(
-				Child(TextField(60))
+				Child(TextField(60; default = "https://www.dropbox.com/scl/fi/d4fe7zqc1pgiiy7pe6jae/gt_clean.h5?rlkey=a6zs9txcodjbj4h2cs5gxvtq1&dl=0"))
 			)"""
 		]
 		
