@@ -1,6 +1,10 @@
 ### A Pluto.jl notebook ###
 # v0.19.26
 
+#> [frontmatter]
+#> title = "Neural Network Phantom Denoising"
+#> category = "Tutorial Notebooks"
+
 using Markdown
 using InteractiveUtils
 

@@ -1,6 +1,10 @@
 ### A Pluto.jl notebook ###
 # v0.19.26
 
+#> [frontmatter]
+#> title = "Brain Dancer GUI"
+#> sidebar = "false"
+
 using Markdown
 using InteractiveUtils
 

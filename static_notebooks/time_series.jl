@@ -1,6 +1,10 @@
 ### A Pluto.jl notebook ###
 # v0.19.26
 
+#> [frontmatter]
+#> title = "Phantom Prep and Time Series Analysis"
+#> category = "Tutorial Notebooks"
+
 using Markdown
 using InteractiveUtils
 
