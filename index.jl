@@ -24,8 +24,8 @@ end
 
 # ╔═╡ dd8c2bbf-f077-4a51-88bd-bf58689738ec
 article_list = Article[
-	Article("Time Series Anaysis", "static_notebooks/time_series.jl"),
-	Article("Neural Network Denoiser", "static_notebooks/denoiser.jl"),
+	Article("Time Series Anaysis", "tutorials/time_series.jl"),
+	Article("Neural Network Denoiser", "tutorials/denoiser.jl"),
 ];
 
 # ╔═╡ 5e154989-66e9-4a6e-9eba-6d9e92f055b4
@@ -42,7 +42,7 @@ end;
 # ╔═╡ 5ee28794-9029-482d-90e7-7829ec0b9c1f
 @htl("""
 <div class = "ArticleList">
-	$([ArticleTile(article) for article ∈ article_list])
+	$([ArticleTile(article) for article in article_list])
 </div>
 """)
 
