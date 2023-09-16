@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.26
+# v0.19.27
 
 #> [frontmatter]
 #> title = "Brain Dancer GUI"
@@ -12,62 +12,97 @@ using InteractiveUtils
 using HypertextLiteral
 
 # ╔═╡ a4679185-2610-485c-942c-3b7bdbf68f80
-md"""
-# Brain Dancer GUI
+html"""
+<html>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,700;1,400&family=Vollkorn:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
+<style>
+body {
+    background-color: transparent;
+}
+
+.header {
+  font-family: 'Alegreya Sans', sans-serif;
+  text-align: center;
+  background-color: #ADD8E6; /* Light blue */
+  color: #000;
+  padding: 1em;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.header h1 {
+  font-size: 2.5em;
+  margin-bottom: 0.3em;
+  font-family: 'Vollkorn', serif;
+}
+
+.header p {
+  font-size: 1.2em;
+}
+
+.header img {
+  max-width: 150px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border-radius: 3%;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #1f1f1f; /* Dark background color */
+  }
+}
+
+</style>
+
+<div class="header">
+  <img src="https://alascience.com/wp-content/uploads/2020/07/Logo-registered-trademark.jpg" alt="Brain Dancer Logo">
+  <h1>Brain Dancer</h1>
+  <p>Data analysis notebook for the BrainDancer Dynamic Phantom.</p>
+</div>
+
+</html>
 """
 
-# ╔═╡ 4b362eb2-ae9b-4afe-a5c0-5c74e7433b7d
+# ╔═╡ 17ccdf35-b187-4ce1-a78c-50b64d35ec27
 struct Article
 	title::String
 	path::String
+	image_url::String
 end
 
-# ╔═╡ dd8c2bbf-f077-4a51-88bd-bf58689738ec
+# ╔═╡ 08e35276-f0e2-4a74-b1c0-4193a4004cd4
 article_list = Article[
-	Article("Time Series Anaysis", "tutorials/time_series.jl"),
-	Article("Neural Network Denoiser", "tutorials/denoiser.jl"),
+	Article("Time Series Analysis", "tutorials/time_series.jl", "https://images.unsplash.com/photo-1501139083538-0139583c060f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2670&q=80"),
+	Article("Neural Network Denoiser", "tutorials/denoiser.jl", "https://images.unsplash.com/photo-1545987796-200677ee1011?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2670&q=80"),
 ];
 
-# ╔═╡ 5e154989-66e9-4a6e-9eba-6d9e92f055b4
+# ╔═╡ c3c98d68-1ca2-4433-abd5-fb530e2bd3cf
 function ArticleTile(article)
 	@htl("""
-	<div class="ArticleTile">
-		<a href="$(article.path)">
-			$(article.title)
-		</a>
-	</div>
+	<a href="$(article.path)" class="card bordered hover:shadow-lg" style="border-color: #ADD8E6;">
+		<div class="card-body">
+			<h2 class="card-title">$(article.title)</h2>
+			<p>Click to open the notebook.</p>
+		</div>
+		<figure>
+			<img src="$(article.image_url)" alt="$(article.title)">
+		</figure>
+	</a>
 	""")
 end;
 
-# ╔═╡ 5ee28794-9029-482d-90e7-7829ec0b9c1f
+# ╔═╡ c627a83e-ad20-4bc6-aa5e-05065509e768
 @htl("""
-<div class = "ArticleList">
+<link href="https://cdn.jsdelivr.net/npm/daisyui@3.7.4/dist/full.css" rel="stylesheet" type="text/css" />
+<script src="https://cdn.tailwindcss.com"></script>
+
+<div class="grid grid-cols-2 gap-4">
 	$([ArticleTile(article) for article in article_list])
 </div>
-""")
-
-# ╔═╡ 75b6b00c-f63e-4111-92a0-4e8cb2cd9ca1
-@htl("""
-<style>
-	.ArticleList {
-		display: flex;
-		flex-direction: column;
-	}
-	.ArticleTile {
-		margin-top: 15px;
-		border-radius: 15px;
-		background-color: #efefef;
-	}
-	.ArticleTile > a {
-		width: 100%;
-		display: block;
-		padding: 20px;
-		text-decoration: none;
-	}
-	.ArticleTile > a:hover {
-		text-decoration: underline;
-	}
-</style>
 """)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -83,7 +118,7 @@ HypertextLiteral = "~0.9.4"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.9.3"
+julia_version = "1.10.0-beta2"
 manifest_format = "2.0"
 project_hash = "fc304fba520d81fb78ea25b98f5762b4591b1182"
 
@@ -100,12 +135,11 @@ version = "0.1.7"
 """
 
 # ╔═╡ Cell order:
-# ╠═535d5388-0672-47f9-8243-176838c59bf6
 # ╟─a4679185-2610-485c-942c-3b7bdbf68f80
-# ╠═4b362eb2-ae9b-4afe-a5c0-5c74e7433b7d
-# ╠═dd8c2bbf-f077-4a51-88bd-bf58689738ec
-# ╠═5e154989-66e9-4a6e-9eba-6d9e92f055b4
-# ╠═5ee28794-9029-482d-90e7-7829ec0b9c1f
-# ╠═75b6b00c-f63e-4111-92a0-4e8cb2cd9ca1
+# ╟─c627a83e-ad20-4bc6-aa5e-05065509e768
+# ╟─535d5388-0672-47f9-8243-176838c59bf6
+# ╟─17ccdf35-b187-4ce1-a78c-50b64d35ec27
+# ╟─08e35276-f0e2-4a74-b1c0-4193a4004cd4
+# ╟─c3c98d68-1ca2-4433-abd5-fb530e2bd3cf
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
