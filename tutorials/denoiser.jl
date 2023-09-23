@@ -38,8 +38,6 @@ html"""
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,700;1,400&family=Vollkorn:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/daisyui@3.7.4/dist/full.css" rel="stylesheet" type="text/css" />
-<script src="https://cdn.tailwindcss.com"></script>
 
 <style>
 body {
@@ -52,11 +50,11 @@ body {
   background-color: #ADD8E6; /* Light blue */
   color: #000;
   padding: 1em;
+  border-radius: 10px;
 }
 
 .header h1 {
   font-size: 2.5em;
-  margin-bottom: 0.3em;
   font-family: 'Vollkorn', serif;
 }
 
@@ -79,14 +77,11 @@ body {
 
 </style>
 
-<div class="header card">
-  <div class="card-body">
-    <img src="https://alascience.com/wp-content/uploads/2020/07/Logo-registered-trademark.jpg" alt="Brain Dancer Logo">
-    <h1 class="card-title">BrainDancer</h1>
-    <p class="card-text">Data analysis notebooks for the BrainDancer Dynamic Phantom.</p>
-  </div>
+<div class="header">
+  <img src="https://alascience.com/wp-content/uploads/2020/07/Logo-registered-trademark.jpg" alt="Brain Dancer Logo">
+  <h1>Brain Dancer</h1>
+  <p>Data analysis notebook for the BrainDancer Dynamic Phantom.</p>
 </div>
-
 """
 
 # ╔═╡ 4243e56a-e1f3-49d2-bd99-b73f6759823d
