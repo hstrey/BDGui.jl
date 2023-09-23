@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.27
+# v0.19.26
 
 #> [frontmatter]
 #> title = "Phantom Prep and Time Series Analysis"
@@ -582,7 +582,7 @@ if (@isdefined rot_ready) && (rot_ready == true)
 md"""
 If the phantom is rotating the wrong direction, check the box below to flip the angles for the `groundtruth` phantom
 
-Flip Angles: $(@bind flipangles PlutoUI.CheckBox())
+Flip Angles: $(@bind flipangles PlutoUI.CheckBox(default = true))
 """
 end
 
@@ -891,7 +891,7 @@ end
 # ╟─1337fe2d-8969-4602-a94b-fbc071b4d3b9
 # ╟─55d21ac9-3fd8-43ed-a7e8-b914e7b1a309
 # ╟─cfd65480-cf34-40e3-bd93-c6aa863602e6
-# ╟─05e8f53f-9221-4021-ab83-88e3e7e4645a
+# ╠═05e8f53f-9221-4021-ab83-88e3e7e4645a
 # ╟─58320a5e-5b63-440a-ab01-295823ffe909
 # ╠═d2025ebd-7441-42dd-9fda-874f9e4db9e7
 # ╠═3c181b45-708f-4bb8-8ebf-ff1795a34fc9
