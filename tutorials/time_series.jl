@@ -582,7 +582,7 @@ if (@isdefined rot_ready) && (rot_ready == true)
 md"""
 If the phantom is rotating the wrong direction, check the box below to flip the angles for the `groundtruth` phantom
 
-Flip Angles: $(@bind flipangles PlutoUI.CheckBox(default = true))
+Flip Angles: $(@bind flipangles PlutoUI.CheckBox())
 """
 end
 
@@ -725,7 +725,7 @@ if (@isdefined skew_ready) && (skew_ready == true)
 		)
 	
 		scatterlines!(orig_vec; markersize = 1, label = "original")
-		scatterlines!(pred_vec; markersize = 1, label = "predicted")
+		scatterlines!(pred_vec; color = (:orange, 0.4), markersize = 1, label = "predicted")
 	
 		axislegend(ax)
 		
