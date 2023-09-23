@@ -18,8 +18,12 @@ end
 # ╠═╡ show_logs = false
 begin
 	using Pkg
-	Pkg.activate("..")
+	Pkg.activate(temp = true)
 
+	Pkg.add(url = "https://github.com/hstrey/BDTools.jl", rev = "denoiser")
+	Pkg.add.(["CairoMakie", "PlutoUI", "NIfTI", "CSV", "DataFrames", "Statistics", "StatsBase"])
+
+	using BDTools
 	using CairoMakie
 	using PlutoUI
 	using NIfTI
@@ -27,12 +31,10 @@ begin
 	using DataFrames
 	using Statistics
 	using StatsBase
-	using BDTools
 end
 
 # ╔═╡ d02b5190-6cf8-4203-9983-72d8f73907de
 html"""
-<html>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,700;1,400&family=Vollkorn:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
@@ -49,12 +51,10 @@ body {
   color: #000;
   padding: 1em;
   border-radius: 10px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 
 .header h1 {
   font-size: 2.5em;
-  margin-bottom: 0.3em;
   font-family: 'Vollkorn', serif;
 }
 
@@ -82,8 +82,6 @@ body {
   <h1>Brain Dancer</h1>
   <p>Data analysis notebook for the BrainDancer Dynamic Phantom.</p>
 </div>
-
-</html>
 """
 
 # ╔═╡ 8821683a-6515-4e5a-8a28-0a20104c1089
@@ -582,7 +580,7 @@ if (@isdefined rot_ready) && (rot_ready == true)
 md"""
 If the phantom is rotating the wrong direction, check the box below to flip the angles for the `groundtruth` phantom
 
-Flip Angles: $(@bind flipangles PlutoUI.CheckBox())
+Flip Angles: $(@bind flipangles PlutoUI.CheckBox(default = true))
 """
 end
 
@@ -725,7 +723,7 @@ if (@isdefined skew_ready) && (skew_ready == true)
 		)
 	
 		scatterlines!(orig_vec; markersize = 1, label = "original")
-		scatterlines!(pred_vec; markersize = 1, label = "predicted")
+		scatterlines!(pred_vec; color = (:orange, 0.4), markersize = 1, label = "predicted")
 	
 		axislegend(ax)
 		

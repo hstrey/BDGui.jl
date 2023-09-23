@@ -13,58 +13,25 @@ using HypertextLiteral
 
 # ╔═╡ a4679185-2610-485c-942c-3b7bdbf68f80
 html"""
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,700;1,400&family=Vollkorn:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/daisyui@3.7.4/dist/full.css" rel="stylesheet" type="text/css" />
-<script src="https://cdn.tailwindcss.com"></script>
+<head>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,700;1,400&family=Vollkorn:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/daisyui@3.7.4/dist/full.css" rel="stylesheet" type="text/css" />
+	<script src="https://cdn.tailwindcss.com"></script>
+</head>
 
-<style>
-body {
-    background-color: transparent;
-}
-
-.header {
-  font-family: 'Alegreya Sans', sans-serif;
-  text-align: center;
-  background-color: #ADD8E6; /* Light blue */
-  color: #000;
-  padding: 1em;
-}
-
-.header h1 {
-  font-size: 2.5em;
-  margin-bottom: 0.3em;
-  font-family: 'Vollkorn', serif;
-}
-
-.header p {
-  font-size: 1.2em;
-}
-
-.header img {
-  max-width: 150px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  border-radius: 3%;
-}
-
-@media (prefers-color-scheme: dark) {
-  body {
-    background-color: #1f1f1f; /* Dark background color */
-  }
-}
-
-</style>
-
-<div class="header card">
-  <div class="card-body">
-    <img src="https://alascience.com/wp-content/uploads/2020/07/Logo-registered-trademark.jpg" alt="Brain Dancer Logo">
-    <h1 class="card-title">BrainDancer</h1>
-    <p class="card-text">Data analysis notebooks for the BrainDancer Dynamic Phantom.</p>
-  </div>
+<div class="bg-transparent dark:bg-[#1f1f1f]">
+	<div id="BrainDancerHeader" class="flex justify-center items-center">
+		<div class="header card bg-[#ADD8E6] text-center">
+			<div class="card-body">
+				<img src="https://alascience.com/wp-content/uploads/2020/07/Logo-registered-trademark.jpg" alt="Brain Dancer Logo" class="mx-auto rounded-md max-w-[150px] my-2">
+				<h1 class="card-title text-[2.5em] font-serif">BrainDancer</h1>
+				<p class="card-text text-[1.2em]">Data analysis notebooks for the BrainDancer Dynamic Phantom.</p>
+			</div>
+		</div>
+	</div>
 </div>
-
 """
 
 # ╔═╡ 17ccdf35-b187-4ce1-a78c-50b64d35ec27

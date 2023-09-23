@@ -18,19 +18,21 @@ end
 # ╠═╡ show_logs = false
 begin
 	using Pkg
-	Pkg.activate("..")
+	Pkg.activate(temp = true)
 
+	Pkg.add(url = "https://github.com/hstrey/BDTools.jl", rev = "denoiser")
+	Pkg.add.(["CairoMakie", "PlutoUI", "NIfTI", "CUDA", "cuDNN", "Flux"])
+	
+	using BDTools
 	using CairoMakie
 	using PlutoUI
 	using NIfTI
 	using CUDA
 	using Flux
-	using BDTools
 end
 
 # ╔═╡ 4a4977b9-3d36-4cd0-83db-7614db5b2d0f
 html"""
-<html>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,700;1,400&family=Vollkorn:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
@@ -47,12 +49,10 @@ body {
   color: #000;
   padding: 1em;
   border-radius: 10px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 
 .header h1 {
   font-size: 2.5em;
-  margin-bottom: 0.3em;
   font-family: 'Vollkorn', serif;
 }
 
@@ -80,8 +80,6 @@ body {
   <h1>Brain Dancer</h1>
   <p>Data analysis notebook for the BrainDancer Dynamic Phantom.</p>
 </div>
-
-</html>
 """
 
 # ╔═╡ 375d51fd-e2b4-4741-bf2e-bf0d30fb782e
