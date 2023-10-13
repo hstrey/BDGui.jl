@@ -3,7 +3,7 @@
 
 #> [frontmatter]
 #> title = "Neural Network Phantom Denoising"
-#> category = "Tutorial Notebooks"
+#> category = "Tutorials"
 
 using Markdown
 using InteractiveUtils

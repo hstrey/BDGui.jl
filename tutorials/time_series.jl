@@ -2,8 +2,8 @@
 # v0.19.26
 
 #> [frontmatter]
-#> title = "Phantom Prep and Time Series Analysis"
-#> category = "Tutorial Notebooks"
+#> title = "Phantom Preparation & Analysis"
+#> category = "Tutorials"
 
 using Markdown
 using InteractiveUtils
