@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.26
+# v0.19.32
 
 using Markdown
 using InteractiveUtils
@@ -14,13 +14,13 @@ macro bind(def, element)
     end
 end
 
-# ╔═╡ ec23f1ff-5050-4e83-b6e4-7b7c43f5bbb4
+# ╔═╡ e0700b91-6663-4279-a544-c1ff5aea6723
 # ╠═╡ show_logs = false
 begin
 	using Pkg
 	Pkg.activate(temp = true)
 
-	Pkg.add(url = "https://github.com/hstrey/BDTools.jl", rev = "denoiser")
+	Pkg.add(url = "https://github.com/hstrey/BDTools.jl")
 	Pkg.add.(["CairoMakie", "PlutoUI", "NIfTI", "CUDA", "cuDNN", "Flux"])
 	
 	using BDTools
@@ -31,76 +31,77 @@ begin
 	using Flux
 end
 
-# ╔═╡ 4a4977b9-3d36-4cd0-83db-7614db5b2d0f
-html"""
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,700;1,400&family=Vollkorn:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-
-<style>
-body {
-    background-color: transparent;
-}
-
-.header {
-  font-family: 'Alegreya Sans', sans-serif;
-  text-align: center;
-  background-color: #ADD8E6; /* Light blue */
-  color: #000;
-  padding: 1em;
-  border-radius: 10px;
-}
-
-.header h1 {
-  font-size: 2.5em;
-  font-family: 'Vollkorn', serif;
-}
-
-.header p {
-  font-size: 1.2em;
-}
-
-.header img {
-  max-width: 150px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  border-radius: 3%;
-}
-
-@media (prefers-color-scheme: dark) {
-  body {
-    background-color: #1f1f1f; /* Dark background color */
-  }
-}
-
-</style>
-
-<div class="header">
-  <img src="https://alascience.com/wp-content/uploads/2020/07/Logo-registered-trademark.jpg" alt="Brain Dancer Logo">
-  <h1>Brain Dancer</h1>
-  <p>Data analysis notebook for the BrainDancer Dynamic Phantom.</p>
-</div>
-"""
-
-# ╔═╡ 375d51fd-e2b4-4741-bf2e-bf0d30fb782e
+# ╔═╡ 2f58d100-4aac-4943-a433-f831067890ae
 md"""
 # Load packages and files
 """
 
-# ╔═╡ 67a5097d-5f2f-42d5-a58d-bd61bd3ff538
+# ╔═╡ e5eaba7c-3b1d-403b-88e1-0f1004efe784
 md"""
 ## Import Packages
 """
 
-# ╔═╡ a9253e1b-686f-4752-98da-b9b8c95335af
+# ╔═╡ 5c7abe91-4ab6-4155-a62d-3858f2335245
+md"""
+!!! info
+	If you plan on running this notebook more than once, setting up a long-term environment for this set is recommended. This can done in the terminal or in a code cell like below:
+
+	```julia
+		begin
+			using Pkg
+			Pkg.activate(".")
+			Pkg.add(url = "https://github.com/hstrey/BDTools.jl")
+			Pkg.add.([
+				"CairoMakie", 
+				"PlutoUI", 
+				"NIfTI",
+				"CUDA",
+				"cuDNN",
+				"Flux"
+			])
+		end
+	```
+
+	Then, when you launch this notebook (and other notebooks inside this environment), you will no longer need to add these packages everytime you load the notebook, and can instead just use:
+
+	```julia
+	using BDTools
+	using CairoMakie
+	using PlutoUI
+	using NIfTI
+	using CUDA
+	using Flux
+	```
+"""
+
+# ╔═╡ 72309c72-72ff-4835-bd93-9ed185a0f500
 TableOfContents()
 
-# ╔═╡ afb61442-6760-43e4-91b3-3b09e2d81c15
+# ╔═╡ 4cf1d0e1-681f-4cb5-be14-55e3a968c745
 md"""
 ## Loading data
 """
 
-# ╔═╡ 97dee264-71f6-4256-970c-0c7bf5da0c57
+# ╔═╡ 6995e379-717e-448c-9b66-93287feb6ae0
+md"""
+!!! success "Important Reminder"
+
+	For those who frequently run this notebook multiple times, there is a convenient
+	option to avoid repetitively clicking all the subsequent boxes. Simply click the box below, and it will automatically select your upcoming boxes.
+
+	**⚠️Caution⚠️: Exercise this option with care. Each step in the process often requires manual adjustments. If these cells automatically respond to previous modifications, it can significantly slow down the interactive experience.**
+
+"""
+
+# ╔═╡ c6637949-67bc-48e9-a3b3-21ab31ba0964
+md"""
+Check all following boxes: $(@bind check_all PlutoUI.CheckBox())
+"""
+
+# ╔═╡ 6c4edc39-b5d3-4241-9493-0b0671731f88
+default_box = check_all
+
+# ╔═╡ ba8efdbd-a307-495b-871d-bceebdef5e84
 function upload_files(phtm, grd_phtm)
 	
 	return PlutoUI.combine() do Child
@@ -124,32 +125,32 @@ function upload_files(phtm, grd_phtm)
 	end
 end
 
-# ╔═╡ a1cef4b6-2921-4368-973b-cadeb2235587
+# ╔═╡ b6a6adac-33e0-43fa-8a78-4ac8e892cca0
 @bind up_files confirm(upload_files("Upload Phantom File", "Upload Ground Truth File"))
 
-# ╔═╡ 8d8c0b39-2309-4d2a-b86a-6a2de2a6217b
+# ╔═╡ af675880-6c09-4b4d-8294-61ac7fd95b0e
 phantomfile, groundtruthfile = up_files
 
-# ╔═╡ 6ff1043e-2335-4469-92cf-c5cfa489e719
+# ╔═╡ 60559bbc-3ab6-47ef-b183-31abf4b7290b
 uploaded = phantomfile != "" && groundtruthfile != "";
 
-# ╔═╡ 9cb8e5d1-7bc4-46c5-a88f-9f887a616f49
+# ╔═╡ af76692c-37f4-4397-8a2f-09b817e22d7f
 if uploaded
 	gt, removeidx, sim, _ = BDTools.load_ground_truth(groundtruthfile)
 	ori, _ = BDTools.load_phantom(gt, phantomfile; valid_slices = true, remove = removeidx)
 end;
 
-# ╔═╡ 12d45783-1d6c-4ee1-bc22-ab95b5531cda
+# ╔═╡ ec4976a3-6d9e-4a99-a91b-281ee2ec6986
 md"""
 # Train Model
 """
 
-# ╔═╡ 5c863eb7-462a-4d30-8504-d122d0db0b6e
+# ╔═╡ f431b64e-7045-4c76-902e-a81b3e4f2bcc
 md"""
 ## Construct a denoiser model
 """
 
-# ╔═╡ 1682dcba-e2e1-43d1-a795-cd186d14f26c
+# ╔═╡ 9d4ebdb5-5511-4902-b1ca-1c1ea70e3252
 if CUDA.has_cuda()
 	dev = Flux.gpu
 	default = 200
@@ -158,25 +159,25 @@ else
 	default = 20
 end
 
-# ╔═╡ 332ab1a8-1f2a-48e7-8cea-9eeda2a30880
+# ╔═╡ 5f826726-1fde-4ab0-911a-0245b1038edb
 md"""
 Choose Number of Epochs: $(@bind epochs NumberField(default ÷ 2:default ÷ 10:default * 2; default = default))
 """
 
-# ╔═╡ 6a9fe5de-7f8a-481f-8cc2-604a36e8f92e
+# ╔═╡ 504670e7-0731-4852-b581-4307c5f1e6eb
 model = DenoiseNet(BDTools.TrainParameters(; epochs = epochs); dev = dev)
 
-# ╔═╡ 2fc31ba1-6ab5-4b27-9d6e-7c7f7a5634be
+# ╔═╡ 24c7815a-88e5-47b4-9359-c057294f88c3
 md"""
-Start training: $(@bind start PlutoUI.CheckBox())
+Start training: $(@bind start PlutoUI.CheckBox(default = default_box))
 """
 
-# ╔═╡ a8b1edae-fc3f-4284-90be-19130dc8dc29
+# ╔═╡ 13145ff9-aa6e-40f6-b473-0acf2e6af58b
 if start
 	losses = BDTools.train!(model, sim, ori)
 end
 
-# ╔═╡ 52c893f4-ca0b-4bf7-b4c1-efdf39d92a69
+# ╔═╡ 9c3a1bcf-4185-4659-82fa-10a25388c33f
 if (@isdefined losses)
 	let
 		f = Figure()
@@ -191,42 +192,42 @@ if (@isdefined losses)
 	end
 end
 
-# ╔═╡ 2cd9e521-352e-4e2d-9759-76efaac869ac
+# ╔═╡ 4c8dc227-9a18-4dfb-ae5a-94d139c9d128
 md"""
 Enter File Path to Save Trained Model: 
 
 $(@bind output_dir confirm(TextField()))
 """
 
-# ╔═╡ b04f5dd8-1415-4a51-b5c9-820c4c7370ad
+# ╔═╡ 492de824-dfd0-4420-9a1f-8f85d72a7504
 if output_dir != ""
 	BDTools.Denoiser.save(joinpath(output_dir, "denoiser_model"), model)
 end;
 
-# ╔═╡ 7edfe114-e6a9-42db-a743-5c4f52f5434f
+# ╔═╡ 2cc71331-6bb2-460a-8a7e-f5c4d0a7069a
 md"""
 # Model Inference
 """
 
-# ╔═╡ 0ec91b61-f1f6-4a9a-8390-9de90c7df421
+# ╔═╡ 8e59220c-ce88-45ec-bd6b-358eba342133
 md"""
 ## Load model and denoise phantom
 """
 
-# ╔═╡ 45f66d99-fa2e-4669-8f54-c587f42464ec
+# ╔═╡ 14b9cc91-83e5-4ad5-9e32-9845f970eb51
 md"""
 Enter File Path to Upload Trained Model: 
 
 $(@bind model_path confirm(TextField()))
 """
 
-# ╔═╡ dfcd661a-0809-4b7c-8c4e-913f12f27760
-if model_path != ""
+# ╔═╡ c321172c-07ce-4b9c-9268-dffaad9ba640
+if (@isdefined model_path) && (model_path != "")
 	trained_model = BDTools.Denoiser.load(model_path)
 end;
 
-# ╔═╡ 9e4eed2f-aa20-45ee-9b0f-ac4968403469
-if model_path != ""
+# ╔═╡ d36a7cf2-9ca9-4afe-ae09-639b7081ef70
+if (@isdefined model_path) && (model_path != "")
 	let 
 		i = 450
 	    original = ori[:,:,i:i]
@@ -251,29 +252,32 @@ if model_path != ""
 end
 
 # ╔═╡ Cell order:
-# ╟─4a4977b9-3d36-4cd0-83db-7614db5b2d0f
-# ╟─375d51fd-e2b4-4741-bf2e-bf0d30fb782e
-# ╟─67a5097d-5f2f-42d5-a58d-bd61bd3ff538
-# ╠═ec23f1ff-5050-4e83-b6e4-7b7c43f5bbb4
-# ╠═a9253e1b-686f-4752-98da-b9b8c95335af
-# ╟─afb61442-6760-43e4-91b3-3b09e2d81c15
-# ╟─a1cef4b6-2921-4368-973b-cadeb2235587
-# ╠═8d8c0b39-2309-4d2a-b86a-6a2de2a6217b
-# ╠═6ff1043e-2335-4469-92cf-c5cfa489e719
-# ╠═9cb8e5d1-7bc4-46c5-a88f-9f887a616f49
-# ╟─97dee264-71f6-4256-970c-0c7bf5da0c57
-# ╟─12d45783-1d6c-4ee1-bc22-ab95b5531cda
-# ╟─5c863eb7-462a-4d30-8504-d122d0db0b6e
-# ╠═1682dcba-e2e1-43d1-a795-cd186d14f26c
-# ╟─332ab1a8-1f2a-48e7-8cea-9eeda2a30880
-# ╠═6a9fe5de-7f8a-481f-8cc2-604a36e8f92e
-# ╟─2fc31ba1-6ab5-4b27-9d6e-7c7f7a5634be
-# ╠═a8b1edae-fc3f-4284-90be-19130dc8dc29
-# ╟─52c893f4-ca0b-4bf7-b4c1-efdf39d92a69
-# ╟─2cd9e521-352e-4e2d-9759-76efaac869ac
-# ╠═b04f5dd8-1415-4a51-b5c9-820c4c7370ad
-# ╟─7edfe114-e6a9-42db-a743-5c4f52f5434f
-# ╟─0ec91b61-f1f6-4a9a-8390-9de90c7df421
-# ╟─45f66d99-fa2e-4669-8f54-c587f42464ec
-# ╠═dfcd661a-0809-4b7c-8c4e-913f12f27760
-# ╟─9e4eed2f-aa20-45ee-9b0f-ac4968403469
+# ╟─2f58d100-4aac-4943-a433-f831067890ae
+# ╟─e5eaba7c-3b1d-403b-88e1-0f1004efe784
+# ╠═e0700b91-6663-4279-a544-c1ff5aea6723
+# ╟─5c7abe91-4ab6-4155-a62d-3858f2335245
+# ╠═72309c72-72ff-4835-bd93-9ed185a0f500
+# ╟─4cf1d0e1-681f-4cb5-be14-55e3a968c745
+# ╟─6995e379-717e-448c-9b66-93287feb6ae0
+# ╟─c6637949-67bc-48e9-a3b3-21ab31ba0964
+# ╠═6c4edc39-b5d3-4241-9493-0b0671731f88
+# ╟─b6a6adac-33e0-43fa-8a78-4ac8e892cca0
+# ╠═af675880-6c09-4b4d-8294-61ac7fd95b0e
+# ╠═60559bbc-3ab6-47ef-b183-31abf4b7290b
+# ╠═af76692c-37f4-4397-8a2f-09b817e22d7f
+# ╟─ba8efdbd-a307-495b-871d-bceebdef5e84
+# ╟─ec4976a3-6d9e-4a99-a91b-281ee2ec6986
+# ╟─f431b64e-7045-4c76-902e-a81b3e4f2bcc
+# ╠═9d4ebdb5-5511-4902-b1ca-1c1ea70e3252
+# ╟─5f826726-1fde-4ab0-911a-0245b1038edb
+# ╠═504670e7-0731-4852-b581-4307c5f1e6eb
+# ╟─24c7815a-88e5-47b4-9359-c057294f88c3
+# ╠═13145ff9-aa6e-40f6-b473-0acf2e6af58b
+# ╟─9c3a1bcf-4185-4659-82fa-10a25388c33f
+# ╟─4c8dc227-9a18-4dfb-ae5a-94d139c9d128
+# ╠═492de824-dfd0-4420-9a1f-8f85d72a7504
+# ╟─2cc71331-6bb2-460a-8a7e-f5c4d0a7069a
+# ╟─8e59220c-ce88-45ec-bd6b-358eba342133
+# ╟─14b9cc91-83e5-4ad5-9e32-9845f970eb51
+# ╠═c321172c-07ce-4b9c-9268-dffaad9ba640
+# ╟─d36a7cf2-9ca9-4afe-ae09-639b7081ef70

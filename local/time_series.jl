@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.26
+# v0.19.32
 
 using Markdown
 using InteractiveUtils
@@ -20,7 +20,7 @@ begin
 	using Pkg
 	Pkg.activate(temp = true)
 
-	Pkg.add(url = "https://github.com/hstrey/BDTools.jl", rev = "denoiser")
+	Pkg.add(url = "https://github.com/hstrey/BDTools.jl")
 	Pkg.add.(["CairoMakie", "PlutoUI", "NIfTI", "CSV", "DataFrames", "Statistics", "StatsBase"])
 
 	using BDTools
@@ -33,57 +33,6 @@ begin
 	using StatsBase
 end
 
-# ╔═╡ d02b5190-6cf8-4203-9983-72d8f73907de
-html"""
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,700;1,400&family=Vollkorn:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-
-<style>
-body {
-    background-color: transparent;
-}
-
-.header {
-  font-family: 'Alegreya Sans', sans-serif;
-  text-align: center;
-  background-color: #ADD8E6; /* Light blue */
-  color: #000;
-  padding: 1em;
-  border-radius: 10px;
-}
-
-.header h1 {
-  font-size: 2.5em;
-  font-family: 'Vollkorn', serif;
-}
-
-.header p {
-  font-size: 1.2em;
-}
-
-.header img {
-  max-width: 150px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  border-radius: 3%;
-}
-
-@media (prefers-color-scheme: dark) {
-  body {
-    background-color: #1f1f1f; /* Dark background color */
-  }
-}
-
-</style>
-
-<div class="header">
-  <img src="https://alascience.com/wp-content/uploads/2020/07/Logo-registered-trademark.jpg" alt="Brain Dancer Logo">
-  <h1>Brain Dancer</h1>
-  <p>Data analysis notebook for the BrainDancer Dynamic Phantom.</p>
-</div>
-"""
-
 # ╔═╡ 8821683a-6515-4e5a-8a28-0a20104c1089
 md"""
 # Load packages and files
@@ -94,6 +43,42 @@ md"""
 ## Import Packages
 """
 
+# ╔═╡ a4702c3a-0274-40da-b2f4-30813dfbbf77
+md"""
+!!! info
+	If you plan on running this notebook more than once, setting up a long-term environment for this set is recommended. This can done in the terminal or in a code cell like below:
+
+	```julia
+		begin
+			using Pkg
+			Pkg.activate(".")
+			Pkg.add(url = "https://github.com/hstrey/BDTools.jl")
+			Pkg.add.([
+				"CairoMakie", 
+				"PlutoUI", 
+				"NIfTI", 
+				"CSV", 
+				"DataFrames", 
+				"Statistics", 
+				"StatsBase"
+			])
+		end
+	```
+
+	Then, when you launch this notebook (and other notebooks inside this environment), you will no longer need to add these packages everytime you load the notebook, and can instead just use:
+
+	```julia
+	using BDTools
+	using CairoMakie
+	using PlutoUI
+	using NIfTI
+	using CSV
+	using DataFrames
+	using Statistics
+	using StatsBase
+	```
+"""
+
 # ╔═╡ a6081d85-7903-4ea7-ac77-16f9161e1d65
 TableOfContents()
 
@@ -101,6 +86,25 @@ TableOfContents()
 md"""
 ## Load Phantom, Logs, & Acquisition Times
 """
+
+# ╔═╡ 98bcd3a0-efc5-4471-b3de-4efe38a387a2
+md"""
+!!! success "Important Reminder"
+
+	For those who frequently run this notebook multiple times, there is a convenient
+	option to avoid repetitively clicking all the subsequent boxes. Simply click the box below, and it will automatically select your upcoming boxes.
+
+	**⚠️Caution⚠️: Exercise this option with care. Each step in the process often requires manual adjustments. If these cells automatically respond to previous modifications, it can significantly slow down the interactive experience.**
+
+"""
+
+# ╔═╡ 397fea84-6cf4-49bf-96e7-0d8997e3308c
+md"""
+Check all following boxes: $(@bind check_all PlutoUI.CheckBox())
+"""
+
+# ╔═╡ 10421b4c-3857-4c2c-aa60-b92f0d378f50
+default = check_all
 
 # ╔═╡ 4ec60d96-3269-43ac-9c55-8b803673456b
 function upload_files(logs, acqs, phtm)
@@ -340,7 +344,7 @@ end
 # ╔═╡ 74261be0-c641-4bef-bb4d-e09f41c87df1
 let
 	if slices
-		f = Figure(resolution=(1000, 1000))
+		f = Figure()
 		ax = CairoMakie.Axis(
 			f[1, 1],
 			title="Input Phantom"
@@ -399,14 +403,14 @@ end
 if slices
 md"""
 If b-field correction looks accurate, check the box:
-$(@bind bfc_ready PlutoUI.CheckBox())
+$(@bind bfc_ready PlutoUI.CheckBox(default = default))
 """
 end
 
 # ╔═╡ 312081a5-e9d8-4368-9e12-87694f24d5dc
 let
 	if slices
-		f = Figure(resolution=(1000, 1000))
+		f = Figure()
 		ax = CairoMakie.Axis(
 			f[1, 1],
 			title="BFC Phantom"
@@ -461,7 +465,7 @@ end
 if (@isdefined bfc_ready) && (bfc_ready == true)
 	md"""
 	If the center fitting process looks accurate, check the box:
-	$(@bind rot_ready PlutoUI.CheckBox())
+	$(@bind rot_ready PlutoUI.CheckBox(default = default))
 	"""
 end
 
@@ -554,7 +558,7 @@ end;
 # ╔═╡ 5afc0ac5-659f-4995-b840-a25b656c0d17
 if (@isdefined rot_ready) && (rot_ready == true)
 	let
-		f = Figure(resolution=(1000, 700))
+		f = Figure()
 		ax = CairoMakie.Axis(
 			f[1, 1],
 			title="Average Static Image @ Slice $(z2)"
@@ -630,7 +634,7 @@ function check_rotated_pred()
 	cidx === nothing && return @warn "Offset out of bounds"
 
 	# plot data
-	f = Figure(resolution = (1200, 800))
+	f = Figure(size = (800, 600))
 
 	ax = CairoMakie.Axis(
 		f[1, 1],
@@ -669,7 +673,7 @@ end
 if (@isdefined rot_ready) && (rot_ready == true)
 	md"""
 	If the threshold looks correct, check the box:
-	$(@bind skew_ready PlutoUI.CheckBox())
+	$(@bind skew_ready PlutoUI.CheckBox(default = default))
 	"""
 end
 
@@ -742,7 +746,7 @@ end
 if (@isdefined skew_ready) && (skew_ready == true)
 	md"""
 	If the outliers were removed correctly, check the box:
-	$(@bind outliers_ready PlutoUI.CheckBox())
+	$(@bind outliers_ready PlutoUI.CheckBox(default = default))
 	"""
 end
 
@@ -862,12 +866,15 @@ if output_dir != ""
 end
 
 # ╔═╡ Cell order:
-# ╟─d02b5190-6cf8-4203-9983-72d8f73907de
 # ╟─8821683a-6515-4e5a-8a28-0a20104c1089
 # ╟─e885bd90-2474-48dc-bba6-d4b9aaebcacf
 # ╠═33b2249f-4dff-4eed-9be9-b0abff4074b1
+# ╟─a4702c3a-0274-40da-b2f4-30813dfbbf77
 # ╠═a6081d85-7903-4ea7-ac77-16f9161e1d65
 # ╟─02d49e3b-918e-41b1-966f-d3aa5b19019f
+# ╟─98bcd3a0-efc5-4471-b3de-4efe38a387a2
+# ╟─397fea84-6cf4-49bf-96e7-0d8997e3308c
+# ╠═10421b4c-3857-4c2c-aa60-b92f0d378f50
 # ╟─c099ea26-3d82-4d66-aa59-b6e14af7bece
 # ╠═d222a4b2-8d6a-4269-a180-fe7f77aa7922
 # ╠═e69d1614-2511-4776-8ac4-5f94a947e498
