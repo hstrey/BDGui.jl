@@ -82,20 +82,17 @@ md"""
 ## Loading data
 """
 
-# ╔═╡ 6995e379-717e-448c-9b66-93287feb6ae0
+# ╔═╡ 531cdc4c-e05e-4f0c-b8e0-dd1d5190d37e
 md"""
-!!! success "Important Reminder"
+!!! success "Uncheck Boxes"
 
-	For those who frequently run this notebook multiple times, there is a convenient
-	option to avoid repetitively clicking all the subsequent boxes. Simply click the box below, and it will automatically select your upcoming boxes.
-
-	**⚠️Caution⚠️: Exercise this option with care. Each step in the process often requires manual adjustments. If these cells automatically respond to previous modifications, it can significantly slow down the interactive experience.**
+	For those who frequently run this notebook multiple times with new data, make sure to toggle this check-box below to reset the interactive steps for new input data
 
 """
 
-# ╔═╡ c6637949-67bc-48e9-a3b3-21ab31ba0964
+# ╔═╡ 94092de2-0ee2-494c-8113-ddacd96897fb
 md"""
-Check all following boxes: $(@bind check_all PlutoUI.CheckBox())
+Reset check boxes by toggling this back to blank: $(@bind check_all PlutoUI.CheckBox(default = false))
 """
 
 # ╔═╡ 6c4edc39-b5d3-4241-9493-0b0671731f88
@@ -258,8 +255,8 @@ end
 # ╟─5c7abe91-4ab6-4155-a62d-3858f2335245
 # ╠═72309c72-72ff-4835-bd93-9ed185a0f500
 # ╟─4cf1d0e1-681f-4cb5-be14-55e3a968c745
-# ╟─6995e379-717e-448c-9b66-93287feb6ae0
-# ╟─c6637949-67bc-48e9-a3b3-21ab31ba0964
+# ╟─531cdc4c-e05e-4f0c-b8e0-dd1d5190d37e
+# ╟─94092de2-0ee2-494c-8113-ddacd96897fb
 # ╠═6c4edc39-b5d3-4241-9493-0b0671731f88
 # ╟─b6a6adac-33e0-43fa-8a78-4ac8e892cca0
 # ╠═af675880-6c09-4b4d-8294-61ac7fd95b0e

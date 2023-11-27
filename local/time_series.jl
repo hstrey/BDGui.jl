@@ -89,18 +89,15 @@ md"""
 
 # ╔═╡ 98bcd3a0-efc5-4471-b3de-4efe38a387a2
 md"""
-!!! success "Important Reminder"
+!!! success "Uncheck Boxes"
 
-	For those who frequently run this notebook multiple times, there is a convenient
-	option to avoid repetitively clicking all the subsequent boxes. Simply click the box below, and it will automatically select your upcoming boxes.
-
-	**⚠️Caution⚠️: Exercise this option with care. Each step in the process often requires manual adjustments. If these cells automatically respond to previous modifications, it can significantly slow down the interactive experience.**
+	For those who frequently run this notebook multiple times with new data, make sure to toggle this check-box below to reset the interactive steps for new input data
 
 """
 
 # ╔═╡ 397fea84-6cf4-49bf-96e7-0d8997e3308c
 md"""
-Check all following boxes: $(@bind check_all PlutoUI.CheckBox())
+Reset check boxes by toggling this back to blank: $(@bind check_all PlutoUI.CheckBox(default = false))
 """
 
 # ╔═╡ 10421b4c-3857-4c2c-aa60-b92f0d378f50
