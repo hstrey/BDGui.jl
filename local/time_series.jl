@@ -272,7 +272,7 @@ function static_slice_info(good_slices_first, good_slices_last)
 		
 		md"""
 		#### Static Slices
-		Select the range of good slices between 1 to 60 by scrolling through the slider and note when the first good slice starts and when the last good slice ends
+		Select the range of good slices by scrolling through the slider and note when the first good slice starts and when the last good slice ends
 		$(inputs)
 		"""
 	end
@@ -735,7 +735,7 @@ end
 # ╔═╡ 827ba5b1-d998-4099-8ff7-e24b95b89265
 if (@isdefined skew_ready) && (skew_ready == true)
 	md"""
-	Choose Outlier Removal Constant: $(@bind outlier_const PlutoUI.Slider(0:.5:10; default = 2, show_value = true))
+	Choose Outlier Removal Constant (Z threshold): $(@bind outlier_const PlutoUI.Slider(0:.5:10; default = 2, show_value = true))
 	"""
 end
 
@@ -824,11 +824,9 @@ end
 # ╔═╡ 819f9274-cfbf-4ba9-943c-2ac9244e9299
 if (@isdefined outliers_ready) && (outliers_ready == true)
 	md"""
-	Variance (multiplicative noise):
-	- Mean sigma: $(mean_sigma)
-	- Std sigma: $(std_sigma)
-	- Mean amplitude: $(mean_amplitude)
-	- Std amplitude: $(std_amplitude)
+	Probabilisitic Analysis:
+	- % Thermal Noise: $((1-mean_amplitude^2*snr)*100)
+	- % Multiplicative Noise: $(mean_amplitude^2*snr*100)
 	
 	Power (standard signal to noise): $(snr)
 	
@@ -844,7 +842,7 @@ md"""
 
 # ╔═╡ 8e4185b7-103b-4cdd-9af6-7f97d03ea25c
 md"""
-Enter File Path to Save `groundtruth` (raw and clean) phantoms: 
+Enter File Path to Save `groundtruth` (raw and clean) phantoms (enter . for current directory): 
 
 $(@bind output_dir confirm(TextField()))
 """
@@ -865,17 +863,17 @@ end
 # ╔═╡ Cell order:
 # ╟─8821683a-6515-4e5a-8a28-0a20104c1089
 # ╟─e885bd90-2474-48dc-bba6-d4b9aaebcacf
-# ╠═33b2249f-4dff-4eed-9be9-b0abff4074b1
+# ╟─33b2249f-4dff-4eed-9be9-b0abff4074b1
 # ╟─a4702c3a-0274-40da-b2f4-30813dfbbf77
-# ╠═a6081d85-7903-4ea7-ac77-16f9161e1d65
+# ╟─a6081d85-7903-4ea7-ac77-16f9161e1d65
 # ╟─02d49e3b-918e-41b1-966f-d3aa5b19019f
 # ╟─98bcd3a0-efc5-4471-b3de-4efe38a387a2
 # ╟─397fea84-6cf4-49bf-96e7-0d8997e3308c
-# ╠═10421b4c-3857-4c2c-aa60-b92f0d378f50
+# ╟─10421b4c-3857-4c2c-aa60-b92f0d378f50
 # ╟─c099ea26-3d82-4d66-aa59-b6e14af7bece
-# ╠═d222a4b2-8d6a-4269-a180-fe7f77aa7922
-# ╠═e69d1614-2511-4776-8ac4-5f94a947e498
-# ╠═6b4e39ab-9fe8-4166-a7a0-ceccf2da58a7
+# ╟─d222a4b2-8d6a-4269-a180-fe7f77aa7922
+# ╟─e69d1614-2511-4776-8ac4-5f94a947e498
+# ╟─6b4e39ab-9fe8-4166-a7a0-ceccf2da58a7
 # ╟─4ec60d96-3269-43ac-9c55-8b803673456b
 # ╟─7283f0fd-16ac-4349-9675-6edc1ddfadfc
 # ╟─5f339c15-3538-49d1-8c32-7d8670baef86
@@ -888,17 +886,17 @@ end
 # ╟─a70cdc7b-677f-4c84-9507-3cdc531dcd51
 # ╟─ef701dbf-7298-46eb-ba01-4870c4bc4ab6
 # ╟─65abf0a8-f020-400d-af14-59645895cdaf
-# ╠═09e300b5-7ae8-417a-8bb8-87c72750a5c9
-# ╠═b4a83883-70b6-48b0-b0fa-8ad965e28386
+# ╟─09e300b5-7ae8-417a-8bb8-87c72750a5c9
+# ╟─b4a83883-70b6-48b0-b0fa-8ad965e28386
 # ╟─09db762a-5d46-45e1-a024-e1e1a986f8cf
 # ╟─7a5d5d09-db35-427b-9228-7b9cfa2522cf
 # ╟─8ef47f99-21a9-4575-b4d1-ff98f0720364
 # ╟─e23f0a47-3da8-4ff5-83c7-5115f3c822ee
 # ╟─74261be0-c641-4bef-bb4d-e09f41c87df1
-# ╠═797159df-a9bf-4048-aacb-bc8f83dfde6e
-# ╠═8d349bbd-abcf-44fe-af35-0042fec17aad
-# ╠═61505bbe-ca29-4d5a-9ada-e837b6cceed1
-# ╠═d8412662-ac5a-46e4-95ed-e68bdedd0732
+# ╟─797159df-a9bf-4048-aacb-bc8f83dfde6e
+# ╟─8d349bbd-abcf-44fe-af35-0042fec17aad
+# ╟─61505bbe-ca29-4d5a-9ada-e837b6cceed1
+# ╟─d8412662-ac5a-46e4-95ed-e68bdedd0732
 # ╟─e49a06d1-4fa8-48d2-b913-75d9f90719e2
 # ╟─f267d838-7ddf-4f5f-b91e-6b154624660f
 # ╟─0476f3ae-b35b-4d6c-8713-2edec2bac798
@@ -911,34 +909,34 @@ end
 # ╟─6402c226-2041-41bf-b7e9-3678bd211807
 # ╟─466194a6-bec5-4bec-9e00-55cdc3d7c378
 # ╟─fb7ef4c9-2c45-486e-bbf9-e3c8a6e32b62
-# ╠═fe339ac3-e62d-4e28-85c9-14ef89bea82c
+# ╟─fe339ac3-e62d-4e28-85c9-14ef89bea82c
 # ╟─f4f37126-23f0-4570-ba49-aff8eaa86f68
 # ╟─3b75fb03-4f9f-4c58-8757-c66323f2f3e6
 # ╟─f3cbe7c3-2caf-4bad-baf1-954b1f79f3e6
 # ╟─5afc0ac5-659f-4995-b840-a25b656c0d17
-# ╠═91899626-c34f-4534-820c-f34f795670de
+# ╟─91899626-c34f-4534-820c-f34f795670de
 # ╟─70ebb35e-1dd2-4a2e-ba9a-524cacfda3ae
 # ╟─5965bf01-a4a9-4b36-aa00-47cfca4f4ba2
 # ╟─b4e7d29f-29a9-482d-85d4-7e31033fcc53
 # ╟─0c5d04fc-b921-405c-8c3b-9ecb64965edf
-# ╠═e401ab6a-1169-45ac-a9ac-af4ca28c33ea
+# ╟─e401ab6a-1169-45ac-a9ac-af4ca28c33ea
 # ╟─92f36dd7-4032-43bc-bcd6-c8c79b49a236
 # ╟─060ea16b-99bd-408f-be19-0ecc8d49b07e
 # ╟─7060ebb2-a4f7-493f-8237-9704a5b60046
 # ╟─49f9f28d-cf34-470a-b8dc-6d9cebb5fa2c
 # ╟─5041d655-8a8d-4063-a8ab-bcb57bbbef44
 # ╟─caf7ed14-dbe6-4e69-8d19-156d6cfd09df
-# ╠═31edf3b1-ad4a-46af-9ad4-52ca33df117d
+# ╟─31edf3b1-ad4a-46af-9ad4-52ca33df117d
 # ╟─d9c90d50-3db4-48d3-a43e-d112229bb8e0
 # ╟─24a9e088-00d3-46e1-b7b7-b46dd610731f
 # ╟─827ba5b1-d998-4099-8ff7-e24b95b89265
 # ╟─676f2f3c-e02c-4d10-8626-7ea46120be59
 # ╟─2533717f-2395-4123-953c-276129bb23d2
-# ╠═f926ed88-c48a-40f9-900b-d95925eaf78b
+# ╟─f926ed88-c48a-40f9-900b-d95925eaf78b
 # ╟─6990dfe0-ecb7-49d1-b4d1-38b689abe7e7
 # ╟─a1acebbc-95b8-44b0-b93b-34275fc8cdd2
 # ╟─819f9274-cfbf-4ba9-943c-2ac9244e9299
-# ╠═0b66e9e0-68a9-4d1c-a0f2-9c98f41097f0
+# ╟─0b66e9e0-68a9-4d1c-a0f2-9c98f41097f0
 # ╟─e30df5c9-818c-400c-a5f8-28bfb12eb4c8
 # ╟─8e4185b7-103b-4cdd-9af6-7f97d03ea25c
-# ╠═6625f7cc-fe32-4448-9f83-190febdc8ed6
+# ╟─6625f7cc-fe32-4448-9f83-190febdc8ed6
