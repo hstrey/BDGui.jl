@@ -110,13 +110,13 @@ function upload_files(logs, acqs, phtm)
 		
 		inputs = [
 			md""" $(logs): $(
-				Child(TextField(60))
+				Child(TextField(60; default = "log.csv"))
 			)""",
 			md""" $(acqs): $(
-				Child(TextField(60))
+				Child(TextField(60; default = "acq_times.csv"))
 			)""",
 			md""" $(phtm): $(
-				Child(TextField(60))
+				Child(TextField(60; default = "epi.nii"))
 			)"""
 		]
 		
@@ -777,29 +777,55 @@ function remove_outliers(orig::Array{T, 3}, pred::Array{T, 3}, outlier_constant)
     return orig_clean_vec, pred_clean_vec, orig_clean_3D_nan, pred_clean_3D_nan
 end
 
+# ╔═╡ ece359f5-4552-4620-9af4-4de83e068aec
+function remove_outliers_skew(orig::Array{T, 3}, pred::Array{T, 3}, outlier_constant) where T
+	# calculate skewness for each time-series
+    skew_orig = Float64[skewness(orig[:,j,i]) for i in 1:size(orig)[3] for j in 1:size(orig)[2]]
+    skew_pred = Float64[skewness(pred[:,j,i]) for i in 1:size(pred)[3] for j in 1:size(orig)[2]]
+
+	# create lists of time series
+	pred_vec = reshape(pred, (size(pred)[1],size(pred)[2]*size(pred)[3]))
+	orig_vec = reshape(orig, (size(orig)[1],size(orig)[2]*size(orig)[3]))
+
+	# create mask of outliers
+    upper_quartile = quantile(skew_pred, 0.75)
+    lower_quartile = quantile(skew_pred, 0.25)
+    IQR = (upper_quartile - lower_quartile) * outlier_constant
+    quartile_set = (lower_quartile - IQR, upper_quartile + IQR)
+
+    pred_mask = (skew_pred .>= quartile_set[1]) .& (skew_pred .<= quartile_set[2])
+
+	# clean
+    orig_clean_vec = orig_vec[: , pred_mask]
+    pred_clean_vec = pred_vec[: , pred_mask]
+	skew_orig_clean = skew_orig[pred_mask]
+	skew_pred_clean = skew_pred[pred_mask]
+
+    return skew_orig, skew_orig_clean, skew_pred, skew_pred_clean, orig_clean_vec, pred_clean_vec
+end
+
 # ╔═╡ f926ed88-c48a-40f9-900b-d95925eaf78b
 # Remove Outliers
 if (@isdefined skew_ready) && (skew_ready == true)
 
-	orig_clean_vec, pred_clean_vec, orig_clean_3D_nan, pred_clean_3D_nan = remove_outliers(orig, pred, outlier_const)
+	skew_orig, skew_orig_clean, skew_pred, skew_pred_clean, orig_clean_vec, pred_clean_vec = remove_outliers_skew(orig, pred, outlier_const)
 	
-	orig_skew, pred_skew = skewness(orig_vec), skewness(pred_vec)
-	
-	orig_clean_skew, pred_clean_skew = skewness(orig_clean_vec), skewness(orig_clean_vec)
 end
 
 # ╔═╡ 676f2f3c-e02c-4d10-8626-7ea46120be59
 if (@isdefined skew_ready) && (skew_ready == true)
 	let
 		f = Figure()
-		ax = Axis(f[1, 1])
-		hist!(orig_vec, bins = 1000, label = "Original")
-		hist!(orig_clean_vec; bins = 1000, label = "Original Cleaned")
+		ax = Axis(f[1, 1],
+		title = "Skew Original")
+		hist!(skew_orig, bins = 50, label = "Original")
+		hist!(skew_orig_clean; bins = 50, label = "Original Cleaned")
 		axislegend(ax)
 	
-		ax = Axis(f[1, 2])
-		hist!(pred_vec, bins = 1000, label = "Predicted")
-		hist!(pred_clean_vec; bins = 1000, label = "Predicted Cleaned")
+		ax = Axis(f[1, 2],
+		title = "Skew Predicted")
+		hist!(skew_pred, bins = 50, label = "Predicted")
+		hist!(skew_pred_clean; bins = 50, label = "Predicted Cleaned")
 		axislegend(ax)
 		
 		f
@@ -808,31 +834,92 @@ end
 
 # ╔═╡ a1acebbc-95b8-44b0-b93b-34275fc8cdd2
 md"""
-# Quality Assurance
+# Quality Measures
 """
 
 # ╔═╡ 0b66e9e0-68a9-4d1c-a0f2-9c98f41097f0
 # Quality Measurements
 if (@isdefined outliers_ready) && (outliers_ready == true)
-	mean_sigma, std_sigma, mean_amplitude, std_amplitude = BDTools.mul_noise(pred_clean_vec, orig_clean_vec)
 	
-	snr = BDTools.st_snr(pred_clean_vec, orig_clean_vec)
+	# standardize the dataset so that each time series has mean=0 and std=1
+	pred_clean_std = BDTools.Denoiser.standardize(pred_clean_vec)[1]
+	orig_clean_std = BDTools.Denoiser.standardize(orig_clean_vec)[1]
 
-	p_cor = cor(pred_clean_vec, orig_clean_vec)
+	# normalize with respect to means for probabilistic analysis
+	pred_mean = mean(pred_clean_vec, dims=1)
+	pred_std = std(pred_clean_vec, dims=1)
+	orig_mean = mean(orig_clean_vec, dims=1)
+
+	pred_norm = (pred_clean_vec .- pred_mean)
+	orig_norm = (orig_clean_vec .- orig_mean)
+	
+	norm_const = std(vec(pred_norm)) # normalize to approx std=1 for pred
+
+	mean_sigma, std_sigma, mean_amplitude, std_amplitude = BDTools.mul_noise(vec(pred_norm) ./ norm_const, vec(orig_norm) ./ norm_const)
+	
+	noise = std(orig_clean_vec .- pred_clean_vec, dims=1)
+
+	snr = vec(pred_std .^2 ./ noise .^2)
+
+	avg_BOLD = mean(vec(pred_mean))
+
+	per_signal = vec(pred_std ./ avg_BOLD) .* 100 # percent signal BOLD
+
+	pred_std_norm = vec(pred_std)/norm_const
+
+	perc_mult_voxel = sqrt.(mean_amplitude^2 .* pred_std_norm.^2 ./ (mean_sigma^2 .* norm_const^2 .+ mean_amplitude^2 .* pred_std_norm.^2))
+
+	perc_mult_1000voxel = sqrt.(mean_amplitude^2 .* pred_std_norm.^2 ./ (mean_sigma^2 .* norm_const^2/1000 .+ mean_amplitude^2 .* pred_std_norm.^2))
+
+	p_cor = cor(vec(pred_clean_std), vec(orig_clean_std))
 end
 
 # ╔═╡ 819f9274-cfbf-4ba9-943c-2ac9244e9299
 if (@isdefined outliers_ready) && (outliers_ready == true)
 	md"""
-	Probabilisitic Analysis:
-	- % Thermal Noise: $((1-mean_amplitude^2*snr)*100)
-	- % Multiplicative Noise: $(mean_amplitude^2*snr*100)
+
+	Signal to noise (power): $(mean(snr)) ``\pm`` $(std(snr))
 	
-	Power (standard signal to noise): $(snr)
-	
-	Pearson's correlation coefficient: $(p_cor)
+	Pearson's correlation coefficient (fidelity): $(p_cor)
 	
 	"""
+end
+
+# ╔═╡ 777410ec-c16c-441a-9491-2fb7f21ae23f
+if (@isdefined outliers_ready) && (outliers_ready == true)
+	let
+		f = Figure()
+		ax = Axis(f[1, 1],
+		title = "Signal to Noise (Power)",
+		xlabel = "Percent BOLD",
+		ylabel = "SNR")
+		
+		scatter!(per_signal, snr)
+		
+		f
+	end
+end
+
+# ╔═╡ f7d577be-ae28-49f6-847a-f0109a76fdde
+if (@isdefined skew_ready) && (skew_ready == true)
+	let
+		f = Figure()
+		ax = Axis(f[1, 1],
+		title = "% Multiplicative Noise",
+		xlabel = "Percent BOLD",
+		ylabel = "% Mul")
+		
+		scatter!(per_signal, perc_mult_voxel)
+	
+		ax = Axis(f[1, 2],
+		title = "% Mult. Noise over 1000 voxels",
+		xlabel = "Percent BOLD",
+		ylabel = "% Mul")
+		
+		scatter!(per_signal, perc_mult_1000voxel)
+		
+		f
+	end
 end
 
 # ╔═╡ e30df5c9-818c-400c-a5f8-28bfb12eb4c8
@@ -850,8 +937,8 @@ $(@bind output_dir confirm(TextField()))
 # ╔═╡ 6625f7cc-fe32-4448-9f83-190febdc8ed6
 # Save Phantom(s)
 if output_dir != ""
-	gt_data_clean = cat(orig_clean_3D_nan, pred_clean_3D_nan; dims = 4)
-	gt_clean = BDTools.GroundTruth(gt_data_clean, copy(gt.sliceindex), copy(gt.maskindex))
+	gt_data_clean = cat(orig_clean_vec, pred_clean_vec; dims = 3)
+	gt_clean = BDTools.GroundTruthCleaned(gt_data_clean)
 	
 	filepath_raw = joinpath(output_dir, "gt_raw.h5")
 	BDTools.serialize(filepath_raw, gt)
@@ -863,7 +950,7 @@ end
 # ╔═╡ Cell order:
 # ╟─8821683a-6515-4e5a-8a28-0a20104c1089
 # ╟─e885bd90-2474-48dc-bba6-d4b9aaebcacf
-# ╟─33b2249f-4dff-4eed-9be9-b0abff4074b1
+# ╠═33b2249f-4dff-4eed-9be9-b0abff4074b1
 # ╟─a4702c3a-0274-40da-b2f4-30813dfbbf77
 # ╟─a6081d85-7903-4ea7-ac77-16f9161e1d65
 # ╟─02d49e3b-918e-41b1-966f-d3aa5b19019f
@@ -934,9 +1021,12 @@ end
 # ╟─2533717f-2395-4123-953c-276129bb23d2
 # ╟─f926ed88-c48a-40f9-900b-d95925eaf78b
 # ╟─6990dfe0-ecb7-49d1-b4d1-38b689abe7e7
+# ╟─ece359f5-4552-4620-9af4-4de83e068aec
 # ╟─a1acebbc-95b8-44b0-b93b-34275fc8cdd2
 # ╟─819f9274-cfbf-4ba9-943c-2ac9244e9299
 # ╟─0b66e9e0-68a9-4d1c-a0f2-9c98f41097f0
+# ╟─777410ec-c16c-441a-9491-2fb7f21ae23f
+# ╟─f7d577be-ae28-49f6-847a-f0109a76fdde
 # ╟─e30df5c9-818c-400c-a5f8-28bfb12eb4c8
 # ╟─8e4185b7-103b-4cdd-9af6-7f97d03ea25c
 # ╟─6625f7cc-fe32-4448-9f83-190febdc8ed6
