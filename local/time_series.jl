@@ -907,14 +907,14 @@ if (@isdefined skew_ready) && (skew_ready == true)
 		ax = Axis(f[1, 1],
 		title = "% Multiplicative Noise",
 		xlabel = "Percent BOLD",
-		ylabel = "% Mul")
+		ylabel = "Fraction Mult")
 		
 		scatter!(per_signal, perc_mult_voxel)
 	
 		ax = Axis(f[1, 2],
 		title = "% Mult. Noise over 1000 voxels",
 		xlabel = "Percent BOLD",
-		ylabel = "% Mul")
+		ylabel = "Fraction Mult")
 		
 		scatter!(per_signal, perc_mult_1000voxel)
 		
