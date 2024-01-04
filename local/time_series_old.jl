@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.36
+# v0.19.32
 
 using Markdown
 using InteractiveUtils
@@ -31,7 +31,6 @@ begin
 	using DataFrames
 	using Statistics
 	using StatsBase
-	using Printf
 end
 
 # ╔═╡ 8821683a-6515-4e5a-8a28-0a20104c1089
@@ -736,7 +735,7 @@ end
 # ╔═╡ 827ba5b1-d998-4099-8ff7-e24b95b89265
 if (@isdefined skew_ready) && (skew_ready == true)
 	md"""
-	Choose Outlier Removal Constant (Z threshold): $(@bind outlier_const PlutoUI.Slider(0:.1:10; default = 2, show_value = true))
+	Choose Outlier Removal Constant (Z threshold): $(@bind outlier_const PlutoUI.Slider(0:.5:10; default = 2, show_value = true))
 	"""
 end
 
@@ -805,38 +804,11 @@ function remove_outliers_skew(orig::Array{T, 3}, pred::Array{T, 3}, outlier_cons
     return skew_orig, skew_orig_clean, skew_pred, skew_pred_clean, orig_clean_vec, pred_clean_vec
 end
 
-# ╔═╡ 79fa3fa1-799b-4a33-8c91-7a06c150d2ba
-function remove_outliers_skew_orig(orig::Array{T, 3}, pred::Array{T, 3}, outlier_constant) where T
-	# calculate skewness for each time-series
-    skew_orig = Float64[skewness(orig[:,j,i]) for i in 1:size(orig)[3] for j in 1:size(orig)[2]]
-    skew_pred = Float64[skewness(pred[:,j,i]) for i in 1:size(pred)[3] for j in 1:size(orig)[2]]
-
-	# create lists of time series
-	pred_vec = reshape(pred, (size(pred)[1],size(pred)[2]*size(pred)[3]))
-	orig_vec = reshape(orig, (size(orig)[1],size(orig)[2]*size(orig)[3]))
-
-	# create mask of outliers
-    upper_quartile = quantile(skew_orig, 0.75)
-    lower_quartile = quantile(skew_orig, 0.25)
-    IQR = (upper_quartile - lower_quartile) * outlier_constant
-    quartile_set = (lower_quartile - IQR, upper_quartile + IQR)
-
-    pred_mask = (skew_orig .>= quartile_set[1]) .& (skew_orig .<= quartile_set[2])
-
-	# clean
-    orig_clean_vec = orig_vec[: , pred_mask]
-    pred_clean_vec = pred_vec[: , pred_mask]
-	skew_orig_clean = skew_orig[pred_mask]
-	skew_pred_clean = skew_pred[pred_mask]
-
-    return skew_orig, skew_orig_clean, skew_pred, skew_pred_clean, orig_clean_vec, pred_clean_vec
-end
-
 # ╔═╡ f926ed88-c48a-40f9-900b-d95925eaf78b
 # Remove Outliers
 if (@isdefined skew_ready) && (skew_ready == true)
 
-	skew_orig, skew_orig_clean, skew_pred, skew_pred_clean, orig_clean_vec, pred_clean_vec = remove_outliers_skew_orig(orig, pred, outlier_const)
+	skew_orig, skew_orig_clean, skew_pred, skew_pred_clean, orig_clean_vec, pred_clean_vec = remove_outliers_skew(orig, pred, outlier_const)
 	
 end
 
@@ -906,9 +878,9 @@ end
 if (@isdefined outliers_ready) && (outliers_ready == true)
 	md"""
 
-	Signal to noise (power): $(mean(snr)) ``\pm`` $@sprintf "%.2f" (std(snr))
+	Signal to noise (power): $(mean(snr)) ``\pm`` $(std(snr))
 	
-	Pearson's correlation coefficient (fidelity): $(@sprintf "%.2f" p_cor)
+	Pearson's correlation coefficient (fidelity): $(p_cor)
 	
 	"""
 end
@@ -1044,13 +1016,12 @@ end
 # ╟─31edf3b1-ad4a-46af-9ad4-52ca33df117d
 # ╟─d9c90d50-3db4-48d3-a43e-d112229bb8e0
 # ╟─24a9e088-00d3-46e1-b7b7-b46dd610731f
-# ╠═827ba5b1-d998-4099-8ff7-e24b95b89265
+# ╟─827ba5b1-d998-4099-8ff7-e24b95b89265
 # ╟─676f2f3c-e02c-4d10-8626-7ea46120be59
 # ╟─2533717f-2395-4123-953c-276129bb23d2
 # ╟─f926ed88-c48a-40f9-900b-d95925eaf78b
 # ╟─6990dfe0-ecb7-49d1-b4d1-38b689abe7e7
 # ╟─ece359f5-4552-4620-9af4-4de83e068aec
-# ╟─79fa3fa1-799b-4a33-8c91-7a06c150d2ba
 # ╟─a1acebbc-95b8-44b0-b93b-34275fc8cdd2
 # ╟─819f9274-cfbf-4ba9-943c-2ac9244e9299
 # ╟─0b66e9e0-68a9-4d1c-a0f2-9c98f41097f0
