@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.37
+# v0.19.36
 
 using Markdown
 using InteractiveUtils
@@ -476,7 +476,7 @@ if (@isdefined bfc_ready) && (bfc_ready == true)
 	# Find the index of the first column whose name contains "Tmot"
 	tmot_col_index = findfirst(name -> occursin("tmot", lowercase.(name)), colnames)
 
-	max_motion = findmax(df_log[!, tmot_col_index][motion_start:end])[1]
+	max_motion = findmax(df_log[!, tmot_col_index])[1]
 	max_motion2 = df_log[findall(x -> x == motion_start, df_log[!, "Seq#"]), tmot_col_index]
 	slices_without_motion = df_acq[!,"Slice"][df_acq[!,"Time"] .> max_motion2]
 	slices_ok = sort(
@@ -636,9 +636,9 @@ function check_rotated_pred()
 
 	ax = CairoMakie.Axis(
 		f[1, 1],
-		title="Average Static Image @ Slice $(z)"
+		title="Average Static Image @ Slice $(z2)"
 	)
-	heatmap!(BDTools.genimg(sph.data[:, :, z]), colormap=:grays)
+	heatmap!(ave2, colormap=:grays)
 	scatter!([x], [y]; markercolor = :red, markersize = 20)
 	
 	ax = CairoMakie.Axis(
@@ -647,10 +647,8 @@ function check_rotated_pred()
 		xlabel = "Time Point",
 		ylabel = "Intensity"
 	)
-	pred_check = gt[x,y,z] .- mean(gt[x,y,z])
-	orig_check = BDTools.Denoiser.detrend(gt[x, y, z, true])
-	lines!(pred_check, label="prediction")
-	lines!(orig_check, label="original")
+	lines!(gt[x, y, z], label="prediction")
+	lines!(gt[x, y, z, true], label="original")
 	axislegend(ax, position=:lt)
 	f
 end
@@ -870,19 +868,18 @@ md"""
 # ╔═╡ 0b66e9e0-68a9-4d1c-a0f2-9c98f41097f0
 # Quality Measurements
 if (@isdefined outliers_ready) && (outliers_ready == true)
+	
+	# standardize the dataset so that each time series has mean=0 and std=1
+	pred_clean_std = BDTools.Denoiser.standardize(pred_clean_vec)[1]
+	orig_clean_std = BDTools.Denoiser.standardize(orig_clean_vec)[1]
 
 	# normalize with respect to means for probabilistic analysis
 	pred_mean = mean(pred_clean_vec, dims=1)
 	pred_std = std(pred_clean_vec, dims=1)
 	orig_mean = mean(orig_clean_vec, dims=1)
 
-	#pred_norm = (pred_clean_vec .- pred_mean)
-	#orig_norm = (orig_clean_vec .- orig_mean)
-
-	# remove linear drift for the moving phantom
-	orig_norm = reduce(hcat,[BDTools.Denoiser.detrend(orig_clean_vec[:,i]) for i in 1:size(orig_clean_vec)[2]])
-
 	pred_norm = (pred_clean_vec .- pred_mean)
+	orig_norm = (orig_clean_vec .- orig_mean)
 	
 	norm_const = std(vec(pred_norm)) # normalize to approx std=1 for pred
 
@@ -902,7 +899,7 @@ if (@isdefined outliers_ready) && (outliers_ready == true)
 
 	perc_mult_1000voxel = sqrt.(mean_amplitude^2 .* pred_std_norm.^2 ./ (mean_sigma^2 .* norm_const^2/1000 .+ mean_amplitude^2 .* pred_std_norm.^2))
 
-	p_cor = cor(vec(pred_norm), vec(orig_norm))
+	p_cor = cor(vec(pred_clean_std), vec(orig_clean_std))
 end
 
 # ╔═╡ 819f9274-cfbf-4ba9-943c-2ac9244e9299
@@ -968,7 +965,7 @@ $(@bind output_dir confirm(TextField()))
 # ╔═╡ 6625f7cc-fe32-4448-9f83-190febdc8ed6
 # Save Phantom(s)
 if output_dir != ""
-	gt_data_clean = cat(orig_norm, pred_norm; dims = 3)
+	gt_data_clean = cat(orig_clean_vec, pred_clean_vec; dims = 3)
 	gt_clean = BDTools.GroundTruthCleaned(gt_data_clean)
 	
 	filepath_raw = joinpath(output_dir, "gt_raw.h5")
@@ -977,9 +974,6 @@ if output_dir != ""
 	filepath_clean = joinpath(output_dir, "gt_clean.h5")
 	BDTools.serialize(filepath_clean, gt_clean)
 end
-
-# ╔═╡ 19642439-8ccd-4049-aef4-5d93d75bf32d
-
 
 # ╔═╡ Cell order:
 # ╟─8821683a-6515-4e5a-8a28-0a20104c1089
@@ -1050,7 +1044,7 @@ end
 # ╟─31edf3b1-ad4a-46af-9ad4-52ca33df117d
 # ╟─d9c90d50-3db4-48d3-a43e-d112229bb8e0
 # ╟─24a9e088-00d3-46e1-b7b7-b46dd610731f
-# ╟─827ba5b1-d998-4099-8ff7-e24b95b89265
+# ╠═827ba5b1-d998-4099-8ff7-e24b95b89265
 # ╟─676f2f3c-e02c-4d10-8626-7ea46120be59
 # ╟─2533717f-2395-4123-953c-276129bb23d2
 # ╟─f926ed88-c48a-40f9-900b-d95925eaf78b
@@ -1058,11 +1052,10 @@ end
 # ╟─ece359f5-4552-4620-9af4-4de83e068aec
 # ╟─79fa3fa1-799b-4a33-8c91-7a06c150d2ba
 # ╟─a1acebbc-95b8-44b0-b93b-34275fc8cdd2
-# ╟─0b66e9e0-68a9-4d1c-a0f2-9c98f41097f0
 # ╟─819f9274-cfbf-4ba9-943c-2ac9244e9299
+# ╟─0b66e9e0-68a9-4d1c-a0f2-9c98f41097f0
 # ╟─777410ec-c16c-441a-9491-2fb7f21ae23f
 # ╟─f7d577be-ae28-49f6-847a-f0109a76fdde
 # ╟─e30df5c9-818c-400c-a5f8-28bfb12eb4c8
 # ╟─8e4185b7-103b-4cdd-9af6-7f97d03ea25c
 # ╟─6625f7cc-fe32-4448-9f83-190febdc8ed6
-# ╠═19642439-8ccd-4049-aef4-5d93d75bf32d
