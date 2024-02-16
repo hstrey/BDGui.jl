@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.37
+# v0.19.38
 
 using Markdown
 using InteractiveUtils
@@ -879,10 +879,10 @@ if (@isdefined outliers_ready) && (outliers_ready == true)
 	#pred_norm = (pred_clean_vec .- pred_mean)
 	#orig_norm = (orig_clean_vec .- orig_mean)
 
-	# remove linear drift for the moving phantom
+	# remove linear drift for both orig and pred
 	orig_norm = reduce(hcat,[BDTools.Denoiser.detrend(orig_clean_vec[:,i]) for i in 1:size(orig_clean_vec)[2]])
-
-	pred_norm = (pred_clean_vec .- pred_mean)
+	
+	pred_norm = reduce(hcat,[BDTools.Denoiser.detrend(pred_clean_vec[:,i]) for i in 1:size(pred_clean_vec)[2]])
 	
 	norm_const = std(vec(pred_norm)) # normalize to approx std=1 for pred
 
@@ -916,21 +916,6 @@ if (@isdefined outliers_ready) && (outliers_ready == true)
 	"""
 end
 
-# ╔═╡ 777410ec-c16c-441a-9491-2fb7f21ae23f
-if (@isdefined outliers_ready) && (outliers_ready == true)
-	let
-		f = Figure()
-		ax = Axis(f[1, 1],
-		title = "Signal to Noise (Power)",
-		xlabel = "Percent BOLD",
-		ylabel = "SNR")
-		
-		scatter!(per_signal, snr)
-		
-		f
-	end
-end
-
 # ╔═╡ f7d577be-ae28-49f6-847a-f0109a76fdde
 if (@isdefined skew_ready) && (skew_ready == true)
 	let
@@ -948,6 +933,21 @@ if (@isdefined skew_ready) && (skew_ready == true)
 		ylabel = "Fraction Mult")
 		
 		scatter!(per_signal, perc_mult_1000voxel)
+		
+		f
+	end
+end
+
+# ╔═╡ 777410ec-c16c-441a-9491-2fb7f21ae23f
+if (@isdefined outliers_ready) && (outliers_ready == true)
+	let
+		f = Figure()
+		ax = Axis(f[1, 1],
+		title = "Signal to Noise (Power)",
+		xlabel = "Percent BOLD",
+		ylabel = "SNR")
+		
+		scatter!(per_signal, snr)
 		
 		f
 	end
@@ -977,9 +977,6 @@ if output_dir != ""
 	filepath_clean = joinpath(output_dir, "gt_clean.h5")
 	BDTools.serialize(filepath_clean, gt_clean)
 end
-
-# ╔═╡ 19642439-8ccd-4049-aef4-5d93d75bf32d
-
 
 # ╔═╡ Cell order:
 # ╟─8821683a-6515-4e5a-8a28-0a20104c1089
@@ -1058,11 +1055,10 @@ end
 # ╟─ece359f5-4552-4620-9af4-4de83e068aec
 # ╟─79fa3fa1-799b-4a33-8c91-7a06c150d2ba
 # ╟─a1acebbc-95b8-44b0-b93b-34275fc8cdd2
-# ╟─0b66e9e0-68a9-4d1c-a0f2-9c98f41097f0
 # ╟─819f9274-cfbf-4ba9-943c-2ac9244e9299
-# ╟─777410ec-c16c-441a-9491-2fb7f21ae23f
+# ╟─0b66e9e0-68a9-4d1c-a0f2-9c98f41097f0
 # ╟─f7d577be-ae28-49f6-847a-f0109a76fdde
+# ╟─777410ec-c16c-441a-9491-2fb7f21ae23f
 # ╟─e30df5c9-818c-400c-a5f8-28bfb12eb4c8
 # ╟─8e4185b7-103b-4cdd-9af6-7f97d03ea25c
 # ╟─6625f7cc-fe32-4448-9f83-190febdc8ed6
-# ╠═19642439-8ccd-4049-aef4-5d93d75bf32d
