@@ -25,8 +25,13 @@ Installation Instructions
    log.csv               - log file from phantom scan
 
    time_series.jl        - fresh copy from BDGui.jl/local
+   denoiser.jl           - fresh copy from BDGui.jl/local
+   noisenet.jl           - fresh copy from BDGui.jl/local
 
 7) Launch time_series.jl in Pluto notebook
-8) perform time-series analysis
+8) Lerform time-series analysis and save results at the end
+9) Launch denoiser.jl notebook to train a neural network on the scanner noise and save the neural net parameters
+10) Launch noisenet.jl to clean human brain fMRIs using a mask
+
 
    
