@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.26
+# v0.19.40
 
 #> [frontmatter]
 #> title = "Phantom Preparation & Analysis"
@@ -226,7 +226,7 @@ end
 
 # ╔═╡ 297aa7da-0896-40e5-ace9-a6895ecebda9
 if uploaded
-	heatmap(phantom[:, :, div(size(phantom, 3), 2), b_slider], colormap=:grays)
+	heatmap(phantom.raw[:, :, div(size(phantom, 3), 2), b_slider], colormap=:grays)
 end
 
 # ╔═╡ 1337fe2d-8969-4602-a94b-fbc071b4d3b9
@@ -373,7 +373,7 @@ end
 # ╔═╡ 3a02d92d-c130-48f4-8b85-e4b88ad3cc3a
 # Correct 4D Phantom w/ B-field
 if slices
-	phantom_whole = phantom[:, :, good_slices_range, :]
+	phantom_whole = phantom.raw[:, :, good_slices_range, :]
 	
 	bfc_phantom = zeros(size(phantom_whole))
 	for i in axes(phantom_whole, 4)
