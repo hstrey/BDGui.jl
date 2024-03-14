@@ -31,9 +31,14 @@ begin
 	using Statistics
 end
 
+# ╔═╡ 38f65da8-43f6-4c53-ab6d-b26c9e6c0336
+md"""
+Reset check boxes by toggling this back to blank: $(@bind check_all PlutoUI.CheckBox(default = false))
+"""
+
 # ╔═╡ 82ba726c-366c-49d0-8ddd-481ace54244b
 md"""
-## Load model and denoise phantom
+## Load model and denoise fMRI scan
 """
 
 # ╔═╡ d816a6db-4ace-4812-8c43-d4b0ea996268
@@ -62,8 +67,14 @@ Enter File Path to 4-d mask to denoise:
 $(@bind mask_path confirm(TextField()))
 """
 
+# ╔═╡ 5008a277-f1bf-4ca8-8d5d-9efb33755753
+default = check_all
+
+# ╔═╡ d9430e71-5e23-4d3b-9511-e0ccc82283be
+ready_to_load_images = (@isdefined brain_path) && (brain_path != "") && (@isdefined mask_path) && (mask_path != "")
+
 # ╔═╡ 2a53f610-0323-4607-bf73-f306c3e90e9a
-if (@isdefined brain_path) && (brain_path != "") && (@isdefined mask_path) && (mask_path != "")
+if ready_to_load_images
 	brain = niread(brain_path)
 	mask = niread(mask_path)
 	maskbool = Bool.(mask.raw)
@@ -72,6 +83,7 @@ if (@isdefined brain_path) && (brain_path != "") && (@isdefined mask_path) && (m
 end
 
 # ╔═╡ 7aaa612d-f9f8-4a59-939b-76172350ff17
+if ready_to_load_images
 md"""
 This NIftI contains $n_times time-series
 
@@ -84,6 +96,7 @@ Choose y: $(@bind brainy PlutoUI.Slider(axes(brain,2); default=1, show_value=tru
 Choose y: $(@bind brainz PlutoUI.Slider(axes(brain,3); default=1, show_value=true))
 
 """
+end
 
 # ╔═╡ a82f7f9f-5f7f-4fa9-b0c2-e9d0a62bc5c7
 if (@isdefined brain_path) && (brain_path != "") && (@isdefined mask_path) && (mask_path != "")
@@ -99,8 +112,16 @@ if (@isdefined brain_path) && (brain_path != "") && (@isdefined mask_path) && (m
 	f
 end
 
+# ╔═╡ 2cc36e0d-01d3-4bee-bcbf-5c364cd362b5
+if ready_to_load_images
+md"""
+When you are ready to denoise check box (denoising may take a while):
+$(@bind ready_to_denoise PlutoUI.CheckBox(default = default))
+"""
+end
+
 # ╔═╡ 519a862c-9739-4c82-bff4-aff1d3762229
-if (@isdefined brain_path) && (brain_path != "") && (@isdefined mask_path) && (mask_path != "")
+if ready_to_load_images && ready_to_denoise
 	brain_denoised = Array(brain[:,:,:,end-599:end])
 	for x in axes(brain,1)
 		for y in axes(brain,2)
@@ -115,10 +136,11 @@ if (@isdefined brain_path) && (brain_path != "") && (@isdefined mask_path) && (m
 			end
 		end
 	end
+	ready_to_display_denoise = true
 end
 
-
 # ╔═╡ 72eb3f52-fb1e-4ee0-9273-7d4229ad0c62
+if ready_to_load_images && ready_to_denoise
 md"""
 Choose x: $(@bind brainxx PlutoUI.Slider(axes(brain,1); default=1, show_value=true))
 
@@ -128,9 +150,10 @@ Choose y: $(@bind brainzz PlutoUI.Slider(axes(brain,3); default=1, show_value=tr
 
 Choose mult factor: $(@bind brainf PlutoUI.Slider(0.01:0.01:10; default=1.0, show_value=true))
 """
+end
 
 # ╔═╡ 73d8050d-035c-47ce-ba63-199ee22ea111
-begin
+if (@isdefined ready_to_display_denoise) && ready_to_display_denoise
 	f2 = Figure(size = (800, 600))
 
 	ax2 = CairoMakie.Axis(
@@ -148,14 +171,16 @@ begin
 end
 
 # ╔═╡ cabad321-a926-4532-9af3-bf51901c423e
+if ready_to_load_images && ready_to_denoise
 md"""
-Enter File Path to Upload Trained Model: 
+Enter File Path to Download Cleaned fMRI scan: 
 
 $(@bind denoised_path confirm(TextField()))
 """
+end
 
 # ╔═╡ ddcc2b01-8f8a-4660-8c35-6620c0163989
-begin
+if (@isdefined denoised_path) && denoised_path !=""
 	brain_head = brain.header
 	bhd = brain_head.dim
 	brain_head.dim = (bhd[1],bhd[2],bhd[3],bhd[4],600,1,1,1)
@@ -165,14 +190,18 @@ end
 
 # ╔═╡ Cell order:
 # ╠═edb43714-cc19-11ee-03db-490ff56099d0
+# ╟─38f65da8-43f6-4c53-ab6d-b26c9e6c0336
 # ╟─82ba726c-366c-49d0-8ddd-481ace54244b
 # ╟─d816a6db-4ace-4812-8c43-d4b0ea996268
 # ╟─0cc67409-eb84-422a-9be0-0a14ee9d7469
 # ╟─eb1dfec2-7680-4e7d-9123-83d709acc51b
 # ╟─6d71c466-1ca3-4fc0-a98a-ea1fe7617108
+# ╟─5008a277-f1bf-4ca8-8d5d-9efb33755753
+# ╟─d9430e71-5e23-4d3b-9511-e0ccc82283be
 # ╟─2a53f610-0323-4607-bf73-f306c3e90e9a
 # ╟─7aaa612d-f9f8-4a59-939b-76172350ff17
 # ╟─a82f7f9f-5f7f-4fa9-b0c2-e9d0a62bc5c7
+# ╟─2cc36e0d-01d3-4bee-bcbf-5c364cd362b5
 # ╟─519a862c-9739-4c82-bff4-aff1d3762229
 # ╟─73d8050d-035c-47ce-ba63-199ee22ea111
 # ╟─72eb3f52-fb1e-4ee0-9273-7d4229ad0c62
