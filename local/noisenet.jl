@@ -130,8 +130,13 @@ if ready_to_load_images && ready_to_denoise
 					ts = Float32.(brain[x,y,z,end-599:end])
 					ts_std = std(ts)
 					ts_mean = mean(ts)
-					ts_dn = BDTools.denoise(trained_model, reshape((ts .- ts_mean) ./ ts_std,(600,1,1))) .* ts_std .+ ts_mean
-					brain_denoised[x,y,z,:] = ts_dn[:,1,1]
+					ts_demean = ts .- ts_mean
+					ts_dn = BDTools.denoise(trained_model, reshape((ts .- ts_mean) ./ ts_std,(600,1,1)))
+					ts_dndemean = ts_dn[:,1,1] .- mean(ts_dn[:,1,1])
+					# estimate best scaling factor for denoised ts by
+					# minimizing sum((ts_demean .- ts_dndemean .* bs) .^2)
+					bs = sum(ts_demean .* ts_dndemean)/sum(ts_dndemean .^ 2)
+					brain_denoised[x,y,z,:] = ts_dn[:,1,1] .* bs .+ ts_mean
 				end
 			end
 		end
