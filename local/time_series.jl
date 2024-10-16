@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.40
+# v0.19.47
 
 using Markdown
 using InteractiveUtils
@@ -639,7 +639,7 @@ function check_rotated_pred()
 		title="Average Static Image @ Slice $(z)"
 	)
 	heatmap!(BDTools.genimg(sph.data[:, :, z]), colormap=:grays)
-	scatter!([x], [y]; markercolor = :red, markersize = 20)
+	scatter!([x], [y]; color = :red, markersize = 20)
 	
 	ax = CairoMakie.Axis(
 		f[1, 2],
@@ -1035,7 +1035,7 @@ end
 # ╟─91899626-c34f-4534-820c-f34f795670de
 # ╟─70ebb35e-1dd2-4a2e-ba9a-524cacfda3ae
 # ╟─5965bf01-a4a9-4b36-aa00-47cfca4f4ba2
-# ╟─b4e7d29f-29a9-482d-85d4-7e31033fcc53
+# ╠═b4e7d29f-29a9-482d-85d4-7e31033fcc53
 # ╟─0c5d04fc-b921-405c-8c3b-9ecb64965edf
 # ╟─e401ab6a-1169-45ac-a9ac-af4ca28c33ea
 # ╟─92f36dd7-4032-43bc-bcd6-c8c79b49a236
