@@ -1,26 +1,28 @@
 ### A Pluto.jl notebook ###
-# v0.19.32
+# v0.20.3
 
 using Markdown
 using InteractiveUtils
 
 # This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
 macro bind(def, element)
+    #! format: off
     quote
         local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
         local el = $(esc(element))
         global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
         el
     end
+    #! format: on
 end
 
 # ╔═╡ 33b2249f-4dff-4eed-9be9-b0abff4074b1
 # ╠═╡ show_logs = false
 begin
 	using Pkg
-	Pkg.activate(temp = true)
+	Pkg.activate(".")
 
-	Pkg.add(url = "https://github.com/hstrey/BDTools.jl")
+	Pkg.add(url = "https://www.github.com/hstrey/BDTools.jl")
 	Pkg.add.(["CairoMakie", "PlutoUI", "NIfTI", "CSV", "DataFrames", "Statistics", "StatsBase"])
 
 	using BDTools
@@ -226,7 +228,7 @@ end
 
 # ╔═╡ 65abf0a8-f020-400d-af14-59645895cdaf
 if uploaded
-	heatmap(phantom[:, :, div(size(phantom, 3), 2), b_slider], colormap=:grays)
+	heatmap(phantom.raw[:, :, div(size(phantom, 3), 2), b_slider], colormap=:grays)
 end
 
 # ╔═╡ 09db762a-5d46-45e1-a024-e1e1a986f8cf
@@ -324,7 +326,7 @@ end;
 # ╔═╡ 61505bbe-ca29-4d5a-9ada-e837b6cceed1
 # Run B-field Correction on Static Image
 if slices
-	input_image, mask, bfield, corrected_image = BDTools.bfield_correction(avg_static_phantom_path, mask_path)
+	input_image, mask, bfield, corrected_image = BDTools.bfield_correction(avg_static_phantom_path, mask_path;spline_order=3, num_control_points=[4, 4, 4])
 end;
 
 # ╔═╡ e23f0a47-3da8-4ff5-83c7-5115f3c822ee
@@ -345,25 +347,29 @@ let
 		f = Figure()
 		ax = CairoMakie.Axis(
 			f[1, 1],
-			title="Input Phantom"
+			title="Input Phantom",
+			aspect = 1
 		)
 		heatmap!(input_image[:, :, bfield_slider], colorrange = (colorrange_low, colorrange_high), colormap=:grays)
 	
 		ax = CairoMakie.Axis(
 			f[1, 2],
-			title="Corrected Average Static Phantom"
+			title="Corrected Average Static Phantom",
+			aspect = 1
 		)
-		heatmap!(corrected_image[:, :, bfield_slider], colorrange = (colorrange_low, colorrange_high), colormap=:grays)
+		heatmap!(corrected_image[:, :, bfield_slider], colormap=:grays)
 	
 		ax = CairoMakie.Axis(
 			f[2, 1],
-			title="Difference"
+			title="Difference",
+			aspect = 1
 		)
-		heatmap!(corrected_image[:, :, bfield_slider] - input_image[:, :, bfield_slider])
+		heatmap!(corrected_image[:, :, bfield_slider] .- input_image[:, :, bfield_slider])
 	
 		ax = CairoMakie.Axis(
 			f[2, 2],
-			title="B-Field"
+			title="B-Field",
+			aspect = 1
 		)
 		heatmap!(bfield[:, :, bfield_slider])
 		f
@@ -373,12 +379,12 @@ end
 # ╔═╡ d8412662-ac5a-46e4-95ed-e68bdedd0732
 # Correct 4D Phantom w/ B-field
 if slices
-	phantom_whole = phantom[:, :, good_slices_range, :]
+	phantom_whole = phantom.raw[:, :, good_slices_range, :]
 	
 	bfc_phantom = zeros(size(phantom_whole))
 	for i in axes(phantom_whole, 4)
 		for j in axes(phantom_whole, 3)
-			bfc_phantom[:,:,j,i] = phantom_whole[:, :, j, i] ./ exp.(bfield[:, :, j])
+			bfc_phantom[:,:,j,i] = phantom_whole[:, :, j, i] ./ bfield.raw[:, :, j]
 		end
 	end
 end
@@ -411,7 +417,8 @@ let
 		f = Figure()
 		ax = CairoMakie.Axis(
 			f[1, 1],
-			title="BFC Phantom"
+			title="BFC Phantom",
+			aspect = 1
 		)
 		heatmap!(bfc_phantom[:, :, bfield_slider3, z3], colormap=:grays)
 		
@@ -440,7 +447,7 @@ end
 
 # ╔═╡ 4100ec34-be7f-4c61-90bd-58bd0cb942ff
 if (@isdefined bfc_ready) && (bfc_ready == true)
-	df_log[200:210, :]
+	df_log[400:410, :]
 end
 
 # ╔═╡ 6a02123b-497e-4230-9ca4-4264c00e3f9c
@@ -476,7 +483,7 @@ if (@isdefined bfc_ready) && (bfc_ready == true)
 	# Find the index of the first column whose name contains "Tmot"
 	tmot_col_index = findfirst(name -> occursin("tmot", lowercase.(name)), colnames)
 
-	max_motion = findmax(df_log[!, tmot_col_index])[1]
+	max_motion = findmax(df_log[!, tmot_col_index][motion_start:end])[1]
 	max_motion2 = df_log[findall(x -> x == motion_start, df_log[!, "Seq#"]), tmot_col_index]
 	slices_without_motion = df_acq[!,"Slice"][df_acq[!,"Time"] .> max_motion2]
 	slices_ok = sort(
@@ -559,13 +566,15 @@ if (@isdefined rot_ready) && (rot_ready == true)
 		f = Figure()
 		ax = CairoMakie.Axis(
 			f[1, 1],
-			title="Average Static Image @ Slice $(z2)"
+			title="Average Static Image @ Slice $(z2)",
+			aspect = 1
 		)
 		heatmap!(ave2, colormap=:grays)
 	
 		ax = CairoMakie.Axis(
 			f[1, 2],
-			title="Generated Image @ Slice $(z2) & Rotated $(degrees) Degrees"
+			title="Generated Image @ Slice $(z2) & Rotated $(degrees) Degrees",
+			aspect = 1
 		)
 		heatmap!(gen[:, :], colormap=:grays)
 		f
@@ -636,10 +645,10 @@ function check_rotated_pred()
 
 	ax = CairoMakie.Axis(
 		f[1, 1],
-		title="Average Static Image @ Slice $(z2)"
+		title="Average Static Image @ Slice $(z)"
 	)
-	heatmap!(ave2, colormap=:grays)
-	scatter!([x], [y]; markercolor = :red, markersize = 20)
+	heatmap!(BDTools.genimg(sph.data[:, :, z]), colormap=:grays)
+	scatter!([x], [y]; color = :red, markersize = 20)
 	
 	ax = CairoMakie.Axis(
 		f[1, 2],
@@ -647,8 +656,10 @@ function check_rotated_pred()
 		xlabel = "Time Point",
 		ylabel = "Intensity"
 	)
-	lines!(gt[x, y, z], label="prediction")
-	lines!(gt[x, y, z, true], label="original")
+	pred_check = gt[x,y,z] .- mean(gt[x,y,z])
+	orig_check = BDTools.Denoiser.detrend(gt[x, y, z, true])
+	lines!(pred_check, label="prediction")
+	lines!(orig_check, label="original")
 	axislegend(ax, position=:lt)
 	f
 end
@@ -736,7 +747,7 @@ end
 # ╔═╡ 827ba5b1-d998-4099-8ff7-e24b95b89265
 if (@isdefined skew_ready) && (skew_ready == true)
 	md"""
-	Choose Outlier Removal Constant (Z threshold): $(@bind outlier_const PlutoUI.Slider(0:.5:10; default = 2, show_value = true))
+	Choose Outlier Removal Constant (Z threshold): $(@bind outlier_const PlutoUI.Slider(0:.1:10; default = 2, show_value = true))
 	"""
 end
 
@@ -805,11 +816,38 @@ function remove_outliers_skew(orig::Array{T, 3}, pred::Array{T, 3}, outlier_cons
     return skew_orig, skew_orig_clean, skew_pred, skew_pred_clean, orig_clean_vec, pred_clean_vec
 end
 
+# ╔═╡ 79fa3fa1-799b-4a33-8c91-7a06c150d2ba
+function remove_outliers_skew_orig(orig::Array{T, 3}, pred::Array{T, 3}, outlier_constant) where T
+	# calculate skewness for each time-series
+    skew_orig = Float64[skewness(orig[:,j,i]) for i in 1:size(orig)[3] for j in 1:size(orig)[2]]
+    skew_pred = Float64[skewness(pred[:,j,i]) for i in 1:size(pred)[3] for j in 1:size(orig)[2]]
+
+	# create lists of time series
+	pred_vec = reshape(pred, (size(pred)[1],size(pred)[2]*size(pred)[3]))
+	orig_vec = reshape(orig, (size(orig)[1],size(orig)[2]*size(orig)[3]))
+
+	# create mask of outliers
+    upper_quartile = quantile(skew_orig, 0.75)
+    lower_quartile = quantile(skew_orig, 0.25)
+    IQR = (upper_quartile - lower_quartile) * outlier_constant
+    quartile_set = (lower_quartile - IQR, upper_quartile + IQR)
+
+    pred_mask = (skew_orig .>= quartile_set[1]) .& (skew_orig .<= quartile_set[2])
+
+	# clean
+    orig_clean_vec = orig_vec[: , pred_mask]
+    pred_clean_vec = pred_vec[: , pred_mask]
+	skew_orig_clean = skew_orig[pred_mask]
+	skew_pred_clean = skew_pred[pred_mask]
+
+    return skew_orig, skew_orig_clean, skew_pred, skew_pred_clean, orig_clean_vec, pred_clean_vec
+end
+
 # ╔═╡ f926ed88-c48a-40f9-900b-d95925eaf78b
 # Remove Outliers
 if (@isdefined skew_ready) && (skew_ready == true)
 
-	skew_orig, skew_orig_clean, skew_pred, skew_pred_clean, orig_clean_vec, pred_clean_vec = remove_outliers_skew(orig, pred, outlier_const)
+	skew_orig, skew_orig_clean, skew_pred, skew_pred_clean, orig_clean_vec, pred_clean_vec = remove_outliers_skew_orig(orig, pred, outlier_const)
 	
 end
 
@@ -841,18 +879,19 @@ md"""
 # ╔═╡ 0b66e9e0-68a9-4d1c-a0f2-9c98f41097f0
 # Quality Measurements
 if (@isdefined outliers_ready) && (outliers_ready == true)
-	
-	# standardize the dataset so that each time series has mean=0 and std=1
-	pred_clean_std = BDTools.Denoiser.standardize(pred_clean_vec)[1]
-	orig_clean_std = BDTools.Denoiser.standardize(orig_clean_vec)[1]
 
 	# normalize with respect to means for probabilistic analysis
 	pred_mean = mean(pred_clean_vec, dims=1)
 	pred_std = std(pred_clean_vec, dims=1)
 	orig_mean = mean(orig_clean_vec, dims=1)
 
-	pred_norm = (pred_clean_vec .- pred_mean)
-	orig_norm = (orig_clean_vec .- orig_mean)
+	#pred_norm = (pred_clean_vec .- pred_mean)
+	#orig_norm = (orig_clean_vec .- orig_mean)
+
+	# remove linear drift for both orig and pred
+	orig_norm = reduce(hcat,[BDTools.Denoiser.detrend(orig_clean_vec[:,i]) for i in 1:size(orig_clean_vec)[2]])
+	
+	pred_norm = reduce(hcat,[BDTools.Denoiser.detrend(pred_clean_vec[:,i]) for i in 1:size(pred_clean_vec)[2]])
 	
 	norm_const = std(vec(pred_norm)) # normalize to approx std=1 for pred
 
@@ -872,7 +911,7 @@ if (@isdefined outliers_ready) && (outliers_ready == true)
 
 	perc_mult_1000voxel = sqrt.(mean_amplitude^2 .* pred_std_norm.^2 ./ (mean_sigma^2 .* norm_const^2/1000 .+ mean_amplitude^2 .* pred_std_norm.^2))
 
-	p_cor = cor(vec(pred_clean_std), vec(orig_clean_std))
+	p_cor = cor(vec(pred_norm), vec(orig_norm))
 end
 
 # ╔═╡ 819f9274-cfbf-4ba9-943c-2ac9244e9299
@@ -886,23 +925,8 @@ if (@isdefined outliers_ready) && (outliers_ready == true)
 	"""
 end
 
-# ╔═╡ 777410ec-c16c-441a-9491-2fb7f21ae23f
-if (@isdefined outliers_ready) && (outliers_ready == true)
-	let
-		f = Figure()
-		ax = Axis(f[1, 1],
-		title = "Signal to Noise (Power)",
-		xlabel = "Percent BOLD",
-		ylabel = "SNR")
-		
-		scatter!(per_signal, snr)
-		
-		f
-	end
-end
-
 # ╔═╡ f7d577be-ae28-49f6-847a-f0109a76fdde
-if (@isdefined skew_ready) && (skew_ready == true)
+if (@isdefined skew_ready) && (skew_ready == true) && (@isdefined per_signal)
 	let
 		f = Figure()
 		ax = Axis(f[1, 1],
@@ -923,6 +947,21 @@ if (@isdefined skew_ready) && (skew_ready == true)
 	end
 end
 
+# ╔═╡ 777410ec-c16c-441a-9491-2fb7f21ae23f
+if (@isdefined outliers_ready) && (outliers_ready == true)
+	let
+		f = Figure()
+		ax = Axis(f[1, 1],
+		title = "Signal to Noise (Power)",
+		xlabel = "Percent BOLD",
+		ylabel = "SNR")
+		
+		scatter!(per_signal, snr)
+		
+		f
+	end
+end
+
 # ╔═╡ e30df5c9-818c-400c-a5f8-28bfb12eb4c8
 md"""
 # Save Ground Truth Phantom(s)
@@ -938,7 +977,7 @@ $(@bind output_dir confirm(TextField()))
 # ╔═╡ 6625f7cc-fe32-4448-9f83-190febdc8ed6
 # Save Phantom(s)
 if output_dir != ""
-	gt_data_clean = cat(orig_clean_vec, pred_clean_vec; dims = 3)
+	gt_data_clean = cat(orig_norm, pred_norm; dims = 3)
 	gt_clean = BDTools.GroundTruthCleaned(gt_data_clean)
 	
 	filepath_raw = joinpath(output_dir, "gt_raw.h5")
@@ -1023,11 +1062,12 @@ end
 # ╟─f926ed88-c48a-40f9-900b-d95925eaf78b
 # ╟─6990dfe0-ecb7-49d1-b4d1-38b689abe7e7
 # ╟─ece359f5-4552-4620-9af4-4de83e068aec
+# ╟─79fa3fa1-799b-4a33-8c91-7a06c150d2ba
 # ╟─a1acebbc-95b8-44b0-b93b-34275fc8cdd2
 # ╟─819f9274-cfbf-4ba9-943c-2ac9244e9299
 # ╟─0b66e9e0-68a9-4d1c-a0f2-9c98f41097f0
-# ╟─777410ec-c16c-441a-9491-2fb7f21ae23f
 # ╟─f7d577be-ae28-49f6-847a-f0109a76fdde
+# ╟─777410ec-c16c-441a-9491-2fb7f21ae23f
 # ╟─e30df5c9-818c-400c-a5f8-28bfb12eb4c8
 # ╟─8e4185b7-103b-4cdd-9af6-7f97d03ea25c
 # ╟─6625f7cc-fe32-4448-9f83-190febdc8ed6

@@ -1,26 +1,28 @@
 ### A Pluto.jl notebook ###
-# v0.19.47
+# v0.20.3
 
 using Markdown
 using InteractiveUtils
 
 # This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
 macro bind(def, element)
+    #! format: off
     quote
         local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
         local el = $(esc(element))
         global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
         el
     end
+    #! format: on
 end
 
 # ╔═╡ 33b2249f-4dff-4eed-9be9-b0abff4074b1
 # ╠═╡ show_logs = false
 begin
 	using Pkg
-	Pkg.activate(temp = true)
+	Pkg.activate(".")
 
-	Pkg.add(url = "https://github.com/hstrey/BDTools.jl")
+	Pkg.add(url = "https://www.github.com/hstrey/BDTools.jl")
 	Pkg.add.(["CairoMakie", "PlutoUI", "NIfTI", "CSV", "DataFrames", "Statistics", "StatsBase"])
 
 	using BDTools
@@ -324,7 +326,7 @@ end;
 # ╔═╡ 61505bbe-ca29-4d5a-9ada-e837b6cceed1
 # Run B-field Correction on Static Image
 if slices
-	input_image, mask, bfield, corrected_image = BDTools.bfield_correction(avg_static_phantom_path, mask_path)
+	input_image, mask, bfield, corrected_image = BDTools.bfield_correction(avg_static_phantom_path, mask_path;spline_order=3, num_control_points=[4, 4, 4])
 end;
 
 # ╔═╡ e23f0a47-3da8-4ff5-83c7-5115f3c822ee
@@ -345,25 +347,29 @@ let
 		f = Figure()
 		ax = CairoMakie.Axis(
 			f[1, 1],
-			title="Input Phantom"
+			title="Input Phantom",
+			aspect = 1
 		)
 		heatmap!(input_image[:, :, bfield_slider], colorrange = (colorrange_low, colorrange_high), colormap=:grays)
 	
 		ax = CairoMakie.Axis(
 			f[1, 2],
-			title="Corrected Average Static Phantom"
+			title="Corrected Average Static Phantom",
+			aspect = 1
 		)
-		heatmap!(corrected_image[:, :, bfield_slider], colorrange = (colorrange_low, colorrange_high), colormap=:grays)
+		heatmap!(corrected_image[:, :, bfield_slider], colormap=:grays)
 	
 		ax = CairoMakie.Axis(
 			f[2, 1],
-			title="Difference"
+			title="Difference",
+			aspect = 1
 		)
-		heatmap!(corrected_image[:, :, bfield_slider] - input_image[:, :, bfield_slider])
+		heatmap!(corrected_image[:, :, bfield_slider] .- input_image[:, :, bfield_slider])
 	
 		ax = CairoMakie.Axis(
 			f[2, 2],
-			title="B-Field"
+			title="B-Field",
+			aspect = 1
 		)
 		heatmap!(bfield[:, :, bfield_slider])
 		f
@@ -378,7 +384,7 @@ if slices
 	bfc_phantom = zeros(size(phantom_whole))
 	for i in axes(phantom_whole, 4)
 		for j in axes(phantom_whole, 3)
-			bfc_phantom[:,:,j,i] = phantom_whole[:, :, j, i] ./ exp.(bfield[:, :, j])
+			bfc_phantom[:,:,j,i] = phantom_whole[:, :, j, i] ./ bfield.raw[:, :, j]
 		end
 	end
 end
@@ -411,7 +417,8 @@ let
 		f = Figure()
 		ax = CairoMakie.Axis(
 			f[1, 1],
-			title="BFC Phantom"
+			title="BFC Phantom",
+			aspect = 1
 		)
 		heatmap!(bfc_phantom[:, :, bfield_slider3, z3], colormap=:grays)
 		
@@ -559,13 +566,15 @@ if (@isdefined rot_ready) && (rot_ready == true)
 		f = Figure()
 		ax = CairoMakie.Axis(
 			f[1, 1],
-			title="Average Static Image @ Slice $(z2)"
+			title="Average Static Image @ Slice $(z2)",
+			aspect = 1
 		)
 		heatmap!(ave2, colormap=:grays)
 	
 		ax = CairoMakie.Axis(
 			f[1, 2],
-			title="Generated Image @ Slice $(z2) & Rotated $(degrees) Degrees"
+			title="Generated Image @ Slice $(z2) & Rotated $(degrees) Degrees",
+			aspect = 1
 		)
 		heatmap!(gen[:, :], colormap=:grays)
 		f
@@ -917,7 +926,7 @@ if (@isdefined outliers_ready) && (outliers_ready == true)
 end
 
 # ╔═╡ f7d577be-ae28-49f6-847a-f0109a76fdde
-if (@isdefined skew_ready) && (skew_ready == true)
+if (@isdefined skew_ready) && (skew_ready == true) && (@isdefined per_signal)
 	let
 		f = Figure()
 		ax = Axis(f[1, 1],
@@ -1035,7 +1044,7 @@ end
 # ╟─91899626-c34f-4534-820c-f34f795670de
 # ╟─70ebb35e-1dd2-4a2e-ba9a-524cacfda3ae
 # ╟─5965bf01-a4a9-4b36-aa00-47cfca4f4ba2
-# ╠═b4e7d29f-29a9-482d-85d4-7e31033fcc53
+# ╟─b4e7d29f-29a9-482d-85d4-7e31033fcc53
 # ╟─0c5d04fc-b921-405c-8c3b-9ecb64965edf
 # ╟─e401ab6a-1169-45ac-a9ac-af4ca28c33ea
 # ╟─92f36dd7-4032-43bc-bcd6-c8c79b49a236
