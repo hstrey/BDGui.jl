@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.20.3
+# v0.20.13
 
 using Markdown
 using InteractiveUtils
@@ -7,7 +7,7 @@ using InteractiveUtils
 # This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
 macro bind(def, element)
     #! format: off
-    quote
+    return quote
         local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
         local el = $(esc(element))
         global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
@@ -22,8 +22,8 @@ begin
 	using Pkg
 	Pkg.activate(".")
 
-	Pkg.add(url = "https://www.github.com/hstrey/BDTools.jl")
-	Pkg.add.(["CairoMakie", "PlutoUI", "NIfTI", "CSV", "DataFrames", "Statistics", "StatsBase"])
+	Pkg.add(url = "https://github.com/hstrey/BDTools.jl")
+	Pkg.add.(["CairoMakie", "PlutoUI", "NIfTI", "CSV", "DataFrames", "Statistics", "StatsBase","NPZ"])
 
 	using BDTools
 	using CairoMakie
@@ -34,6 +34,7 @@ begin
 	using Statistics
 	using StatsBase
 	using Printf
+	using NPZ
 end
 
 # ╔═╡ 8821683a-6515-4e5a-8a28-0a20104c1089
@@ -326,7 +327,7 @@ end;
 # ╔═╡ 61505bbe-ca29-4d5a-9ada-e837b6cceed1
 # Run B-field Correction on Static Image
 if slices
-	input_image, mask, bfield, corrected_image = BDTools.bfield_correction(avg_static_phantom_path, mask_path;spline_order=3, num_control_points=[4, 4, 4])
+	input_image, mask, bfield, corrected_image = BDTools.bfield_correction(avg_static_phantom_path, mask_path)
 end;
 
 # ╔═╡ e23f0a47-3da8-4ff5-83c7-5115f3c822ee
@@ -347,29 +348,25 @@ let
 		f = Figure()
 		ax = CairoMakie.Axis(
 			f[1, 1],
-			title="Input Phantom",
-			aspect = 1
+			title="Input Phantom"
 		)
 		heatmap!(input_image[:, :, bfield_slider], colorrange = (colorrange_low, colorrange_high), colormap=:grays)
 	
 		ax = CairoMakie.Axis(
 			f[1, 2],
-			title="Corrected Average Static Phantom",
-			aspect = 1
+			title="Corrected Average Static Phantom"
 		)
-		heatmap!(corrected_image[:, :, bfield_slider], colormap=:grays)
+		heatmap!(corrected_image[:, :, bfield_slider], colorrange = (colorrange_low, colorrange_high), colormap=:grays)
 	
 		ax = CairoMakie.Axis(
 			f[2, 1],
-			title="Difference",
-			aspect = 1
+			title="Difference"
 		)
-		heatmap!(corrected_image[:, :, bfield_slider] .- input_image[:, :, bfield_slider])
+		heatmap!(corrected_image[:, :, bfield_slider] - input_image[:, :, bfield_slider])
 	
 		ax = CairoMakie.Axis(
 			f[2, 2],
-			title="B-Field",
-			aspect = 1
+			title="B-Field"
 		)
 		heatmap!(bfield[:, :, bfield_slider])
 		f
@@ -384,7 +381,7 @@ if slices
 	bfc_phantom = zeros(size(phantom_whole))
 	for i in axes(phantom_whole, 4)
 		for j in axes(phantom_whole, 3)
-			bfc_phantom[:,:,j,i] = phantom_whole[:, :, j, i] ./ bfield.raw[:, :, j]
+			bfc_phantom[:,:,j,i] = phantom_whole[:, :, j, i] ./ exp.(bfield[:, :, j])
 		end
 	end
 end
@@ -417,8 +414,7 @@ let
 		f = Figure()
 		ax = CairoMakie.Axis(
 			f[1, 1],
-			title="BFC Phantom",
-			aspect = 1
+			title="BFC Phantom"
 		)
 		heatmap!(bfc_phantom[:, :, bfield_slider3, z3], colormap=:grays)
 		
@@ -566,15 +562,13 @@ if (@isdefined rot_ready) && (rot_ready == true)
 		f = Figure()
 		ax = CairoMakie.Axis(
 			f[1, 1],
-			title="Average Static Image @ Slice $(z2)",
-			aspect = 1
+			title="Average Static Image @ Slice $(z2)"
 		)
 		heatmap!(ave2, colormap=:grays)
 	
 		ax = CairoMakie.Axis(
 			f[1, 2],
-			title="Generated Image @ Slice $(z2) & Rotated $(degrees) Degrees",
-			aspect = 1
+			title="Generated Image @ Slice $(z2) & Rotated $(degrees) Degrees"
 		)
 		heatmap!(gen[:, :], colormap=:grays)
 		f
@@ -892,20 +886,24 @@ if (@isdefined outliers_ready) && (outliers_ready == true)
 	orig_norm = reduce(hcat,[BDTools.Denoiser.detrend(orig_clean_vec[:,i]) for i in 1:size(orig_clean_vec)[2]])
 	
 	pred_norm = reduce(hcat,[BDTools.Denoiser.detrend(pred_clean_vec[:,i]) for i in 1:size(pred_clean_vec)[2]])
+
+	pred_norm_mean = mean(pred_norm, dims=1)
+	pred_norm_std = std(pred_norm, dims=1)
+	orig_mean = mean(orig_norm, dims=1)
 	
 	norm_const = std(vec(pred_norm)) # normalize to approx std=1 for pred
 
 	mean_sigma, std_sigma, mean_amplitude, std_amplitude = BDTools.mul_noise(vec(pred_norm) ./ norm_const, vec(orig_norm) ./ norm_const)
 	
-	noise = std(orig_clean_vec .- pred_clean_vec, dims=1)
+	noise = std(orig_norm .- pred_norm, dims=1)
 
-	snr = vec(pred_std .^2 ./ noise .^2)
+	snr = vec(pred_norm_std .^2 ./ noise .^2)
 
 	avg_BOLD = mean(vec(pred_mean))
 
-	per_signal = vec(pred_std ./ avg_BOLD) .* 100 # percent signal BOLD
+	per_signal = vec(pred_norm_std ./ avg_BOLD) .* 100 # percent signal BOLD
 
-	pred_std_norm = vec(pred_std)/norm_const
+	pred_std_norm = vec(pred_norm_std)/norm_const
 
 	perc_mult_voxel = sqrt.(mean_amplitude^2 .* pred_std_norm.^2 ./ (mean_sigma^2 .* norm_const^2 .+ mean_amplitude^2 .* pred_std_norm.^2))
 
@@ -926,18 +924,18 @@ if (@isdefined outliers_ready) && (outliers_ready == true)
 end
 
 # ╔═╡ f7d577be-ae28-49f6-847a-f0109a76fdde
-if (@isdefined skew_ready) && (skew_ready == true) && (@isdefined per_signal)
+if (@isdefined per_signal) && (@isdefined perc_mult_voxel)
 	let
 		f = Figure()
 		ax = Axis(f[1, 1],
-		title = "% Multiplicative Noise",
+		title = "Multiplicative Noise",
 		xlabel = "Percent BOLD",
 		ylabel = "Fraction Mult")
 		
 		scatter!(per_signal, perc_mult_voxel)
 	
 		ax = Axis(f[1, 2],
-		title = "% Mult. Noise over 1000 voxels",
+		title = "Mult. Noise over 1000 voxels",
 		xlabel = "Percent BOLD",
 		ylabel = "Fraction Mult")
 		
@@ -974,6 +972,13 @@ Enter File Path to Save `groundtruth` (raw and clean) phantoms (enter . for curr
 $(@bind output_dir confirm(TextField()))
 """
 
+# ╔═╡ c592d279-4ac9-400d-ae04-18e99b5c3620
+function normalize(data::AbstractArray; dims=1)
+    μ = mean(data, dims=dims)
+    σ = std(data, dims=dims, mean=μ)
+    μ, σ, (data.-μ) ./ mean(σ)
+end
+
 # ╔═╡ 6625f7cc-fe32-4448-9f83-190febdc8ed6
 # Save Phantom(s)
 if output_dir != ""
@@ -985,6 +990,19 @@ if output_dir != ""
 
 	filepath_clean = joinpath(output_dir, "gt_clean.h5")
 	BDTools.serialize(filepath_clean, gt_clean)
+
+	ori64means, ori64sigmas, ori64 = normalize(reshape(orig_norm, (size(orig_norm)[1],1,size(orig_norm)[2])))
+	sim64means, sim64sigmas, sim64 = normalize(reshape(pred_norm, (size(pred_norm)[1],1,size(pred_norm)[2])))
+
+	data_dict = Dict("ori64means" => ori64means,
+             "ori64sigmas" => ori64sigmas,
+             "ori64" => ori64,
+             "sim64means" => sim64means,
+             "sim64sigmas" => sim64sigmas,
+             "sim64" => sim64
+             )
+
+	npzwrite(joinpath(output_dir, "gt_clean.npz"), data_dict)
 end
 
 # ╔═╡ Cell order:
@@ -1044,7 +1062,7 @@ end
 # ╟─91899626-c34f-4534-820c-f34f795670de
 # ╟─70ebb35e-1dd2-4a2e-ba9a-524cacfda3ae
 # ╟─5965bf01-a4a9-4b36-aa00-47cfca4f4ba2
-# ╟─b4e7d29f-29a9-482d-85d4-7e31033fcc53
+# ╠═b4e7d29f-29a9-482d-85d4-7e31033fcc53
 # ╟─0c5d04fc-b921-405c-8c3b-9ecb64965edf
 # ╟─e401ab6a-1169-45ac-a9ac-af4ca28c33ea
 # ╟─92f36dd7-4032-43bc-bcd6-c8c79b49a236
@@ -1070,4 +1088,5 @@ end
 # ╟─777410ec-c16c-441a-9491-2fb7f21ae23f
 # ╟─e30df5c9-818c-400c-a5f8-28bfb12eb4c8
 # ╟─8e4185b7-103b-4cdd-9af6-7f97d03ea25c
+# ╟─c592d279-4ac9-400d-ae04-18e99b5c3620
 # ╟─6625f7cc-fe32-4448-9f83-190febdc8ed6
